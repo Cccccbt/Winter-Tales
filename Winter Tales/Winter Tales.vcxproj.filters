@@ -24,6 +24,12 @@
     <ClCompile Include="resource_manager.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="collision_layer.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="collision_manager.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="atlas.h">
@@ -39,6 +45,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="collision_box.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="collision_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

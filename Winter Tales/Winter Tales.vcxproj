@@ -123,6 +123,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="collision_layer.h" />
+    <ClCompile Include="collision_manager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="resource_manager.cpp" />
     <ClCompile Include="vector2.h" />
@@ -130,6 +132,8 @@
   <ItemGroup>
     <ClInclude Include="animation.h" />
     <ClInclude Include="atlas.h" />
+    <ClInclude Include="collision_box.h" />
+    <ClInclude Include="collision_manager.h" />
     <ClInclude Include="resource_manager.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="util.h" />
