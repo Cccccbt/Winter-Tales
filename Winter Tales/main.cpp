@@ -1,0 +1,68 @@
+#include <graphics.h>
+#include <chrono>
+#include <thread>
+#include "animation.h"
+#include "atlas.h"
+#include "resource_manager.h"
+#include "timer.h"
+#include "util.h"
+#include "vector2.h"
+
+int main()
+{
+	using namespace std::chrono;
+
+	HWND hwnd = initgraph(1280, 720, EW_SHOWCONSOLE);
+	SetWindowText(hwnd, _T("Winter Tale"));
+
+	try
+	{
+		ResourceManager::instance()->load();
+	}
+
+	catch (const LPCTSTR id)
+	{
+		TCHAR err_message[512];
+		_stprintf_s(err_message, _T("Fail to load: %s"), id);
+		MessageBox(hwnd, err_message, _T("Fail to Load File"), MB_OK | MB_ICONERROR);
+		return -1;
+	}
+
+	const nanoseconds frame_duration(1000000000 / 60);
+	steady_clock::time_point last_tick = steady_clock::now();
+
+	ExMessage msg;
+	bool running = true;
+
+	BeginBatchDraw();
+
+	while (running)
+	{
+		while (peekmessage(&msg))
+		{
+			//Process User Input
+		}
+
+		steady_clock::time_point frame_start = steady_clock::now();
+		duration<float> delta = duration<float>(frame_start - last_tick);
+
+		//Process update
+
+		cleardevice();
+
+		//Draw
+
+		FlushBatchDraw();
+
+		last_tick = frame_start;
+		nanoseconds sleep_duration = frame_duration - (steady_clock::now() - frame_start);
+		while (sleep_duration > nanoseconds(0))
+		{
+			std::this_thread::sleep_for(sleep_duration);
+		}
+	}
+
+	EndBatchDraw();
+
+	return 0;
+}
