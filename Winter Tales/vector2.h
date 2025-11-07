@@ -17,32 +17,32 @@ public:
 
 	~Vector2() = default;
 	
-	Vector2 operator+(Vector2& v)
+	Vector2 operator+(const Vector2& v)
 	{
 		return Vector2(x + v.x, y + v.y);
 	}
 
-	Vector2 operator-(Vector2& v)
+	Vector2 operator-(const Vector2& v)
 	{
 		return Vector2(x - v.x, y - v.y);
 	}
 
-	Vector2 operator*(Vector2& v)
+	Vector2 operator*(const Vector2& v)
 	{
 		return Vector2(x * v.x, y * v.y);
 	}
 
-	Vector2 operator/(Vector2& v)
+	Vector2 operator/(const Vector2& v)
 	{
 		return Vector2(x / v.x, y / v.y);
 	}
 
-	Vector2 operator+(float& num)
+	Vector2 operator+(const float& num)
 	{
 		return Vector2(x + num, y + num);
 	}
 
-	Vector2 operator-(float& num)
+	Vector2 operator-(const float& num)
 	{
 		return Vector2(x - num, y - num);
 	}

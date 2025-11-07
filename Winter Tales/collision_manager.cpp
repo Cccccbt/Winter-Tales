@@ -1,4 +1,4 @@
-#pragma once
+
 #include "collision_manager.h"
 #include <graphics.h>
 

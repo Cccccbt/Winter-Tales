@@ -101,7 +101,7 @@ void ResourceManager::load()
 	}
 }
 
-void ResourceManager::flip_image(IMAGE* src_image, IMAGE* dst_image, int num_h = 1)
+void ResourceManager::flip_image(IMAGE* src_image, IMAGE* dst_image, int num_h)
 {
 	int w = src_image->getwidth();
 	int h = src_image->getheight();
@@ -127,7 +127,7 @@ void ResourceManager::flip_image(IMAGE* src_image, IMAGE* dst_image, int num_h =
 	}
 }
 
-void ResourceManager::flip_image(const std::string& src_id, const std::string& dst_id, int num_h = 1)
+void ResourceManager::flip_image(const std::string& src_id, const std::string& dst_id, int num_h)
 {
 	IMAGE* dst_img = new IMAGE();
 
