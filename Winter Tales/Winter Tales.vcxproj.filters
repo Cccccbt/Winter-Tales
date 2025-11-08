@@ -15,20 +15,26 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="vector2.h">
       <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="resource_manager.cpp">
-      <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="collision_layer.h">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="state_machine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="character.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="collision_manager.cpp">
-      <Filter>Resource Files</Filter>
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="resource_manager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +57,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="collision_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="state_node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="state_machine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="character.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

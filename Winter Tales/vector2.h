@@ -12,8 +12,7 @@ public:
 	Vector2() = default;
 
 	Vector2(float a, float b)
-		:x(a), y(b) {
-	};
+		:x(a), y(b) {};
 
 	~Vector2() = default;
 	
