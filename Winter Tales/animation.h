@@ -3,6 +3,8 @@
 #include "util.h"
 #include "timer.h"
 #include "vector2.h"
+
+////
 class Animation
 {
 public:
@@ -11,6 +13,8 @@ public:
 		Centered,
 		BottomCentered
 	};
+
+
 
 	Animation()
 	{
@@ -38,7 +42,7 @@ public:
 	void reset()
 	{
 		idx_frame = 0;
-		timer.reset();
+		timer.restart();
 	}
 
 	void set_position(const Vector2& pos)

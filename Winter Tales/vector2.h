@@ -15,11 +15,16 @@ public:
 		:x(a), y(b) {};
 
 	~Vector2() = default;
+
+	//Vector2 v1 = Vector(2, 4);
+	//Vector2 v2 = vector (3, 4);
 	
 	Vector2 operator+(const Vector2& v)
 	{
 		return Vector2(x + v.x, y + v.y);
 	}
+
+	// v1 + v2 == Vector2(5, 8)
 
 	Vector2 operator-(const Vector2& v)
 	{
@@ -61,6 +66,7 @@ public:
 		x += v.x;
 		y += v.y;
 	}
+	// v1 += v2
 
 	void operator-=(Vector2& v)
 	{

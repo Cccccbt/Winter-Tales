@@ -36,20 +36,30 @@ int main()
 
 	BeginBatchDraw();
 
+	IMAGE* test = nullptr;
+
+	//loadimage(test, _T("resorces\little_match_girl.png"));
+
+	//Game Loop
 	while (running)
 	{
 		while (peekmessage(&msg))
 		{
 			//Process User Input
+			
 		}
 
 		steady_clock::time_point frame_start = steady_clock::now();
 		duration<float> delta = duration<float>(frame_start - last_tick);
 
 		//Process update
+		on_update(delta)
+		{
 
+		}
 		cleardevice();
 
+		//putimage(100, 100, test);
 		//Draw
 
 		FlushBatchDraw();

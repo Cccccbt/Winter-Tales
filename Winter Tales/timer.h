@@ -7,6 +7,9 @@ public:
 	Timer() = default;
 	~Timer() = default;
 
+	//Timer t;
+	//
+
 	void restart()
 	{
 		pass_time = 0;
