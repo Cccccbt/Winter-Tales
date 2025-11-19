@@ -127,6 +127,7 @@
     <ClCompile Include="collision_layer.h" />
     <ClCompile Include="collision_manager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="player.cpp" />
     <ClCompile Include="resource_manager.cpp" />
     <ClCompile Include="state_machine.cpp" />
     <ClCompile Include="vector2.h" />
@@ -137,6 +138,7 @@
     <ClInclude Include="character.h" />
     <ClInclude Include="collision_box.h" />
     <ClInclude Include="collision_manager.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="resource_manager.h" />
     <ClInclude Include="state_machine.h" />
     <ClInclude Include="state_node.h" />

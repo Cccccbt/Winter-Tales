@@ -27,8 +27,13 @@ ResourceManager* ResourceManager::instance()
 
 static const std::vector<ImageResInfo> image_info_list =
 {
-	//{"background", _T(_R"(resources\background.png)")},
-	//......
+	{"little_match_girl", _T("resources\\little_match_girl.png")},
+	{"little_match_girl_attack_A_right", _T("resources\\little_match_girl_attack_A.png")},
+	{"little_match_girl_attack_B_right", _T("resources\\little_match_girl_attack_B.png")},
+	{"little_match_girl_idle_right", _T("resources\\little_match_girl_idle.png")},
+	{"little_match_girl_roll_right", _T("resources\\little_match_girl_roll.png")},
+
+	{"background", _T("resources\\background.png")}
 };
 
 static const std::vector<AtlasResInfo> atlas_info_list =
@@ -92,13 +97,16 @@ void ResourceManager::load()
 		}
 
 		atlas_pool[info.id] = atlas;
-
-		//flipimage
-		//......
-		//flipatlas
-		//......
-		//load_audio(_T(R"(resources\audio\bgm.mp3)"), _T("bgm"));
 	}
+
+	//flipimage
+	flip_image("little_match_girl_attack_A_right", "little_match_girl_attack_A_left");
+	flip_image("little_match_girl_attack_B_right", "little_match_girl_attack_B_left");
+	flip_image("little_match_girl_idle_right", "little_match_girl_idle_left");
+	flip_image("little_match_girl_roll_right", "little_match_girl_roll_left");
+	//flipatlas
+	// 
+	//load_audio(_T(R"(resources\audio\bgm.mp3)"), _T("bgm"));
 }
 
 void ResourceManager::flip_image(IMAGE* src_image, IMAGE* dst_image, int num_h)

@@ -1,18 +1,21 @@
 #include <graphics.h>
 #include <chrono>
 #include <thread>
+#include <iostream>
 #include "animation.h"
 #include "atlas.h"
 #include "resource_manager.h"
 #include "timer.h"
 #include "util.h"
 #include "vector2.h"
+#include "player.h"
 
 int main()
 {
 	using namespace std::chrono;
 
-	HWND hwnd = initgraph(1280, 720, EW_SHOWCONSOLE);
+	//HWND hwnd = initgraph(1280, 720, EW_SHOWCONSOLE);
+	HWND hwnd = initgraph(1280, 720);
 	SetWindowText(hwnd, _T("Winter Tale"));
 
 	try
@@ -36,13 +39,26 @@ int main()
 
 	BeginBatchDraw();
 
-	IMAGE* test = nullptr;
+	ResourceManager::instance()->load();
 
-	//loadimage(test, _T("resorces\little_match_girl.png"));
+	Animation test;
+	test.add_frame(ResourceManager::instance()->find_image("little_match_girl"), 22);
+	test.set_interval(1.0f / 12.0f);
+	test.set_is_loop(true);
+	test.set_on_finished(
+		[]()
+		{
+			std::cout << "Test\n";
+		}
+	);
+
+	Player playerTest;
+	playerTest.set_position(Vector2(400, 0));
 
 	//Game Loop
 	while (running)
 	{
+
 		while (peekmessage(&msg))
 		{
 			//Process User Input
@@ -53,20 +69,25 @@ int main()
 		duration<float> delta = duration<float>(frame_start - last_tick);
 
 		//Process update
-		on_update(delta)
-		{
 
-		}
+
 		cleardevice();
 
-		//putimage(100, 100, test);
+		putimage(0, 0, ResourceManager::instance()->find_image("background"));
+		playerTest.on_render();
+		playerTest.on_update(delta.count());
+
+		test.set_position(Vector2(400, 400));
+		test.on_update(delta.count());
+		test.on_render();
+
 		//Draw
 
 		FlushBatchDraw();
 
 		last_tick = frame_start;
 		nanoseconds sleep_duration = frame_duration - (steady_clock::now() - frame_start);
-		while (sleep_duration > nanoseconds(0))
+		while (sleep_duration > nanoseconds(1000000000 / 60))
 		{
 			std::this_thread::sleep_for(sleep_duration);
 		}

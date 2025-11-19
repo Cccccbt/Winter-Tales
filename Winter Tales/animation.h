@@ -3,8 +3,7 @@
 #include "util.h"
 #include "timer.h"
 #include "vector2.h"
-////
-////
+
 class Animation
 {
 public:
@@ -27,11 +26,10 @@ public:
 				if (idx_frame >= frame_list.size())
 				{
 					idx_frame = is_loop ? 0 : frame_list.size() - 1;
-				}
-
-				if (on_finished && !is_loop)
-				{
-					on_finished();
+					if (on_finished && !is_loop)
+					{
+						on_finished();
+					}
 				}
 			}
 		);

@@ -3,6 +3,8 @@
 
 Character::Character()
 {
+	hit_box = CollisionManager::instance()->create_collision_box();
+	hurt_box = CollisionManager::instance()->create_collision_box();
 	is_invulnerable_status.set_wait_time(1.0f);
 	is_invulnerable_status.set_one_shot(true);
 	is_invulnerable_status.set_callback
@@ -88,7 +90,7 @@ void Character::on_update(float delta)
 		position.y = getheight();
 	}
 
-	hit_box->set_position(get_logical_center());
+	hurt_box->set_position(get_logical_center());
 	is_invulnerable_status.on_update(delta);
 
 	if (!current_animation)

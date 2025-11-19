@@ -13,7 +13,7 @@ public:
 	void restart()
 	{
 		pass_time = 0;
-		wait_time = 0;
+		shotted = false;
 	}
 
 	void set_wait_time(float time)
@@ -52,7 +52,6 @@ public:
 			if (callback && (!one_shot || (one_shot && !shotted)))
 			{
 				callback();
-				shotted = true;
 			}
 
 			pass_time = 0;

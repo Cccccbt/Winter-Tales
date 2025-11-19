@@ -15,8 +15,8 @@ struct AnimationGroup
 class Character
 {
 public:
-	Character() = default;
-	~Character() = default;
+	Character();
+	~Character();
 
 	void decrease_hp(int h);
 
@@ -45,7 +45,7 @@ public:
 		return velocity;
 	}
 
-	const Vector2& get_logical_center()
+	const Vector2 get_logical_center()
 	{
 		return Vector2(position.x, position.y - logic_height / 2);
 	}
@@ -71,7 +71,7 @@ public:
 		is_invulnerable_status.restart();
 	}
 
-	virtual void on_hurt() {};
+	virtual void on_hurt();
 
 	virtual void on_input(const ExMessage& msg);
 	virtual void on_update(float delta);
