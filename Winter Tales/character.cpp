@@ -61,9 +61,11 @@ void Character::on_update(float delta)
 
 	if (enable_gravity)
 	{
-		velocity.y += GRAVITY;
+		velocity.y += GRAVITY * delta;
 	}
 
+	position.x += velocity.x * delta;
+	position.y += velocity.y * delta;
 
 	if (is_blink_invisiable)
 	{

@@ -5,6 +5,7 @@
 #include "animation.h"
 #include "atlas.h"
 #include "resource_manager.h"
+#include "character_manager.h"
 #include "timer.h"
 #include "util.h"
 #include "vector2.h"
@@ -39,8 +40,9 @@ int main()
 
 	BeginBatchDraw();
 
+	CharacterManager::instance();
 	ResourceManager::instance()->load();
-
+	
 	Animation test;
 	test.add_frame(ResourceManager::instance()->find_image("little_match_girl"), 22);
 	test.set_interval(1.0f / 12.0f);
@@ -52,8 +54,11 @@ int main()
 		}
 	);
 
+	/*
 	Player playerTest;
-	playerTest.set_position(Vector2(400, 0));
+	playerTest.set_position(Vector2(400, 400));
+	playerTest.set_enable_gravity(true);
+	*/
 
 	//Game Loop
 	while (running)
@@ -62,7 +67,7 @@ int main()
 		while (peekmessage(&msg))
 		{
 			//Process User Input
-			
+			CharacterManager::instance()->on_input(msg);
 		}
 
 		steady_clock::time_point frame_start = steady_clock::now();
@@ -74,14 +79,21 @@ int main()
 		cleardevice();
 
 		putimage(0, 0, ResourceManager::instance()->find_image("background"));
-		playerTest.on_render();
-		playerTest.on_update(delta.count());
+		
 
+		CharacterManager::instance()->on_update(delta.count());
+		CharacterManager::instance()->on_render();
+
+		/*
+		playerTest.on_update(delta.count());
+		playerTest.on_render();
+		*/
+		/*
 		test.set_position(Vector2(400, 400));
 		test.on_update(delta.count());
 		test.on_render();
+		*/
 
-		//Draw
 
 		FlushBatchDraw();
 
