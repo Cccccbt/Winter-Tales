@@ -1,3 +1,4 @@
+
 #pragma once
 #include "state_node.h"
 #include "timer.h"
@@ -23,6 +24,8 @@ public:
 	void on_enter() {};
 	void on_update(float delta) {};
 	void on_exit() {};
+private:
+	void update_hit_box_position();
 
 private:
 	Timer timer;
@@ -37,6 +40,9 @@ public:
 	void on_enter() {};
 	void on_update(float delta) {};
 	void on_exit() {};
+
+private:
+	void update_hit_box_position();
 
 private:
 	Timer timer;

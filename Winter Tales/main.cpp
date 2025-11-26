@@ -41,8 +41,8 @@ int main()
 	BeginBatchDraw();
 
 	CharacterManager::instance();
-	ResourceManager::instance()->load();
 	
+	/*
 	Animation test;
 	test.add_frame(ResourceManager::instance()->find_image("little_match_girl"), 22);
 	test.set_interval(1.0f / 12.0f);
@@ -53,6 +53,7 @@ int main()
 			std::cout << "Test\n";
 		}
 	);
+	*/
 
 	/*
 	Player playerTest;

@@ -66,12 +66,12 @@ Player::Player()
 
 	AnimationGroup& animation_idle = animation_pool["idle"];
 	animation_idle.right.set_interval(0.05f);
-	animation_idle.right.set_is_loop(false);
+	animation_idle.right.set_is_loop(true);
 	animation_idle.right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
 	animation_idle.right.add_frame(ResourceManager::instance()->find_image("little_match_girl_attack_A_right"), 4);
 
 	animation_idle.left.set_interval(0.05f);
-	animation_idle.left.set_is_loop(false);
+	animation_idle.left.set_is_loop(true);
 	animation_idle.left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
 	animation_idle.left.add_frame(ResourceManager::instance()->find_image("little_match_girl_attack_A_left"), 4);
 
@@ -157,6 +157,16 @@ void Player::on_update(float delta)
 		velocity.x = get_move_axis() * SPEED_ROLL;
 	}
 
+	if (get_move_axis() < 0)
+	{
+		is_facing_left = true;
+	}
+
+	 else if (get_move_axis() > 0)
+	{
+		is_facing_left = false;
+	}
+
 	timer_attack_cd.on_update(delta);
 	timer_roll_cd.on_update(delta);
 
@@ -172,3 +182,8 @@ void Player::on_hurt()
 {
 	//PlaceHolder
 }
+
+void Player::on_attack()
+{
+	//PlaceHolder
+};

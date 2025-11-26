@@ -2,6 +2,7 @@
 #include "animation.h"
 #include "timer.h"
 #include "character.h"
+#include "util.h"
 
 class Player : public Character
 {
@@ -13,6 +14,7 @@ public:
 	void on_update(float delta) override;
 	void on_render() override;
 	void on_hurt() override;
+	void on_attack();
 
 	void set_rolling(bool flag)
 	{
