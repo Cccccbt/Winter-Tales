@@ -71,6 +71,11 @@ public:
 		is_invulnerable_status.restart();
 	}
 
+	bool is_on_floor() const
+	{
+		return position.y >= FLOOR_Y;
+	}
+
 	virtual void on_hurt();
 
 	virtual void on_input(const ExMessage& msg);
@@ -82,6 +87,7 @@ public:
 
 protected:
 	const float GRAVITY = 980 * 2;
+	const float FLOOR_Y = 620;
 
 	int hp = 10;
 	Vector2 position;

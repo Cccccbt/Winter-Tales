@@ -33,15 +33,16 @@ static const std::vector<ImageResInfo> image_info_list =
 	{"little_match_girl_idle_right", _T("resources\\little_match_girl_idle.png")},
 	{"little_match_girl_roll_right", _T("resources\\little_match_girl_roll.png")},
 
-	{"player_attack_1",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Attack_1.png")},
-	{"player_attack_2",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Attack_2.png")},
-	{"player_attack_3", _T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Attack_3.png")},
-	{"player_idle",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Idle.png")},
-	{"player_idle_2",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Idle_2.png")},
-	{"player_run",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Run.png")},
-	{"player_hurt",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Hurt.png")},
-	{"player_dead",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Dead.png")},
-	{"player_jump",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Jump.png")},
+	{"player_attack_1_left",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Attack_1.png")},
+	{"player_attack_2_left",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Attack_2.png")},
+	{"player_attack_3_left", _T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Attack_3.png")},
+	{"player_idle_left",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Idle.png")},
+	{"player_idle_2_left",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Idle_2.png")},
+	{"player_run_left",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Run.png")},
+	{"player_hurt_left",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Hurt.png")},
+	{"player_dead_left",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Dead.png")},
+	{"player_jump_left",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Jump.png")},
+	{"player_charge_left", _T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Charge.png")},
 	{"background", _T("resources\\new\\snow-2d-game-tileset-pixel-art\\2 Background\\background.png")}
 };
 
@@ -113,6 +114,20 @@ void ResourceManager::load()
 	flip_image("little_match_girl_attack_B_right", "little_match_girl_attack_B_left");
 	flip_image("little_match_girl_idle_right", "little_match_girl_idle_left");
 	flip_image("little_match_girl_roll_right", "little_match_girl_roll_left");
+
+	// Player sprite flips
+	flip_image("player_attack_1_left", "player_attack_1_right", 9);
+	flip_image("player_attack_2_left", "player_attack_2_right", 14);
+	flip_image("player_attack_3_left", "player_attack_3_right", 6);
+	flip_image("player_idle_left", "player_idle_right", 6);
+	flip_image("player_idle_2_left", "player_idle_2_right", 18);
+	flip_image("player_run_left", "player_run_right", 6);
+	flip_image("player_hurt_left", "player_hurt_right", 4);
+	flip_image("player_dead_left", "player_dead_right", 4);
+	flip_image("player_jump_left", "player_jump_right", 6);
+	flip_image("player_charge_left", "player_charge_right", 6);
+	
+	
 	//flipatlas
 	// 
 	//load_audio(_T(R"(resources\audio\bgm.mp3)"), _T("bgm"));
