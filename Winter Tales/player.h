@@ -11,11 +11,9 @@ public:
 	virtual void on_update(float delta) override;
 	virtual void on_render() override;
 
-	void on_hurt() override;
 	void on_jump();
 	void on_roll();
-	void on_attack_A();
-	void on_attack_B();
+	void on_attack();
 	void on_land();
 
 	void set_rolling(bool flag)
@@ -45,7 +43,7 @@ public:
 
 	bool can_attack() const
 	{
-		return !is_attack_cd && !is_attacking && (is_attack_A_key_down || is_attack_B_key_down);
+		return !is_attack_cd && !is_attacking && is_attack_key_down;
 	};
 
 	bool can_jump() const
@@ -58,12 +56,31 @@ public:
 		return is_left_key_down - is_right_key_down;
 	}
 
+	int get_attack_combo() const
+	{
+		return attack_combo;
+	}
+
+	void attack_combo_up()
+	{
+		attack_combo = (attack_combo + 1) % max_attack_combo;
+	}
+
+	void set_attack_combo(int num)
+	{
+		attack_combo = (attack_combo + num) % max_attack_combo;
+	}
+
 private:
 	const float CD_ROLL = 0.75f;
 	const float CD_ATTACK = 0.5f;
 	const float SPEED_RUN = 300.0f;
 	const float SPEED_ROLL = 800.0f;
 	const float SPEED_JUMP = 780.0f;
+
+	Timer timer_combo_reset;
+	int attack_combo = 0;
+	int max_attack_combo = 3;
 
 	Timer timer_roll_cd;
 	bool is_rolling = false;
@@ -77,8 +94,7 @@ private:
 	bool is_right_key_down = false;
 	bool is_jump_key_down = false;
 	bool is_roll_key_down = false;
-	bool is_attack_A_key_down = false;
-	bool is_attack_B_key_down = false;
+	bool is_attack_key_down = false;
 
 	Animation* charge_effect_animation;
 };

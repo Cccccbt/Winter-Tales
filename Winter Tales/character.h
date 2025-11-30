@@ -71,6 +71,11 @@ public:
 		is_invulnerable_status.restart();
 	}
 
+	bool get_is_facing_left() const
+	{
+		return is_facing_left;
+	}
+
 	bool is_on_floor() const
 	{
 		return position.y >= FLOOR_Y;

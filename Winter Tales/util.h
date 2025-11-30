@@ -44,7 +44,7 @@ inline void load_audio(LPCTSTR path, LPCTSTR id)
 inline void play_audio(LPCTSTR id, bool is_loop = false)
 {
     static TCHAR str_cmd[512];
-    _stprintf_s(str_cmd, _T("play %s &s from 0 "), id, is_loop ? _T("repeat") : _T(""));
+    _stprintf_s(str_cmd, _T("play %s %s from 0"), id, is_loop ? _T("repeat") : _T(""));
     mciSendString(str_cmd, NULL, 0, NULL);
 }
 

@@ -10,6 +10,7 @@
 #include "util.h"
 #include "vector2.h"
 #include "player.h"
+#include "collision_manager.h"
 
 int main()
 {
@@ -40,7 +41,6 @@ int main()
 
 	BeginBatchDraw();
 
-	CharacterManager::instance();
 	
 	/*
 	Animation test;
@@ -75,15 +75,15 @@ int main()
 		duration<float> delta = duration<float>(frame_start - last_tick);
 
 		//Process update
+		CharacterManager::instance()->on_update(delta.count());
+		CollisionManager::instance()->process_collide();
 
-
+		setbkcolor(RGB(0, 0, 0));
 		cleardevice();
 
 		putimage(0, 0, ResourceManager::instance()->find_image("background"));
-		
-
-		CharacterManager::instance()->on_update(delta.count());
 		CharacterManager::instance()->on_render();
+		CollisionManager::instance()->on_debug_render();
 
 		/*
 		playerTest.on_update(delta.count());

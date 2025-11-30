@@ -1,6 +1,7 @@
 #include "player.h"
 #include "resource_manager.h"
 #include <cmath>
+#include "player_state_nodes.h"
 
 Player::Player()
 {
@@ -23,6 +24,13 @@ Player::Player()
 	hurt_box->set_on_collide([&]() 
 		{
 			this->on_hurt();
+		});
+
+	timer_combo_reset.set_wait_time(2.0f);
+	timer_combo_reset.set_one_shot(true);
+	timer_combo_reset.set_callback([&]()
+		{
+			attack_combo = 0;
 		});
 
 	timer_attack_cd.set_wait_time(CD_ATTACK);
@@ -175,6 +183,17 @@ Player::Player()
 	current_animation = &animation_pool["player_idle"];
 
 	//Initialize StateMachine
+	state_machine.register_state("idle", new PlayerIdle());
+	state_machine.register_state("run", new PlayerRun());
+	state_machine.register_state("jump", new PlayerJump());
+	state_machine.register_state("roll", new PlayerRoll());
+	state_machine.register_state("attack_1", new PlayerAttack1());
+	state_machine.register_state("attack_2", new PlayerAttack2());
+	state_machine.register_state("attack_3", new PlayerAttack3());
+	state_machine.register_state("hurt", new PlayerHurt());
+	state_machine.register_state("dead", new PlayerDead());
+
+	state_machine.set_entry("idle");
 }
 
 void Player::on_input(const ExMessage& msg)
@@ -187,58 +206,62 @@ void Player::on_input(const ExMessage& msg)
 	case WM_KEYDOWN:
 		switch (msg.vkcode)
 		{
-			case '0x41': // A key
+			case 0x41: // A key - FIXED: Remove quotes
 			case VK_LEFT:
 				is_left_key_down = true;
 				break;
-			case '0x44': // D key
+			case 0x44: // D key - FIXED: Remove quotes
 			case VK_RIGHT:
 				is_right_key_down = true;
 				break;
-			case '0x57': // W key
+			case 0x57: // W key - FIXED: Remove quotes
 			case VK_UP:
 				is_jump_key_down = true;
 				break;
-			case '0x53': // S key
+			case 0x53: // S key - FIXED: Remove quotes
 			case VK_DOWN:
 				is_roll_key_down = true;
 				break;
 
-			case '0x4A': // J key
-				is_attack_A_key_down = true;
-				break;
-
-			case '0x4B': // K key
-				is_attack_B_key_down = true;
+			case 0x4A: // J key - FIXED: Remove quotes
+				is_attack_key_down = true;
 				break;
 
 			case VK_SPACE: // Space key
 				//Super Skill
 				break;
 		}
+		break; // FIXED: Add missing break
 
-
-
-	case WM_IME_KEYUP:
+	case WM_KEYUP: // FIXED: Change from WM_IME_KEYUP to WM_KEYUP
 		switch (msg.vkcode)
 		{
-			case '0x41': // A key
+			case 0x41: // A key - FIXED: Remove quotes
 			case VK_LEFT:
 				is_left_key_down = false;
 				break;
-			case '0x44': // D key
+			case 0x44: // D key - FIXED: Remove quotes
 			case VK_RIGHT:
 				is_right_key_down = false;
 				break;
-			case '0x57': // W key
+			case 0x57: // W key - FIXED: Remove quotes
 			case VK_UP:
 				is_jump_key_down = false;
 				break;
-			case '0x53': // S key
+			case 0x53: // S key - FIXED: Remove quotes
 			case VK_DOWN:
 				is_roll_key_down = false;
 				break;
+
+			case 0x4A: // J key - FIXED: Remove quotes
+				is_attack_key_down = false;
+				break;
+
+			case VK_SPACE: // Space key
+				//Super Skill
+				break;
 		}
+		break;
 	}
 }
 
@@ -256,8 +279,10 @@ void Player::on_update(float delta)
 
 	timer_roll_cd.on_update(delta);
 	timer_attack_cd.on_update(delta);
+	timer_combo_reset.on_update(delta);
 
-	//Placeholder for Charger
+	// FIXED: Add state machine update
+	state_machine.on_update(delta);
 
 	Character::on_update(delta);
 }
@@ -289,19 +314,10 @@ void Player::on_roll()
 	velocity.x = (is_facing_left ? -1 : 1) * SPEED_ROLL;
 }
 
-void Player::on_attack_A()
+void Player::on_attack()
 {
 	timer_attack_cd.restart();
 	is_attack_cd = true;
+	attack_combo_up();
 }
 
-void Player::on_attack_B()
-{
-	//Finish later
-	timer_attack_cd.restart();
-	is_attack_cd = true;
-	switch (get_move_axis())
-	{
-
-	}
-}
