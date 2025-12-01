@@ -335,8 +335,9 @@ void Player::on_roll()
 
 void Player::on_attack()
 {
-	timer_attack_cd.restart();
-	is_attack_cd = true;
-	attack_combo_up();
+        timer_attack_cd.restart();
+        is_attack_cd = true;
+        timer_combo_reset.restart();
+        attack_combo_up();
 }
 

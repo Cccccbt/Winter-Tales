@@ -36,15 +36,15 @@ public:
 		is_attacking = flag;
 	};
 
-	bool get_attacking() const
-	{
-		return is_attacking;
-	};
+        bool get_attacking() const
+        {
+                return is_attacking;
+        };
 
-	bool can_attack() const
-	{
-		return !is_attack_cd && !is_attacking && is_attack_key_down;
-	};
+        bool can_attack() const
+        {
+                return !is_attack_cd && is_attack_key_down;
+        };
 
 	bool can_jump() const
 	{

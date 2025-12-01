@@ -1,6 +1,20 @@
 #include "player_state_nodes.h"
 #include "character_manager.h"
 
+// Returns the correct attack state name based on the current combo step.
+static const char* get_next_attack_state(const Player* player)
+{
+        switch (player->get_attack_combo())
+        {
+        case 1:
+                return "attack_2";
+        case 2:
+                return "attack_3";
+        default:
+                return "attack_1";
+        }
+}
+
 PlayerAttack1::PlayerAttack1()
 {
 	timer.set_wait_time(1.2f);
@@ -43,20 +57,15 @@ void PlayerAttack1::on_update(float delta)
 		return;
 	}
 
-	// Check for combo transitions while attacking
-	if (player->can_attack() && player->get_attacking())
-	{
-		if (player->get_attack_combo() == 1)
-		{
-			player->switch_state("attack_2");
-			return;
-		}
-		else if (player->get_attack_combo() == 2)
-		{
-			player->switch_state("attack_3");
-			return;
-		}
-	}
+        // Check for combo transitions while attacking
+        if (player->can_attack() && player->get_attacking())
+        {
+                if (player->get_attack_combo() == 1)
+                {
+                        player->switch_state("attack_2");
+                        return;
+                }
+        }
 
 	// Only transition out when attack is finished (timer callback sets is_attacking = false)
 	if (!player->get_attacking())
@@ -125,16 +134,26 @@ void PlayerAttack2::on_enter()
 
 void PlayerAttack2::on_update(float delta)
 {
-	timer.on_update(delta);
-	update_hit_box_position();
+        timer.on_update(delta);
+        update_hit_box_position();
 
-	Player* player = CharacterManager::instance()->get_player();
+        Player* player = CharacterManager::instance()->get_player();
 
-	if (player->get_hp() <= 0)
-	{
-		player->switch_state("dead");
-	}
-	else if (!player->get_attacking())
+        // Allow chaining to the third attack while the second animation is playing
+        if (player->can_attack() && player->get_attacking())
+        {
+                if (player->get_attack_combo() == 2)
+                {
+                        player->switch_state("attack_3");
+                        return;
+                }
+        }
+
+        if (player->get_hp() <= 0)
+        {
+                player->switch_state("dead");
+        }
+        else if (!player->get_attacking())
 	{
 		if (player->get_move_axis() == 0)
 		{
@@ -297,10 +316,10 @@ void PlayerIdle::on_update(float delta)
 		player->switch_state("dead");
 	}
 
-	else if (player->can_attack())
-	{
-		player->switch_state("attack_1");
-	}
+        else if (player->can_attack())
+        {
+                player->switch_state(get_next_attack_state(player));
+        }
 	else if (player->get_move_axis() != 0)
 	{
 		player->switch_state("run");
@@ -347,12 +366,12 @@ void PlayerJump::on_update(float delta)
 		return;
 	}
 
-	if (player->can_attack())
-	{
-		player->switch_state("attack_1");
-		std::cout << "Exit Jump to Attack";
-		return;
-	}
+        if (player->can_attack())
+        {
+                player->switch_state(get_next_attack_state(player));
+                std::cout << "Exit Jump to Attack";
+                return;
+        }
 
 	// Track when player leaves the ground
 	if (!player->is_on_floor())
@@ -456,10 +475,10 @@ void PlayerRun::on_update(float delta)
 	{
 		player->switch_state("dead");
 	}
-	else if (player->can_attack())
-	{
-		player->switch_state("attack_1");
-	}
+        else if (player->can_attack())
+        {
+                player->switch_state(get_next_attack_state(player));
+        }
 	else if (player->get_move_axis() == 0)
 	{
 		player->switch_state("idle");

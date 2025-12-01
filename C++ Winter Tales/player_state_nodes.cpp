@@ -1,6 +1,7 @@
 void PlayerAttack1::on_enter()
 {
     Player* player = CharacterManager::instance()->get_player();
+    player->clear_attack_animation_offset();
     player->set_animation("attack_1");
     player->set_attacking(true);
     player->on_attack();
@@ -33,6 +34,7 @@ void PlayerAttack1::on_update(float delta)
 void PlayerAttack2::on_enter()
 {
     Player* player = CharacterManager::instance()->get_player();
+    player->set_attack_animation_offset_x(-34);
     player->set_animation("attack_2");
     player->set_attacking(true);
     player->on_attack();
@@ -56,6 +58,7 @@ void PlayerAttack2::on_update(float delta)
 
     if (!player->get_attacking())
     {
+        player->clear_attack_animation_offset();
         if (player->get_move_axis() == 0) player->switch_state("idle");
         else player->switch_state("run");
     }
@@ -64,6 +67,7 @@ void PlayerAttack2::on_update(float delta)
 void PlayerAttack3::on_enter()
 {
     Player* player = CharacterManager::instance()->get_player();
+    player->clear_attack_animation_offset();
     player->set_animation("attack_3");
     player->set_attacking(true);
     player->on_attack();
