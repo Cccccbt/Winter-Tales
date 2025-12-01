@@ -30,9 +30,12 @@ void PlayerAttack1::on_enter()
 void PlayerAttack1::on_update(float delta)
 {
 	timer.on_update(delta);
+	
 	update_hit_box_position();
 
 	Player* player = CharacterManager::instance()->get_player();
+
+	player->set_velocity(Vector2(0, player->get_velocity().y));
 
 	if (player->get_hp() <= 0)
 	{

@@ -80,7 +80,7 @@ private:
 
 	Timer timer_combo_reset;
 	int attack_combo = 0;
-	int max_attack_combo = 3;
+	int max_attack_combo = 3;  // CHANGE FROM 2 TO 3!
 
 	Timer timer_roll_cd;
 	bool is_rolling = false;
