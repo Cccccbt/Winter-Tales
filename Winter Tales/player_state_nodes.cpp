@@ -3,7 +3,7 @@
 
 PlayerAttack1::PlayerAttack1()
 {
-	timer.set_wait_time(0.5f);
+	timer.set_wait_time(1.2f);
 	timer.set_one_shot(true);
 	timer.set_callback([&]()
 	{
@@ -37,29 +37,32 @@ void PlayerAttack1::on_update(float delta)
 	if (player->get_hp() <= 0)
 	{
 		player->switch_state("dead");
+		return;
 	}
 
-	else if (player->can_attack())
+	// Check for combo transitions while attacking
+	if (player->can_attack() && player->get_attacking())
 	{
 		if (player->get_attack_combo() == 1)
 		{
 			player->switch_state("attack_2");
+			return;
 		}
-
 		else if (player->get_attack_combo() == 2)
 		{
 			player->switch_state("attack_3");
+			return;
 		}
 	}
 
-	else if (!player->get_attacking())
+	// Only transition out when attack is finished (timer callback sets is_attacking = false)
+	if (!player->get_attacking())
 	{
 		if (player->get_move_axis() == 0)
 		{
 			player->switch_state("idle");
 		}
-		
-		else if (player->is_on_floor())
+		else
 		{
 			player->switch_state("run");
 		}
@@ -318,7 +321,7 @@ void PlayerIdle::on_exit()
 
 PlayerJump::PlayerJump()
 {
-
+    has_left_ground = false;  // Add this member variable
 }
 
 void PlayerJump::on_enter()
@@ -326,32 +329,50 @@ void PlayerJump::on_enter()
 	Player* player = CharacterManager::instance()->get_player();
 	player->set_animation("jump");
 	player->on_jump();
+	has_left_ground = false;  // Reset flag when entering jump state
 	//Play jump sound
 }
 
 void PlayerJump::on_update(float delta)
 {
 	Player* player = CharacterManager::instance()->get_player();
+	
 	if (player->get_hp() <= 0)
 	{
 		player->switch_state("dead");
+		std::cout << "Exit Jump to Dead\n";
+		return;
 	}
 
-	else if (player->can_attack())
+	if (player->can_attack())
 	{
 		player->switch_state("attack_1");
+		std::cout << "Exit Jump to Attack";
+		return;
 	}
 
-	else if (player->is_on_floor())
+	// Track when player leaves the ground
+	if (!player->is_on_floor())
+	{
+		has_left_ground = true;
+	}
+
+	// Only transition when:
+	// 1. Player has left the ground (prevents immediate exit)
+	// 2. Player is falling downward (velocity.y > 0)
+	// 3. Player touches the floor
+	if (has_left_ground && player->is_on_floor())
 	{
 		player->on_land();
 		if (player->get_move_axis() == 0)
 		{
 			player->switch_state("idle");
+			std::cout<<"Exit Jump to Idle\n";
 		}
 		else
 		{
 			player->switch_state("run");
+			std::cout << "Exit Jump to Run";
 		}
 	}
 }
@@ -359,6 +380,7 @@ void PlayerJump::on_update(float delta)
 void PlayerJump::on_exit()
 {
 	// Jump state typically doesn't need exit logic
+	std::cout << "Exit Jump\n";
 }
 
 PlayerRoll::PlayerRoll()

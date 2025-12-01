@@ -143,4 +143,5 @@ public:
 
 private:
 	Timer timer;
+	bool has_left_ground;  // ADD THIS
 };

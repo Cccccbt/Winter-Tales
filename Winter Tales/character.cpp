@@ -72,6 +72,7 @@ void Character::on_update(float delta)
 		is_invulnerable_blink.on_update(delta);
 	}
 
+	// Screen boundaries (X axis)
 	if (position.x <= 0)
 	{
 		position.x = 0;
@@ -82,14 +83,17 @@ void Character::on_update(float delta)
 		position.x = getwidth();
 	}
 
+	// Ceiling
 	if (position.y <= 0)
 	{
 		position.y = 0;
 	}
 
-	if (position.y >= getheight())
+	// FLOOR COLLISION - FIX THIS!
+	if (position.y >= FLOOR_Y)
 	{
-		position.y = getheight();
+		position.y = FLOOR_Y;  // Clamp to FLOOR_Y, not getheight()
+		velocity.y = 0;         // Stop downward velocity when hitting floor
 	}
 
 	hurt_box->set_position(get_logical_center());

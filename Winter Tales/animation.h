@@ -3,6 +3,7 @@
 #include "util.h"
 #include "timer.h"
 #include "vector2.h"
+#include <iostream>
 
 class Animation
 {
@@ -124,6 +125,7 @@ public:
 	void on_update(float delta)
 	{
 		timer.on_update(delta);
+		//std::cout << idx_frame << std::endl;
 	}
 
 	void on_render()

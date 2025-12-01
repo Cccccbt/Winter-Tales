@@ -52,12 +52,12 @@ Player::Player()
 	// Attack 1 Animation
 	AnimationGroup& animation_attack_1 = animation_pool["attack_1"];
 	Animation& attack_1_left = animation_attack_1.left;
-	attack_1_left.set_interval(0.05f);
+	attack_1_left.set_interval(0.1f);
 	attack_1_left.set_is_loop(false);
 	attack_1_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
 	attack_1_left.add_frame(ResourceManager::instance()->find_image("player_attack_1_left"), 9);
 	Animation& attack_1_right = animation_attack_1.right;
-	attack_1_right.set_interval(0.05f);
+	attack_1_right.set_interval(0.1f);
 	attack_1_right.set_is_loop(false);
 	attack_1_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
 	attack_1_right.add_frame(ResourceManager::instance()->find_image("player_attack_1_right"), 9);
@@ -120,12 +120,12 @@ Player::Player()
 	run_left.set_interval(0.08f);
 	run_left.set_is_loop(true);
 	run_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
-	run_left.add_frame(ResourceManager::instance()->find_image("player_run_left"), 6);
+	run_left.add_frame(ResourceManager::instance()->find_image("player_run_left"), 10);
 	Animation& run_right = animation_run.right;
 	run_right.set_interval(0.08f);
 	run_right.set_is_loop(true);
 	run_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
-	run_right.add_frame(ResourceManager::instance()->find_image("player_run_right"), 6);
+	run_right.add_frame(ResourceManager::instance()->find_image("player_run_right"), 10);
 
 	// Hurt Animation
 	AnimationGroup& animation_hurt = animation_pool["hurt"];
@@ -159,12 +159,31 @@ Player::Player()
 	jump_left.set_interval(0.1f);
 	jump_left.set_is_loop(false);
 	jump_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
-	jump_left.add_frame(ResourceManager::instance()->find_image("player_jump_left"), 6);
+	jump_left.add_frame(ResourceManager::instance()->find_image("player_jump_left"), 12);
 	Animation& jump_right = animation_jump.right;
 	jump_right.set_interval(0.1f);
 	jump_right.set_is_loop(false);
 	jump_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
-	jump_right.add_frame(ResourceManager::instance()->find_image("player_jump_right"), 6);
+	jump_right.add_frame(ResourceManager::instance()->find_image("player_jump_right"), 12);
+	jump_right.set_on_finished(
+		[&]()
+		{
+			std::cout << "Jump animation finished." << std::endl;
+		});
+
+	// Roll Animation
+	AnimationGroup& animation_roll = animation_pool["roll"];
+	Animation& roll_left = animation_roll.left;
+	roll_left.set_interval(0.1f);
+	roll_left.set_is_loop(false);
+	roll_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
+	roll_left.add_frame(ResourceManager::instance()->find_image("player_roll_left"), 16);
+	Animation& roll_right = animation_roll.right;
+	roll_right.set_interval(0.1f);
+	roll_right.set_is_loop(false);
+	roll_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
+	roll_right.add_frame(ResourceManager::instance()->find_image("player_roll_right"), 16);
+
 
 	// Charge Animation
 	AnimationGroup& animation_charge = animation_pool["charge"];
@@ -180,7 +199,7 @@ Player::Player()
 	charge_right.add_frame(ResourceManager::instance()->find_image("player_charge_right"), 6);
 
 	// Set initial animation
-	current_animation = &animation_pool["player_idle"];
+	current_animation = &animation_pool["idle"];
 
 	//Initialize StateMachine
 	state_machine.register_state("idle", new PlayerIdle());

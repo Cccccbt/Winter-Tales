@@ -53,7 +53,7 @@ public:
 
 	int get_move_axis() const
 	{
-		return is_left_key_down - is_right_key_down;
+		return is_right_key_down - is_left_key_down;
 	}
 
 	int get_attack_combo() const
@@ -76,7 +76,7 @@ private:
 	const float CD_ATTACK = 0.5f;
 	const float SPEED_RUN = 300.0f;
 	const float SPEED_ROLL = 800.0f;
-	const float SPEED_JUMP = 780.0f;
+	const float SPEED_JUMP = 780.0f;  // Perfect for 1.2s animation duration
 
 	Timer timer_combo_reset;
 	int attack_combo = 0;
