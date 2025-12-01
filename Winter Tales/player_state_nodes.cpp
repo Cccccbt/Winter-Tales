@@ -1,6 +1,20 @@
 #include "player_state_nodes.h"
 #include "character_manager.h"
 
+// Returns the correct attack state name based on the current combo step.
+static const char* get_next_attack_state(const Player* player)
+{
+        switch (player->get_attack_combo())
+        {
+        case 1:
+                return "attack_2";
+        case 2:
+                return "attack_3";
+        default:
+                return "attack_1";
+        }
+}
+
 PlayerAttack1::PlayerAttack1()
 {
 	timer.set_wait_time(1.2f);
@@ -302,10 +316,10 @@ void PlayerIdle::on_update(float delta)
 		player->switch_state("dead");
 	}
 
-	else if (player->can_attack())
-	{
-		player->switch_state("attack_1");
-	}
+        else if (player->can_attack())
+        {
+                player->switch_state(get_next_attack_state(player));
+        }
 	else if (player->get_move_axis() != 0)
 	{
 		player->switch_state("run");
@@ -352,12 +366,12 @@ void PlayerJump::on_update(float delta)
 		return;
 	}
 
-	if (player->can_attack())
-	{
-		player->switch_state("attack_1");
-		std::cout << "Exit Jump to Attack";
-		return;
-	}
+        if (player->can_attack())
+        {
+                player->switch_state(get_next_attack_state(player));
+                std::cout << "Exit Jump to Attack";
+                return;
+        }
 
 	// Track when player leaves the ground
 	if (!player->is_on_floor())
@@ -461,10 +475,10 @@ void PlayerRun::on_update(float delta)
 	{
 		player->switch_state("dead");
 	}
-	else if (player->can_attack())
-	{
-		player->switch_state("attack_1");
-	}
+        else if (player->can_attack())
+        {
+                player->switch_state(get_next_attack_state(player));
+        }
 	else if (player->get_move_axis() == 0)
 	{
 		player->switch_state("idle");
