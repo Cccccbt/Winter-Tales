@@ -21,9 +21,9 @@ class Bullet_Destroyed : public StateNode
 public:
 	Bullet_Destroyed();
 	~Bullet_Destroyed();
-    void on_enter() override;
-    void on_update(float delta) override;
-    void on_exit() override;
+	void on_enter() override;
+	void on_update(float delta) override;
+	void on_exit() override;
 
 private:
 

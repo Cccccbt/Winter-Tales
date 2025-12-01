@@ -124,7 +124,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="bullet.cpp" />
-    <ClCompile Include="bullet_state_nodes.cpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="character_manager.cpp" />
     <ClCompile Include="collision_layer.h" />
@@ -139,7 +138,6 @@
   <ItemGroup>
     <ClInclude Include="animation.h" />
     <ClInclude Include="atlas.h" />
-    <ClInclude Include="bullet_state_nodes.h" />
     <ClInclude Include="character.h" />
     <ClInclude Include="character_manager.h" />
     <ClInclude Include="bullet.h" />

@@ -1,4 +1,5 @@
 #pragma once
+#include "bullet.h"
 #include "character.h"
 
 class Player : public Character
@@ -71,10 +72,12 @@ public:
 		attack_combo = (attack_combo + num) % max_attack_combo;
 	}
 
+	void throw_bullet();
+
 private:
 	const float CD_ROLL = 0.75f;
 	const float CD_ATTACK = 0.5f;
-	const float CD_COMBO_RESET = 3.0f;
+	const float CD_COMBO_RESET = 2.0f;
 	const float SPEED_RUN = 300.0f;
 	const float SPEED_ROLL = 600.0f;
 	const float SPEED_JUMP = 780.0f;  // Perfect for 1.2s animation duration
@@ -98,4 +101,12 @@ private:
 	bool is_attack_key_down = false;
 
 	Animation* charge_effect_animation;
+	std::vector<Bullet*> bullet_pool;
+
+	/// temp solution for player invulnerability
+	/// replace with proper state machine code later
+	Timer is_invulnerable_status;
+	Timer is_invulnerable_blink;
+	bool is_invulnerable = false;
+	bool is_blink_invisiable = false;
 };

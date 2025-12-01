@@ -1,11 +1,26 @@
 #include "player_state_nodes.h"
 #include "character_manager.h"
 
+// Returns the correct attack state name based on the current combo step.
+static const char* get_next_attack_state(const Player* player)
+{
+        switch (player->get_attack_combo())
+        {
+        case 1:
+                return "attack_2";
+        case 2:
+                return "attack_3";
+        default:
+                return "attack_1";
+        }
+}
+
 PlayerAttack1::PlayerAttack1()
 {
 	timer.set_wait_time(0.5f);
 	timer.set_one_shot(true);
-	timer.set_callback([&]()
+	// FIXED: Use [] - lambda doesn't need to capture anything
+	timer.set_callback([]()
 	{
 		CharacterManager::instance()->get_player()->set_attacking(false);
 	});
@@ -17,9 +32,10 @@ void PlayerAttack1::on_enter()
 	player->set_animation("attack_1");
 	player->set_attacking(true);
 	player->on_attack();
+	player->throw_bullet();
 
 	CollisionBox* hit_box = player->get_hit_box();
-	hit_box->set_enabled(true);
+	hit_box->set_enabled(false);
 	update_hit_box_position();
 
 	timer.restart();
@@ -99,7 +115,8 @@ PlayerAttack2::PlayerAttack2()
 {
 	timer.set_wait_time(0.75f);
 	timer.set_one_shot(true);
-	timer.set_callback([&]()
+	// FIXED: Use []
+	timer.set_callback([]()
 	{
 		CharacterManager::instance()->get_player()->set_attacking(false);
 	});
@@ -179,7 +196,8 @@ PlayerAttack3::PlayerAttack3()
 {
 	timer.set_wait_time(0.35f);
 	timer.set_one_shot(true);
-	timer.set_callback([&]()
+	// FIXED: Use []
+	timer.set_callback([]()
 	{
 		CharacterManager::instance()->get_player()->set_attacking(false);
 	});
@@ -192,7 +210,10 @@ void PlayerAttack3::on_enter()
 	player->set_attacking(true);
 	player->on_attack();
 
+
 	CollisionBox* hit_box = player->get_hit_box();
+	// MOVED: Set hit box size here in on_enter(), not in constructor
+	hit_box->set_size(Vector2(16, 16)); // Reset to default size
 	hit_box->set_enabled(true);
 	update_hit_box_position();
 
@@ -239,29 +260,18 @@ void PlayerAttack3::update_hit_box_position()
 	CollisionBox* hit_box = player->get_hit_box();
 	Vector2 player_pos = player->get_position();
 	Vector2 hit_box_size = hit_box->get_size();
-	if (player->get_is_facing_left())
-	{
-		hit_box->set_position(Vector2(
-			player_pos.x - hit_box_size.x,
-			player_pos.y - hit_box_size.y));
-	}
-	else
-	{
-		hit_box->set_position(Vector2(
-			player_pos.x,
-			player_pos.y - hit_box_size.y));
-	}
+	hit_box->set_position(player->get_logical_center() + (player->get_is_facing_left() ? Vector2(-30, -20) : Vector2(30, -20)));
 }
 
 PlayerDead::PlayerDead()
 {
 	timer.set_wait_time(2.0f);
 	timer.set_one_shot(true);
-	timer.set_callback([&]()
+	// FIXED: Use []
+	timer.set_callback([]()
 	{
-		// Placeholder for respawn or game over logic
-			MessageBox(GetHWnd(), _T("No......"), _T("You Dead"), MB_OK);
-			exit(0);
+		MessageBox(GetHWnd(), _T("No......"), _T("You Dead"), MB_OK);
+		exit(0);
 	});
 }
 
@@ -366,12 +376,12 @@ void PlayerJump::on_update(float delta)
 		return;
 	}
 
-	if (player->can_attack())
-	{
-		player->switch_state("attack_1");
-		std::cout << "Exit Jump to Attack";
-		return;
-	}
+        if (player->can_attack())
+        {
+                player->switch_state(get_next_attack_state(player));
+                std::cout << "Exit Jump to Attack";
+                return;
+        }
 
 	// Track when player leaves the ground
 	if (!player->is_on_floor())
@@ -409,10 +419,11 @@ PlayerRoll::PlayerRoll()
 {
 	timer.set_wait_time(0.35f);
 	timer.set_one_shot(true);
-	timer.set_callback([&]()
-		{
-			CharacterManager::instance()->get_player()->set_rolling(false);
-		});
+	// FIXED: Use []
+	timer.set_callback([]()
+	{
+		CharacterManager::instance()->get_player()->set_rolling(false);
+	});
 }
 
 void PlayerRoll::on_enter()
@@ -516,7 +527,8 @@ PlayerHurt::PlayerHurt()
 {
 	timer.set_wait_time(0.5f);
 	timer.set_one_shot(true);
-	timer.set_callback([&]()
+	// FIXED: Use []
+	timer.set_callback([]()
 	{
 		// End hurt state
 	});

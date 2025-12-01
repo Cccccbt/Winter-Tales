@@ -2,14 +2,25 @@
 #include "collision_manager.h"
 
 Character::Character()
+	: position(0.0f, 0.0f),  // Initialize position
+	  velocity(0.0f, 0.0f),  // Initialize velocity
+	  logic_height(64.0f),   // Initialize logic_height
+	  is_facing_left(false),
+	  hp(100),
+	  enable_gravity(false),
+	  is_invulnerable(false),
+	  is_blink_invisiable(false),
+	  current_animation(nullptr)
 {
 	hit_box = CollisionManager::instance()->create_collision_box();
 	hurt_box = CollisionManager::instance()->create_collision_box();
+	
 	is_invulnerable_status.set_wait_time(1.0f);
 	is_invulnerable_status.set_one_shot(true);
+	// FIXED: Use [this] instead of [&]
 	is_invulnerable_status.set_callback
 	(
-		[&]() 
+		[this]() 
 		{
 			is_invulnerable = true;
 		}
@@ -17,9 +28,10 @@ Character::Character()
 
 	is_invulnerable_blink.set_wait_time(0.075f);
 	is_invulnerable_blink.set_one_shot(false);
+	// FIXED: Use [this] instead of [&]
 	is_invulnerable_blink.set_callback
 	(
-		[&]()
+		[this]()
 		{
 			is_blink_invisiable = !is_blink_invisiable;
 		}
@@ -78,9 +90,9 @@ void Character::on_update(float delta)
 		position.x = 0;
 	}
 
-	if (position.x >= getwidth())
+	if (position.x >= static_cast<float>(getwidth()))  // FIXED: Cast to float
 	{
-		position.x = getwidth();
+		position.x = static_cast<float>(getwidth());   // FIXED: Cast to float
 	}
 
 	// Ceiling
@@ -89,11 +101,11 @@ void Character::on_update(float delta)
 		position.y = 0;
 	}
 
-	// FLOOR COLLISION - FIX THIS!
+	// FLOOR COLLISION
 	if (position.y >= FLOOR_Y)
 	{
-		position.y = FLOOR_Y;  // Clamp to FLOOR_Y, not getheight()
-		velocity.y = 0;         // Stop downward velocity when hitting floor
+		position.y = FLOOR_Y;
+		velocity.y = 0;
 	}
 
 	hurt_box->set_position(get_logical_center());

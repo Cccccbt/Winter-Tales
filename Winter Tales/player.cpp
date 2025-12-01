@@ -22,14 +22,14 @@ Player::Player()
 	hit_box->set_enabled(false);
 	hurt_box->set_enabled(true);
 
-	hurt_box->set_on_collide([&]() 
+	hurt_box->set_on_collide([this]() 
 		{
 			this->on_hurt();
 		});
 
 	timer_combo_reset.set_wait_time(CD_COMBO_RESET);
 	timer_combo_reset.set_one_shot(true);
-	timer_combo_reset.set_callback([&]()
+	timer_combo_reset.set_callback([this]()
 		{
 			attack_combo = 0;
 		});
@@ -40,12 +40,12 @@ Player::Player()
 	timer_attack_cd.set_one_shot(true);
 	timer_roll_cd.set_one_shot(true);
 
-	timer_attack_cd.set_callback([&]()
+	timer_attack_cd.set_callback([this]()
 		{
 			is_attack_cd = false;
 		});
 
-	timer_roll_cd.set_callback([&]()
+	timer_roll_cd.set_callback([this]()
 		{
 			is_roll_cd = false;
 		});
@@ -167,7 +167,7 @@ Player::Player()
 	jump_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
 	jump_right.add_frame(ResourceManager::instance()->find_image("player_jump_right"), 12);
 	jump_right.set_on_finished(
-		[&]()
+		[this]()
 		{
 			std::cout << "Jump animation finished." << std::endl;
 		});
@@ -214,6 +214,15 @@ Player::Player()
 	state_machine.register_state("dead", new PlayerDead());
 
 	state_machine.set_entry("idle");
+}
+
+Player::~Player()
+{
+	// Clean up bullets
+	for (auto bullet : bullet_pool) {
+		delete bullet;
+	}
+	bullet_pool.clear();
 }
 
 void Player::on_input(const ExMessage& msg)
@@ -292,7 +301,8 @@ void Player::on_update(float delta)
 		velocity.x = get_move_axis() * SPEED_RUN;
 	}
 
-	if (get_move_axis() != 0)
+	// Only allow direction changes when NOT attacking
+	if (get_move_axis() != 0 && !is_attacking)
 	{
 		is_facing_left = get_move_axis() < 0;
 	}
@@ -303,11 +313,32 @@ void Player::on_update(float delta)
 
 	Character::on_update(delta);
 	hurt_box->set_position(is_facing_left ? get_logical_center() + Vector2(8, 0) : get_logical_center() - Vector2(8, 0));
+	
+	// Update bullets and clean up disabled ones
+	for (auto it = bullet_pool.begin(); it != bullet_pool.end();)
+	{
+		(*it)->on_update(delta);
+		if (!(*it)->get_enabled())
+		{
+			delete *it;
+			it = bullet_pool.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
 }
 
 void Player::on_render()
 {
 	Character::on_render();
+	
+	// Render bullets
+	for (auto bullet : bullet_pool)
+	{
+		bullet->on_render();
+	}
 }
 
 void Player::on_hurt()
@@ -334,8 +365,15 @@ void Player::on_roll()
 
 void Player::on_attack()
 {
-	timer_attack_cd.restart();
-	is_attack_cd = true;
-	attack_combo_up();
+        timer_attack_cd.restart();
+        is_attack_cd = true;
+        timer_combo_reset.restart();
+        attack_combo_up();
 }
 
+void Player::throw_bullet()
+{
+	// Create a new bullet with the current facing direction and position
+	Bullet* bullet = new Bullet(is_facing_left, get_logical_center() + Vector2(0, -20));
+	bullet_pool.push_back(bullet);
+}

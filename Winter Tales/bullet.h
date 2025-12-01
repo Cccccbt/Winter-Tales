@@ -10,13 +10,19 @@
 class Bullet
 {
 public:
-	Bullet(bool);
+	Bullet(bool is_facing_left = false, const Vector2& position = Vector2());
 	~Bullet();
 	void on_update(float delta);
+	void on_render();
 
 	void set_position(const Vector2& position)
 	{
 		this->position = position;
+	}
+
+	const Vector2& get_position() const
+	{
+		return position;
 	}
 
 	CollisionBox* get_hit_box()
@@ -44,12 +50,14 @@ public:
 		return is_facing_left;
 	}
 
+	void on_destroy();
+
+
 private:
 	Vector2 position;
 	const Vector2 SPEED = Vector2(300.0f, 0.0f);
 	bool is_facing_left = false;
 	bool is_enabled = true;
-	StateMachine state_machine;
 	CollisionBox* hit_box;
 	AnimationGroup* current_animation;
 	std::unordered_map<std::string, AnimationGroup> animation_pool;
