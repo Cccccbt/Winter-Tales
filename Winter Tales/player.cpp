@@ -2,6 +2,7 @@
 #include "resource_manager.h"
 #include <cmath>
 #include "player_state_nodes.h"
+#include "animation.h"
 
 Player::Player()
 {
@@ -10,7 +11,7 @@ Player::Player()
 	logic_height = 64;
 
 	hit_box->set_size(Vector2(32, 64));
-	hurt_box->set_size(Vector2(32, 64));
+	hurt_box->set_size(Vector2(16, 64));
 
 	hit_box->set_layer_src(CollisionLayer::None);
 	hit_box->set_layer_dst(CollisionLayer::Enemy);
@@ -26,7 +27,7 @@ Player::Player()
 			this->on_hurt();
 		});
 
-	timer_combo_reset.set_wait_time(2.0f);
+	timer_combo_reset.set_wait_time(CD_COMBO_RESET);
 	timer_combo_reset.set_one_shot(true);
 	timer_combo_reset.set_callback([&]()
 		{
@@ -52,12 +53,12 @@ Player::Player()
 	// Attack 1 Animation
 	AnimationGroup& animation_attack_1 = animation_pool["attack_1"];
 	Animation& attack_1_left = animation_attack_1.left;
-	attack_1_left.set_interval(0.1f);
+	attack_1_left.set_interval(0.05f);
 	attack_1_left.set_is_loop(false);
 	attack_1_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
 	attack_1_left.add_frame(ResourceManager::instance()->find_image("player_attack_1_left"), 9);
 	Animation& attack_1_right = animation_attack_1.right;
-	attack_1_right.set_interval(0.1f);
+	attack_1_right.set_interval(0.05f);
 	attack_1_right.set_is_loop(false);
 	attack_1_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
 	attack_1_right.add_frame(ResourceManager::instance()->find_image("player_attack_1_right"), 9);
@@ -300,10 +301,8 @@ void Player::on_update(float delta)
 	timer_attack_cd.on_update(delta);
 	timer_combo_reset.on_update(delta);
 
-	// FIXED: Add state machine update
-	state_machine.on_update(delta);
-
 	Character::on_update(delta);
+	hurt_box->set_position(is_facing_left ? get_logical_center() + Vector2(8, 0) : get_logical_center() - Vector2(8, 0));
 }
 
 void Player::on_render()

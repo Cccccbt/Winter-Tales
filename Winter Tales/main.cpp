@@ -17,7 +17,7 @@ int main()
 	using namespace std::chrono;
 
 	//HWND hwnd = initgraph(1280, 720, EW_SHOWCONSOLE);
-	HWND hwnd = initgraph(1280, 720);
+	HWND hwnd = initgraph(576, 324);
 	SetWindowText(hwnd, _T("Winter Tale"));
 
 	try

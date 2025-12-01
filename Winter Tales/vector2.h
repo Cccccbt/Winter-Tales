@@ -26,7 +26,7 @@ public:
 
 	// v1 + v2 == Vector2(5, 8)
 
-	Vector2 operator-(const Vector2& v)
+	Vector2 operator-(const Vector2& v) const
 	{
 		return Vector2(x - v.x, y - v.y);
 	}
@@ -61,7 +61,11 @@ public:
 		return Vector2(x / num, y / num);
 	}
 
-	void operator+=(Vector2& v)
+	Vector2 operator*(float scalar) const {
+		return Vector2(x * scalar, y * scalar);
+	}
+
+	void operator+=(const Vector2& v)
 	{
 		x += v.x;
 		y += v.y;
@@ -97,5 +101,10 @@ public:
 			return;
 		x = x / this->length();
 		y = y / this->length();
+	}
+
+	Vector2 operator+(const Vector2& v) const
+	{
+		return Vector2(x + v.x, y + v.y);
 	}
 };

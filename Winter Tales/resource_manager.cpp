@@ -43,6 +43,8 @@ static const std::vector<ImageResInfo> image_info_list =
 	{"player_dead_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Dead.png")},
 	{"player_jump_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Jump.png")},
 	{"player_charge_right", _T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Charge.png")},
+	{"player_bullet_moving_right", _T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Bullet_Moving.png")},
+	{"player_bullet_destroyed_right", _T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Bullet_Destroyed.png")},
 	{"player_roll_right", _T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Roll.png")},
 	{"background", _T("resources\\new\\snow-2d-game-tileset-pixel-art\\2 Background\\background.png")}
 };
@@ -129,6 +131,10 @@ void ResourceManager::load()
 	flip_image("player_charge_right", "player_charge_left", 6);
 	flip_image("player_roll_right", "player_roll_left", 16);
 	
+
+	flip_image("player_bullet_moving_right", "player_bullet_moving_left", 3);
+	flip_image("player_bullet_destroyed_right", "player_bullet_destroyed_left", 3);
+
 	//flipatlas
 	// 
 	//load_audio(_T(R"(resources\audio\bgm.mp3)"), _T("bgm"));

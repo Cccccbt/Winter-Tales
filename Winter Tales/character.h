@@ -6,12 +6,6 @@
 #include <unordered_map>
 #include <string>
 
-struct AnimationGroup
-{
-	Animation left;
-	Animation right;
-};
-
 class Character
 {
 public:
@@ -92,7 +86,7 @@ public:
 
 protected:
 	const float GRAVITY = 980 * 2;
-	const float FLOOR_Y = 620;
+	const float FLOOR_Y =300;
 
 	int hp = 10;
 	Vector2 position;

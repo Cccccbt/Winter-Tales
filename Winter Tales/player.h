@@ -74,8 +74,9 @@ public:
 private:
 	const float CD_ROLL = 0.75f;
 	const float CD_ATTACK = 0.5f;
+	const float CD_COMBO_RESET = 3.0f;
 	const float SPEED_RUN = 300.0f;
-	const float SPEED_ROLL = 800.0f;
+	const float SPEED_ROLL = 600.0f;
 	const float SPEED_JUMP = 780.0f;  // Perfect for 1.2s animation duration
 
 	Timer timer_combo_reset;

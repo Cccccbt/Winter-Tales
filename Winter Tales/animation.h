@@ -14,8 +14,6 @@ public:
 		BottomCentered
 	};
 
-
-
 	Animation()
 	{
 		timer.set_one_shot(false);
@@ -144,10 +142,10 @@ private:
 	{
 		Rect rect_src;
 		IMAGE* image = nullptr;
-		
+
 		Frame() = default;
 		Frame(IMAGE* image, const Rect& rect_src)
-			:image(image), rect_src(rect_src) 
+			:image(image), rect_src(rect_src)
 		{
 
 		};
@@ -157,9 +155,16 @@ private:
 
 	Timer timer;
 	Vector2 position;
-	int idx_frame = 0;
+	size_t idx_frame = 0;           // was: int idx_frame = 0;
 	bool is_loop = false;
 	std::vector<Frame> frame_list;
 	std::function<void()> on_finished;
 	AnchorMode anchor_mode = AnchorMode::Centered;
+};
+
+// Move AnimationGroup after Animation so 'Animation' is a complete type here
+struct AnimationGroup
+{
+	Animation left;
+	Animation right;
 };

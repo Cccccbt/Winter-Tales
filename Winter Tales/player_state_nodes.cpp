@@ -3,7 +3,7 @@
 
 PlayerAttack1::PlayerAttack1()
 {
-	timer.set_wait_time(1.2f);
+	timer.set_wait_time(0.5f);
 	timer.set_one_shot(true);
 	timer.set_callback([&]()
 	{
@@ -23,7 +23,7 @@ void PlayerAttack1::on_enter()
 	update_hit_box_position();
 
 	timer.restart();
-
+	std::cout << "Enter PlayerAttack1, attack_combo " << player->get_attack_combo() << std::endl;
 	//Play attack sound
 }
 
@@ -44,7 +44,7 @@ void PlayerAttack1::on_update(float delta)
 	}
 
         // Check for combo transitions while attacking
-        if (player->can_attack() && player->get_attacking())
+        if (player->can_attack() && !player->get_attacking())
         {
                 if (player->get_attack_combo() == 1)
                 {
@@ -72,6 +72,7 @@ void PlayerAttack1::on_exit()
 	CollisionBox* hit_box = CharacterManager::instance()->get_player()->get_hit_box();
 	hit_box->set_enabled(false);
 	CharacterManager::instance()->get_player()->set_attacking(false);
+	std::cout << "Exit PlayerAttack1, attack_combo " << CharacterManager::instance()->get_player()->get_attack_combo() << std::endl;
 }
 
 void PlayerAttack1::update_hit_box_position()
@@ -96,7 +97,7 @@ void PlayerAttack1::update_hit_box_position()
 
 PlayerAttack2::PlayerAttack2()
 {
-	timer.set_wait_time(0.7f);
+	timer.set_wait_time(0.75f);
 	timer.set_one_shot(true);
 	timer.set_callback([&]()
 	{
@@ -112,10 +113,12 @@ void PlayerAttack2::on_enter()
 	player->on_attack();
 
 	CollisionBox* hit_box = player->get_hit_box();
-	hit_box->set_enabled(true);
+	hit_box->set_size(Vector2(64, 16));
 	update_hit_box_position();
+	hit_box->set_enabled(true);
 
 	timer.restart();
+	std::cout << "Enter PlayerAttack2, attack_combo " << player->get_attack_combo() << std::endl;
 }
 
 void PlayerAttack2::on_update(float delta)
@@ -123,10 +126,12 @@ void PlayerAttack2::on_update(float delta)
         timer.on_update(delta);
         update_hit_box_position();
 
+
         Player* player = CharacterManager::instance()->get_player();
+		player->set_velocity(Vector2(0, player->get_velocity().y));
 
         // Allow chaining to the third attack while the second animation is playing
-        if (player->can_attack() && player->get_attacking())
+        if (player->can_attack() && !player->get_attacking())
         {
                 if (player->get_attack_combo() == 2)
                 {
@@ -157,6 +162,7 @@ void PlayerAttack2::on_exit()
 	CollisionBox* hit_box = CharacterManager::instance()->get_player()->get_hit_box();
 	hit_box->set_enabled(false);
 	CharacterManager::instance()->get_player()->set_attacking(false);
+	std::cout << "Exit PlayerAttack2, attack_combo " << CharacterManager::instance()->get_player()->get_attack_combo() << std::endl;
 }
 
 void PlayerAttack2::update_hit_box_position()
@@ -165,23 +171,13 @@ void PlayerAttack2::update_hit_box_position()
 	CollisionBox* hit_box = player->get_hit_box();
 	Vector2 player_pos = player->get_position();
 	Vector2 hit_box_size = hit_box->get_size();
-	if (player->get_is_facing_left())
-	{
-		hit_box->set_position(Vector2(
-			player_pos.x - hit_box_size.x,
-			player_pos.y - hit_box_size.y));
-	}
-	else
-	{
-		hit_box->set_position(Vector2(
-			player_pos.x,
-			player_pos.y - hit_box_size.y));
-	}
+	hit_box->set_position(player->get_logical_center() + (player->get_is_facing_left() ? Vector2(-56, -20) : Vector2(56, -20)));
+
 }
 
 PlayerAttack3::PlayerAttack3()
 {
-	timer.set_wait_time(0.8f);
+	timer.set_wait_time(0.35f);
 	timer.set_one_shot(true);
 	timer.set_callback([&]()
 	{
@@ -201,6 +197,7 @@ void PlayerAttack3::on_enter()
 	update_hit_box_position();
 
 	timer.restart();
+	std::cout << "Enter PlayerAttack3, attack_combo " << player->get_attack_combo() << std::endl;
 }
 
 void PlayerAttack3::on_update(float delta)
@@ -209,6 +206,7 @@ void PlayerAttack3::on_update(float delta)
 	update_hit_box_position();
 
 	Player* player = CharacterManager::instance()->get_player();
+	player->set_velocity(Vector2(0, player->get_velocity().y));
 
 	if (player->get_hp() <= 0)
 	{
@@ -232,6 +230,7 @@ void PlayerAttack3::on_exit()
 	CollisionBox* hit_box = CharacterManager::instance()->get_player()->get_hit_box();
 	hit_box->set_enabled(false);
 	CharacterManager::instance()->get_player()->set_attacking(false);
+	std::cout << "Exit PlayerAttack3, attack_combo " << CharacterManager::instance()->get_player()->get_attack_combo() << std::endl;
 }
 
 void PlayerAttack3::update_hit_box_position()
@@ -291,6 +290,7 @@ PlayerIdle::PlayerIdle()
 void PlayerIdle::on_enter()
 {
 	CharacterManager::instance()->get_player()->set_animation("idle");
+	std::cout << "Enter Idle" << std::endl;
 }
 
 void PlayerIdle::on_update(float delta)
@@ -304,8 +304,20 @@ void PlayerIdle::on_update(float delta)
 
 	else if (player->can_attack())
 	{
-		player->switch_state("attack_1");
+		switch (player->get_attack_combo())
+		{
+		case 0:
+			player->switch_state("attack_1");
+			break;
+		case 1:
+			player->switch_state("attack_2");
+			break;
+		case 2:
+			player->switch_state("attack_3");
+			break;
+		}
 	}
+
 	else if (player->get_move_axis() != 0)
 	{
 		player->switch_state("run");
@@ -325,6 +337,7 @@ void PlayerIdle::on_update(float delta)
 void PlayerIdle::on_exit()
 {
 	// Idle state typically doesn't need exit logic
+	std::cout << "Exit Idle" << std::endl;
 }
 
 PlayerJump::PlayerJump()
@@ -338,6 +351,7 @@ void PlayerJump::on_enter()
 	player->set_animation("jump");
 	player->on_jump();
 	has_left_ground = false;  // Reset flag when entering jump state
+	std::cout << "Enter Jump" << std::endl;
 	//Play jump sound
 }
 
@@ -410,6 +424,7 @@ void PlayerRoll::on_enter()
 	player->on_roll();
 	timer.restart();
 	//Play roll sound
+	std::cout << "Enter Roll" << std::endl;
 }
 
 void PlayerRoll::on_update(float delta)
@@ -439,6 +454,7 @@ void PlayerRoll::on_exit()
 {
 	Player* player = CharacterManager::instance()->get_player();
 	player->get_hurt_box()->set_enabled(true);
+	std::cout << "Exit Roll" << std::endl;
 }
 
 PlayerRun::PlayerRun()
@@ -449,7 +465,7 @@ PlayerRun::PlayerRun()
 void PlayerRun::on_enter()
 {
 	CharacterManager::instance()->get_player()->set_animation("run");
-
+	std::cout << "Enter Run" << std::endl;
 	//Play run sound loop
 }
 
@@ -463,7 +479,18 @@ void PlayerRun::on_update(float delta)
 	}
 	else if (player->can_attack())
 	{
-		player->switch_state("attack_1");
+		switch (player->get_attack_combo())
+		{
+		case 0:
+			player->switch_state("attack_1");
+			break;
+		case 1:
+			player->switch_state("attack_2");
+			break;
+		case 2:
+			player->switch_state("attack_3");
+			break;
+		}
 	}
 	else if (player->get_move_axis() == 0)
 	{
@@ -482,6 +509,7 @@ void PlayerRun::on_update(float delta)
 void PlayerRun::on_exit()
 {
 	// Run state typically doesn't need exit logic
+	std::cout << "Exit Run" << std::endl;
 }
 
 PlayerHurt::PlayerHurt()
