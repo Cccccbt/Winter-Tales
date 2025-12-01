@@ -43,20 +43,15 @@ void PlayerAttack1::on_update(float delta)
 		return;
 	}
 
-	// Check for combo transitions while attacking
-	if (player->can_attack() && player->get_attacking())
-	{
-		if (player->get_attack_combo() == 1)
-		{
-			player->switch_state("attack_2");
-			return;
-		}
-		else if (player->get_attack_combo() == 2)
-		{
-			player->switch_state("attack_3");
-			return;
-		}
-	}
+        // Check for combo transitions while attacking
+        if (player->can_attack() && player->get_attacking())
+        {
+                if (player->get_attack_combo() == 1)
+                {
+                        player->switch_state("attack_2");
+                        return;
+                }
+        }
 
 	// Only transition out when attack is finished (timer callback sets is_attacking = false)
 	if (!player->get_attacking())
@@ -125,16 +120,26 @@ void PlayerAttack2::on_enter()
 
 void PlayerAttack2::on_update(float delta)
 {
-	timer.on_update(delta);
-	update_hit_box_position();
+        timer.on_update(delta);
+        update_hit_box_position();
 
-	Player* player = CharacterManager::instance()->get_player();
+        Player* player = CharacterManager::instance()->get_player();
 
-	if (player->get_hp() <= 0)
-	{
-		player->switch_state("dead");
-	}
-	else if (!player->get_attacking())
+        // Allow chaining to the third attack while the second animation is playing
+        if (player->can_attack() && player->get_attacking())
+        {
+                if (player->get_attack_combo() == 2)
+                {
+                        player->switch_state("attack_3");
+                        return;
+                }
+        }
+
+        if (player->get_hp() <= 0)
+        {
+                player->switch_state("dead");
+        }
+        else if (!player->get_attacking())
 	{
 		if (player->get_move_axis() == 0)
 		{
