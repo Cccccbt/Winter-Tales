@@ -41,26 +41,6 @@ int main()
 
 	BeginBatchDraw();
 
-	
-	/*
-	Animation test;
-	test.add_frame(ResourceManager::instance()->find_image("little_match_girl"), 22);
-	test.set_interval(1.0f / 12.0f);
-	test.set_is_loop(true);
-	test.set_on_finished(
-		[]()
-		{
-			std::cout << "Test\n";
-		}
-	);
-	*/
-
-	/*
-	Player playerTest;
-	playerTest.set_position(Vector2(400, 400));
-	playerTest.set_enable_gravity(true);
-	*/
-
 	//Game Loop
 	while (running)
 	{
@@ -84,16 +64,6 @@ int main()
 		putimage(0, 0, ResourceManager::instance()->find_image("background"));
 		CharacterManager::instance()->on_render();
 		CollisionManager::instance()->on_debug_render();
-
-		/*
-		playerTest.on_update(delta.count());
-		playerTest.on_render();
-		*/
-		/*
-		test.set_position(Vector2(400, 400));
-		test.on_update(delta.count());
-		test.on_render();
-		*/
 
 
 		FlushBatchDraw();

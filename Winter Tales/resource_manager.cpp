@@ -46,7 +46,19 @@ static const std::vector<ImageResInfo> image_info_list =
 	{"player_bullet_moving_right", _T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Bullet_Moving.png")},
 	{"player_bullet_destroyed_right", _T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Bullet_Destroyed.png")},
 	{"player_roll_right", _T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Roll.png")},
-	{"background", _T("resources\\new\\snow-2d-game-tileset-pixel-art\\2 Background\\background.png")}
+
+	{"magic_bear_attack_1_right", _T("resources\\resources\\new\\snow-bosses-game-character-pixel-art-pack\\3 Magic_bear\\Magic_bear_attack1.png")},
+	{"magic_bear_attack_2_right", _T("resources\\resources\\new\\snow-bosses-game-character-pixel-art-pack\\3 Magic_bear\\Magic_bear_attack2.png")},
+	{"magic_bear_attack_3_right", _T("resources\\resources\\new\\snow-bosses-game-character-pixel-art-pack\\3 Magic_bear\\Magic_bear_attack3.png")},
+	{"magic_bear_attack_4_right", _T("resources\\resources\\new\\snow-bosses-game-character-pixel-art-pack\\3 Magic_bear\\Magic_bear_attack4.png")},
+	{"magic_bear_idle_right", _T("resources\\resources\\new\\snow-bosses-game-character-pixel-art-pack\\3 Magic_bear\\Magic_bear_idle.png")},
+	{"magic_bear_hurt_right", _T("resources\\resources\\new\\snow-bosses-game-character-pixel-art-pack\\3 Magic_bear\\Magic_bear_hurt.png")},
+	{"magic_bear_dead_right", _T("resources\\resources\\new\\snow-bosses-game-character-pixel-art-pack\\3 Magic_bear\\Magic_bear_death.png")},
+	{"magic_bear_walk_right", _T("resources\\resources\\new\\snow-bosses-game-character-pixel-art-pack\\3 Magic_bear\\Magic_bear_walk.png")},
+	{"magic_bear_sneer_right", _T("resources\\resources\\new\\snow-bosses-game-character-pixel-art-pack\\3 Magic_bear\\Magic_bear_sneer.png")},
+	{"magic_bear_ball_right", _T("resources\\resources\\new\\snow-bosses-game-character-pixel-art-pack\\3 Magic_bear\\Magic_bear_ball.png")},
+
+	{"background", _T("resources\\new\\snow-2d-game-tileset-pixel-art\\2 Background\\background.png")},
 };
 
 static const std::vector<AtlasResInfo> atlas_info_list =
@@ -130,7 +142,17 @@ void ResourceManager::load()
 	flip_image("player_jump_right", "player_jump_left", 12);
 	flip_image("player_charge_right", "player_charge_left", 6);
 	flip_image("player_roll_right", "player_roll_left", 16);
-	
+	flip_image("magic_bear_attack_1_right", "magic_bear_attack_1_left", 8);
+	flip_image("magic_bear_attack_2_right", "magic_bear_attack_2_left", 8);
+	flip_image("magic_bear_attack_3_right", "magic_bear_attack_3_left", 8);
+	flip_image("magic_bear_attack_4_right", "magic_bear_attack_4_left", 8);
+	flip_image("magic_bear_idle_right", "magic_bear_idle_left", 6);
+	flip_image("magic_bear_hurt_right", "magic_bear_hurt_left", 4);
+	flip_image("magic_bear_dead_right", "magic_bear_dead_left", 6);
+	flip_image("magic_bear_walk_right", "magic_bear_walk_left", 8);
+	flip_image("magic_bear_sneer_right", "magic_bear_sneer_left", 6);
+	flip_image("magic_bear_ball_right", "magic_bear_ball_left", 6);
+
 
 	flip_image("player_bullet_moving_right", "player_bullet_moving_left", 3);
 	flip_image("player_bullet_destroyed_right", "player_bullet_destroyed_left", 3);
