@@ -1,0 +1,363 @@
+#include "magic_bear_state_nodes.h"
+#include <iostream>
+MagicBearIdle::MagicBearIdle()
+{
+	timer_idle.set_wait_time(2.0f);
+	timer_idle.set_one_shot(true);
+	timer_idle.set_callback([]()
+	{
+		// Callback logic can be implemented here if needed
+		CharacterManager::instance()->get_magic_bear()->switch_state("walk");
+	});
+}
+
+MagicBearIdle::~MagicBearIdle()
+{
+}
+
+void MagicBearIdle::on_enter()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	bear->set_animation("idle");
+	timer_idle.restart();
+	std::cout << "MagicBear entered Idle state." << std::endl;
+}
+
+void MagicBearIdle::on_update(float delta)
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	Player* player = CharacterManager::instance()->get_player();
+	float distance_to_player = (player->get_position() - bear->get_position()).length();
+
+	timer_idle.on_update(delta);
+
+	if (bear->is_player_in_close_range() && bear->can_attack_bite())
+	{
+		bear->switch_state("attack1");
+	}
+	else if (bear->is_player_in_mid_range() && bear->can_attack_run())
+	{
+		bear->switch_state("attack2");
+	}
+	else if (bear->is_player_in_far_range() && bear->can_attack_ray())
+	{
+		bear->switch_state("attack3");
+	}
+	else if (bear->can_attack_ball())
+	{
+		bear->switch_state("attack4");
+	}
+	
+}
+
+void MagicBearIdle::on_exit()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	std::cout << "MagicBear exited Idle state." << std::endl;
+}
+
+
+MagicBearWalk::MagicBearWalk()
+{
+	timer_walk.set_wait_time(3.0f);
+	timer_walk.set_one_shot(true);
+	timer_walk.set_callback([]()
+	{
+		// Callback logic can be implemented here if needed
+		CharacterManager::instance()->get_magic_bear()->switch_state("idle");
+	});
+}
+
+MagicBearWalk::~MagicBearWalk()
+{
+}
+
+void MagicBearWalk::on_enter()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	bear->set_animation("walk");
+	bear->get_hit_box()->set_enabled(false);
+	timer_walk.restart();
+	std::cout << "MagicBear entered Walk state." << std::endl;
+}
+
+void MagicBearWalk::on_update(float delta)
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	bear->set_velocity(Vector2(bear->get_is_facing_left() ? -bear->get_walk_speed() : bear->get_walk_speed(), bear->get_velocity().y));
+
+	timer_walk.on_update(delta);
+
+	if (bear->get_hp() <= 0)
+	{
+		bear->switch_state("dead");
+		return;
+	}
+
+	if (bear->is_player_in_close_range() && bear->can_attack_bite())
+	{
+		bear->switch_state("attack1");
+	}
+	else if (bear->is_player_in_mid_range() && bear->can_attack_run())
+	{
+		bear->switch_state("attack2");
+	}
+	else if (bear->is_player_in_far_range() && bear->can_attack_ray())
+	{
+		bear->switch_state("attack3");
+	}
+	else if (bear->can_attack_ball())
+	{
+		bear->switch_state("attack4");
+	}
+}
+
+void MagicBearWalk::on_exit()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	std::cout << "MagicBear exited Walk state." << std::endl;
+}
+
+MagicBearAttack1::MagicBearAttack1()
+{
+	timer_attack.set_wait_time(1.0f);
+	timer_attack.set_one_shot(true);
+	timer_attack.set_callback([]()
+	{
+		CharacterManager::instance()->get_magic_bear()->switch_state("idle");
+	});
+}
+
+MagicBearAttack1::~MagicBearAttack1()
+{
+}
+
+void MagicBearAttack1::on_enter()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	bear->get_hit_box()->set_size(Vector2(16.0f, 32.0f));
+	bear->get_hit_box()->set_enabled(true);
+	bear->set_animation("attack1");
+	bear->on_bite();
+	timer_attack.restart();
+	std::cout << "MagicBear entered Attack1 state." << std::endl;
+}
+
+void MagicBearAttack1::on_update(float delta)
+{
+	timer_attack.on_update(delta);
+
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	update_collision_box();
+	if (bear->get_hp() <= 0)
+	{
+		bear->switch_state("dead");
+		return;
+	}
+
+}
+
+void MagicBearAttack1::on_exit()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	bear->get_hit_box()->set_enabled(false);
+	std::cout << "MagicBear exited Attack1 state." << std::endl;
+}
+
+void MagicBearAttack1::update_collision_box()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	Vector2 center = bear->get_logical_center();
+	if (bear->get_is_facing_left())
+	{
+		bear->get_hit_box()->set_position(Vector2(center.x - 30.0f, center.y));
+	}
+	else
+	{
+		bear->get_hit_box()->set_position(Vector2(center.x + 30.0f, center.y));
+	}
+}
+
+MagicBearAttack2::MagicBearAttack2()
+{
+	timer_attack.set_wait_time(1.5f);
+	timer_attack.set_one_shot(true);
+	timer_attack.set_callback([]()
+	{
+		CharacterManager::instance()->get_magic_bear()->switch_state("idle");
+	});
+}
+
+MagicBearAttack2::~MagicBearAttack2()
+{
+}
+
+void MagicBearAttack2::on_enter()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	bear->set_animation("attack2");
+	bear->on_run();
+	bear->get_hit_box()->set_enabled(false);
+	timer_attack.restart();
+	std::cout << "MagicBear entered Attack2 state." << std::endl;
+}
+
+void MagicBearAttack2::on_update(float delta)
+{
+	timer_attack.on_update(delta);
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	if (bear->get_hp() <= 0)
+	{
+		bear->switch_state("dead");
+		return;
+	}
+}
+
+void MagicBearAttack2::on_exit()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	std::cout << "MagicBear exited Attack2 state." << std::endl;
+}
+
+MagicBearAttack3::MagicBearAttack3()
+{
+	timer_attack.set_wait_time(2.0f);
+	timer_attack.set_one_shot(true);
+	timer_attack.set_callback([]()
+	{
+		CharacterManager::instance()->get_magic_bear()->switch_state("idle");
+	});
+}
+
+MagicBearAttack3::~MagicBearAttack3()
+{
+}
+
+void MagicBearAttack3::on_enter()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	bear->set_animation("attack3");
+	bear->on_ray();
+	bear->get_hit_box()->set_enabled(true);
+	std::cout << "MagicBear entered Attack3 state." << std::endl;
+}
+
+void MagicBearAttack3::on_update(float delta)
+{
+	timer_attack.on_update(delta);
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	if (bear->get_hp() <= 0)
+	{
+		bear->switch_state("dead");
+		return;
+	}
+}
+
+void MagicBearAttack3::on_exit()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	bear->get_hit_box()->set_enabled(false);
+	std::cout << "MagicBear exited Attack3 state." << std::endl;
+}
+
+void MagicBearAttack3::update_collision_box()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	Vector2 center = bear->get_logical_center();
+	if (bear->get_is_facing_left())
+	{
+		bear->get_hit_box()->set_position(Vector2(center.x - 50.0f, center.y));
+	}
+	else
+	{
+		bear->get_hit_box()->set_position(Vector2(center.x + 50.0f, center.y));
+	}
+}
+
+MagicBearAttack4::MagicBearAttack4()
+{
+	timer_attack.set_wait_time(2.5f);
+	timer_attack.set_one_shot(true);
+	timer_attack.set_callback([]()
+	{
+		CharacterManager::instance()->get_magic_bear()->switch_state("idle");
+	});
+}
+
+MagicBearAttack4::~MagicBearAttack4()
+{
+}
+
+void MagicBearAttack4::on_enter()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	bear->set_animation("attack4");
+	bear->on_ball();
+	bear->get_hit_box()->set_enabled(false);
+	timer_attack.restart();
+	std::cout << "MagicBear entered Attack4 state." << std::endl;
+}
+
+void MagicBearAttack4::on_update(float delta)
+{
+	timer_attack.on_update(delta);
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	if (bear->get_hp() <= 0)
+	{
+		bear->switch_state("dead");
+		return;
+	}
+}
+
+void MagicBearAttack4::on_exit()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	std::cout << "MagicBear exited Attack4 state." << std::endl;
+}
+
+void MagicBearAttack4::update_collision_box()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	Vector2 center = bear->get_logical_center();
+	if (bear->get_is_facing_left())
+	{
+		bear->get_hit_box()->set_position(Vector2(center.x - 70.0f, center.y));
+	}
+	else
+	{
+		bear->get_hit_box()->set_position(Vector2(center.x + 70.0f, center.y));
+	}
+}
+
+MagicBearDead::MagicBearDead()
+{	
+}
+
+MagicBearDead::~MagicBearDead()
+{
+}
+
+void MagicBearDead::on_enter()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	bear->set_animation("dead");
+	bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
+	bear->get_hit_box()->set_enabled(false);
+	std::cout << "MagicBear entered Dead state." << std::endl;
+}
+
+void MagicBearDead::on_update(float delta)
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+}
+
+void MagicBearDead::on_exit()
+{
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	std::cout << "MagicBear exited Dead state." << std::endl;
+}
+
+
+
+
+

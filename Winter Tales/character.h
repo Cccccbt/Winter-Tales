@@ -39,7 +39,7 @@ public:
 		return velocity;
 	}
 
-	const Vector2 get_logical_center()
+	const Vector2 get_logical_center() const
 	{
 		return Vector2(position.x, position.y - logic_height / 2);
 	}

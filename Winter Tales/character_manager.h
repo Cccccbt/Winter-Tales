@@ -3,6 +3,10 @@
 #include "player.h"
 #include <vector>
 #include <unordered_map>
+
+// Forward declaration to avoid circular dependency
+class MagicBear;
+
 class CharacterManager
 {
 public:
@@ -16,10 +20,13 @@ public:
 	void on_render();
 	void on_input(const ExMessage& msg);
 
+	MagicBear* get_magic_bear();
+
 private:
 	static CharacterManager* character_manager;
 	std::unordered_map<std::string, Character*> character_list;
 	Player* player;
+	MagicBear* magic_bear;
 
 	CharacterManager();
 	~CharacterManager();

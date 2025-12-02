@@ -1,5 +1,6 @@
 #include "character_manager.h"
 #include "player.h"
+#include "magic_bear.h"
 
 CharacterManager* CharacterManager::character_manager = nullptr;
 
@@ -37,6 +38,11 @@ Player* CharacterManager::get_player()
 	return player;
 }
 
+MagicBear* CharacterManager::get_magic_bear()
+{
+	return magic_bear;
+}
+
 void CharacterManager::on_input(const ExMessage& msg)
 {
 	for (auto i = character_list.begin(); i != character_list.end(); i++)
@@ -57,6 +63,7 @@ void CharacterManager::on_update(float delta)
 	}
 	
 	player->on_update(delta);
+	magic_bear->on_update(delta);
 }
 
 void CharacterManager::on_render()
@@ -66,6 +73,7 @@ void CharacterManager::on_render()
 		i->second->on_render();
 	}
 	player->on_render();
+	magic_bear->on_render();
 }
 
 CharacterManager::CharacterManager()
@@ -74,7 +82,13 @@ CharacterManager::CharacterManager()
 	this->player = player;
 	player->set_position(Vector2(40, 400));
 	player->set_enable_gravity(true);
+
+	MagicBear* magic_bear = new MagicBear();
+	this->magic_bear = magic_bear;
+	magic_bear->set_position(Vector2(400, 400));
+	magic_bear->set_enable_gravity(true);
 };
+
 CharacterManager::~CharacterManager()
 {
 	for (auto i = character_list.begin(); i != character_list.end(); i++)
