@@ -56,7 +56,7 @@ static const std::vector<ImageResInfo> image_info_list =
 	{"magic_bear_dead_right", _T("resources\\new\\snow-bosses-game-character-pixel-art-pack\\3 Magic_bear\\Magic_bear_death.png")},
 	{"magic_bear_walk_right", _T("resources\\new\\snow-bosses-game-character-pixel-art-pack\\3 Magic_bear\\Magic_bear_walk.png")},
 	{"magic_bear_sneer_right", _T("resources\\new\\snow-bosses-game-character-pixel-art-pack\\3 Magic_bear\\Magic_bear_sneer.png")},
-	{"magic_bear_ball_right", _T("resources\\new\\snow-bosses-game-character-pixel-art-pack\\3 Magic_bear\\Ball.png")},
+	{"magic_bear_ball", _T("resources\\new\\snow-bosses-game-character-pixel-art-pack\\3 Magic_bear\\Ball.png")},
 
 	{"background", _T("resources\\new\\snow-2d-game-tileset-pixel-art\\2 Background\\background.png")},
 };
@@ -142,17 +142,15 @@ void ResourceManager::load()
 	flip_image("player_jump_right", "player_jump_left", 12);
 	flip_image("player_charge_right", "player_charge_left", 6);
 	flip_image("player_roll_right", "player_roll_left", 16);
-	flip_image("magic_bear_attack_1_right", "magic_bear_attack_1_left", 8);
-	flip_image("magic_bear_attack_2_right", "magic_bear_attack_2_left", 8);
-	flip_image("magic_bear_attack_3_right", "magic_bear_attack_3_left", 8);
-	flip_image("magic_bear_attack_4_right", "magic_bear_attack_4_left", 8);
-	flip_image("magic_bear_idle_right", "magic_bear_idle_left", 6);
-	flip_image("magic_bear_hurt_right", "magic_bear_hurt_left", 4);
-	flip_image("magic_bear_dead_right", "magic_bear_dead_left", 6);
-	flip_image("magic_bear_walk_right", "magic_bear_walk_left", 8);
+	flip_image("magic_bear_attack_1_right", "magic_bear_attack_1_left", 6);
+	flip_image("magic_bear_attack_2_right", "magic_bear_attack_2_left", 6);
+	flip_image("magic_bear_attack_3_right", "magic_bear_attack_3_left", 6);
+	flip_image("magic_bear_attack_4_right", "magic_bear_attack_4_left", 4);
+	flip_image("magic_bear_idle_right", "magic_bear_idle_left", 4);
+	flip_image("magic_bear_hurt_right", "magic_bear_hurt_left", 2);
+	flip_image("magic_bear_dead_right", "magic_bear_dead_left", 4);
+	flip_image("magic_bear_walk_right", "magic_bear_walk_left", 6);
 	flip_image("magic_bear_sneer_right", "magic_bear_sneer_left", 6);
-	flip_image("magic_bear_ball_right", "magic_bear_ball_left", 6);
-
 
 	flip_image("player_bullet_moving_right", "player_bullet_moving_left", 3);
 	flip_image("player_bullet_destroyed_right", "player_bullet_destroyed_left", 3);

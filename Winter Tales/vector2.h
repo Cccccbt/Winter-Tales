@@ -95,12 +95,14 @@ public:
 		return sqrt(x * x + y * y);
 	}
 
-	void normalize()
+	Vector2 normalize()
 	{
 		if (this->length() == 0)
-			return;
+			return Vector2();
 		x = x / this->length();
 		y = y / this->length();
+
+		return Vector2(x, y);
 	}
 
 	Vector2 operator+(const Vector2& v) const

@@ -128,6 +128,10 @@
     <ClCompile Include="character_manager.cpp" />
     <ClCompile Include="collision_layer.h" />
     <ClCompile Include="collision_manager.cpp" />
+    <ClCompile Include="magic_bear.cpp" />
+    <ClCompile Include="magic_bear_ball.cpp" />
+    <ClCompile Include="magic_bear_ray.cpp" />
+    <ClCompile Include="magic_bear_state_nodes.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="player_state_nodes.cpp" />
@@ -144,6 +148,9 @@
     <ClInclude Include="collision_box.h" />
     <ClInclude Include="collision_manager.h" />
     <ClInclude Include="magic_bear.h" />
+    <ClInclude Include="magic_bear_ball.h" />
+    <ClInclude Include="magic_bear_ray.h" />
+    <ClInclude Include="magic_bear_state_nodes.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="player_state_nodes.h" />
     <ClInclude Include="resource_manager.h" />
