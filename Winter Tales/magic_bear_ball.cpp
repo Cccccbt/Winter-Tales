@@ -67,8 +67,6 @@ void MagicBearBall::on_update(float delta)
 		float shake_x = static_cast<float>((rand() % static_cast<int>(SHAKE_INTENSITY * 2 + 1)) - SHAKE_INTENSITY);
 		float shake_y = static_cast<float>((rand() % static_cast<int>(SHAKE_INTENSITY * 2 + 1)) - SHAKE_INTENSITY);
 		position = base_position + Vector2(shake_x, shake_y);
-		
-		std::cout << "Aiming Shake: (" << (int)shake_x << ", " << (int)shake_y << ")" << std::endl;
 	}
 
 	// Update collision box position

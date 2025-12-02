@@ -43,9 +43,6 @@ int main()
 
 	BeginBatchDraw();
 
-	MagicBearBall bear_ball(false, Vector2(300.0f, 200.0f));
-	MagicBearRay bear_ray(false, Vector2(0.0f, 150.0f));
-
 	//Game Loop
 	while (running)
 	{
@@ -60,8 +57,6 @@ int main()
 		duration<float> delta = duration<float>(frame_start - last_tick);
 
 		//Process update
-		bear_ball.on_update(delta.count());
-		bear_ray.on_update(delta.count());
 		CharacterManager::instance()->on_update(delta.count());
 		CollisionManager::instance()->process_collide();
 
@@ -72,8 +67,6 @@ int main()
 		
 		CharacterManager::instance()->on_render();
 		CollisionManager::instance()->on_debug_render();
-		bear_ball.on_render();
-		bear_ray.on_render();
 
 		FlushBatchDraw();
 

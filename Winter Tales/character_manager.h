@@ -1,9 +1,12 @@
 #pragma once
 #include "character.h"
 #include "player.h"
-#include "magic_bear.h"
 #include <vector>
 #include <unordered_map>
+
+// Forward declaration to avoid circular dependency
+class MagicBear;
+
 class CharacterManager
 {
 public:

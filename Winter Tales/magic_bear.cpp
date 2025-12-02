@@ -8,14 +8,19 @@ MagicBear::MagicBear()
 	logic_height = 32.0f;
 
 	hit_box = CollisionManager::instance()->create_collision_box();
+	body_hit_box = CollisionManager::instance()->create_collision_box();
 	hurt_box = CollisionManager::instance()->create_collision_box();
+
 	hit_box->set_size(Vector2(56, 32));
+	body_hit_box->set_size(Vector2(56, 32));
 	hurt_box->set_size(Vector2(56, 32));
 
 	hit_box->set_layer_src(CollisionLayer::None);
+	body_hit_box->set_layer_src(CollisionLayer::None);
 	hurt_box->set_layer_src(CollisionLayer::Enemy);
 
 	hit_box->set_layer_dst(CollisionLayer::Player);
+	body_hit_box->set_layer_dst(CollisionLayer::Player);
 	hurt_box->set_layer_dst(CollisionLayer::None);
 
 	hurt_box->set_on_collide(
@@ -132,7 +137,16 @@ MagicBear::MagicBear()
 	attack4_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
 	attack4_right.add_frame(ResourceManager::instance()->find_image("magic_bear_attack_4_right"), 4);
 	
-	current_animation = &animation_pool["idle"];
+	state_machine.register_state("idle", new MagicBearIdle());
+	state_machine.register_state("walk", new MagicBearWalk());
+	state_machine.register_state("attack1", new MagicBearAttack1());
+	state_machine.register_state("attack2", new MagicBearAttack2());
+	state_machine.register_state("attack3", new MagicBearAttack3());
+	state_machine.register_state("attack4", new MagicBearAttack4());
+//	state_machine.register_state("hurt", new MagicBearHurt());
+//	state_machine.register_state("dead", new MagicBearHurt()); // Reuse hurt state for dead for simplicity
+//	state_machine.register_state("sneer", new MagicBearIdle()); // Reuse idle state for sneer for simplicity
+	state_machine.set_entry("idle");
 
 }
 
@@ -154,11 +168,19 @@ void MagicBear::on_input(const ExMessage& msg)
 void MagicBear::on_update(float delta)
 {
 	// Implementation of on_update
-	if (velocity.x >= 0.0001f)
-		is_facing_left = (velocity.x < 0);		// Update facing direction based on velocity
+	Player* player = CharacterManager::instance()->get_player();
+	
+	// Update facing direction to always face the player
+	Vector2 direction_to_player = player->get_position() - get_position();
+	if (direction_to_player.x != 0)
+	{
+		is_facing_left = (direction_to_player.x < 0);
+	}
+	
 	Character::on_update(delta);
 
 	hit_box->set_position(get_logical_center());
+	body_hit_box->set_position(get_logical_center());
 
 	for (auto& ball : bear_ball_list)
 	{
@@ -233,5 +255,33 @@ void MagicBear::on_bite()
 {
 	// Implementation of on_bite
 
+}
+
+void MagicBear::on_run()
+{
+	// Implementation of on_run
+	// Run attack: Bear rushes toward the player with increased speed
+	set_velocity(Vector2(is_facing_left ? -get_run_speed() : get_run_speed(), get_velocity().y));
+}
+
+bool MagicBear::is_player_in_close_range() const
+{
+	Character* player = CharacterManager::instance()->get_player();
+	float distance = (player->get_logical_center() - get_logical_center()).length();
+	return distance <= CLOSE_RANGE;
+}
+
+bool MagicBear::is_player_in_mid_range() const
+{
+	Character* player = CharacterManager::instance()->get_player();
+	float distance = (player->get_logical_center() - get_logical_center()).length();
+	return distance > CLOSE_RANGE && distance <= MID_RANGE;
+}
+
+bool MagicBear::is_player_in_far_range() const
+{
+	Character* player = CharacterManager::instance()->get_player();
+	float distance = (player->get_logical_center() - get_logical_center()).length();
+	return distance > MID_RANGE && distance <= FAR_RANGE;
 }
 

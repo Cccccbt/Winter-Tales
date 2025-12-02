@@ -15,6 +15,7 @@ public:
 	virtual void on_update(float delta) override;
 	virtual void on_exit() override;
 private:
+	Timer timer_idle;
 };
 
 class MagicBearWalk : public StateNode
@@ -27,7 +28,7 @@ public:
 	virtual void on_update(float delta) override;
 	virtual void on_exit() override;
 private:
-	const float WALK_SPEED = 150.0f;
+	Timer timer_walk;
 };
 
 class MagicBearAttack1 : public StateNode
@@ -40,7 +41,8 @@ public:
 	virtual void on_update(float delta) override;
 	virtual void on_exit() override;
 private:
-	Timer attack_timer;
+	Timer timer_attack;
+	void update_collision_box();
 };
 
 class MagicBearAttack2 : public StateNode
@@ -53,8 +55,7 @@ public:
 	virtual void on_update(float delta) override;
 	virtual void on_exit() override;
 private:
-	Timer attack_timer;
-	float charge_progress = 0.0f;
+	Timer timer_attack;
 };
 
 class MagicBearAttack3 : public StateNode
@@ -67,7 +68,8 @@ public:
 	virtual void on_update(float delta) override;
 	virtual void on_exit() override;
 private:
-	Timer attack_timer;
+	Timer timer_attack;
+	void update_collision_box();
 };
 
 class MagicBearAttack4 : public StateNode
@@ -80,7 +82,8 @@ public:
 	virtual void on_update(float delta) override;
 	virtual void on_exit() override;
 private:
-	Timer attack_timer;
+	Timer timer_attack;
+	void update_collision_box();
 };
 
 class MagicBearSneer : public StateNode

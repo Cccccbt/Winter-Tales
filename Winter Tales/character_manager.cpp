@@ -1,5 +1,6 @@
 #include "character_manager.h"
 #include "player.h"
+#include "magic_bear.h"
 
 CharacterManager* CharacterManager::character_manager = nullptr;
 
