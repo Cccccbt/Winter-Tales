@@ -35,7 +35,7 @@ int main()
 
 	const nanoseconds frame_duration(1000000000 / 60);
 	steady_clock::time_point last_tick = steady_clock::now();
-
+	
 	ExMessage msg;
 	bool running = true;
 
