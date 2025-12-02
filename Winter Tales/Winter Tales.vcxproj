@@ -143,6 +143,7 @@
     <ClInclude Include="bullet.h" />
     <ClInclude Include="collision_box.h" />
     <ClInclude Include="collision_manager.h" />
+    <ClInclude Include="magic_bear.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="player_state_nodes.h" />
     <ClInclude Include="resource_manager.h" />
