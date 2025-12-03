@@ -135,24 +135,16 @@ MagicBear::MagicBear()
 	
 
 	AnimationGroup& attack4_animation = animation_pool["attack4"];
-	Animation& attack4_left = attack4_animation.left;
-	attack4_left.set_interval(0.2f);
-	attack4_left.set_is_loop(false);
-	attack4_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
-	attack4_left.add_frame(ResourceManager::instance()->find_image("magic_bear_attack_4_left"), 4);
-	attack4_left.set_on_finished([this]()
-		{
-			on_ball();
-		});
-	Animation& attack4_right = attack4_animation.right;
-	attack4_right.set_interval(0.2f);
-	attack4_right.set_is_loop(false);
-	attack4_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
-	attack4_right.add_frame(ResourceManager::instance()->find_image("magic_bear_attack_4_right"), 4);
-	attack4_right.set_on_finished([this]()
-		{
-			on_ball ();
-		});
+        Animation& attack4_left = attack4_animation.left;
+        attack4_left.set_interval(0.2f);
+        attack4_left.set_is_loop(false);
+        attack4_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
+        attack4_left.add_frame(ResourceManager::instance()->find_image("magic_bear_attack_4_left"), 4);
+        Animation& attack4_right = attack4_animation.right;
+        attack4_right.set_interval(0.2f);
+        attack4_right.set_is_loop(false);
+        attack4_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
+        attack4_right.add_frame(ResourceManager::instance()->find_image("magic_bear_attack_4_right"), 4);
 	
 	state_machine.register_state("idle", new MagicBearIdle());
 	state_machine.register_state("walk", new MagicBearWalk());

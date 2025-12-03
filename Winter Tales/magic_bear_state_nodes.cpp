@@ -345,6 +345,22 @@ MagicBearAttack4::MagicBearAttack4()
         {
                 CharacterManager::instance()->get_magic_bear()->switch_state("idle");
         });
+
+        timer_ball.set_wait_time(0.45f);
+        timer_ball.set_one_shot(false);
+        timer_ball.set_callback([this]()
+        {
+                MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+                if (ball_cast_count < 3)
+                {
+                        bear->on_ball();
+                        ++ball_cast_count;
+                        if (ball_cast_count >= 3)
+                        {
+                                timer_ball.pause();
+                        }
+                }
+        });
 }
 
 MagicBearAttack4::~MagicBearAttack4()
@@ -358,16 +374,21 @@ void MagicBearAttack4::on_enter()
         bear->set_animation("attack4");
         //bear->on_ball();
         bear->get_hit_box()->set_enabled(false);
-		enter_facing_left = bear->get_is_facing_left();
+                enter_facing_left = bear->get_is_facing_left();
         timer_attack.restart();
+        ball_cast_count = 0;
+        bear->on_ball();
+        ++ball_cast_count;
+        timer_ball.restart();
         std::cout << "MagicBear entered Attack4 state." << std::endl;
 }
 
 void MagicBearAttack4::on_update(float delta)
 {
         timer_attack.on_update(delta);
+        timer_ball.on_update(delta);
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
-		bear->set_is_facing_left(enter_facing_left);
+                bear->set_is_facing_left(enter_facing_left);
         if (bear->get_hp() <= 0)
         {
                 bear->switch_state("dead");
@@ -378,6 +399,7 @@ void MagicBearAttack4::on_update(float delta)
 void MagicBearAttack4::on_exit()
 {
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+        timer_ball.pause();
         bear->start_attack4_cooldown();
         bear->start_global_attack_cooldown();
         std::cout << "MagicBear exited Attack4 state." << std::endl;
