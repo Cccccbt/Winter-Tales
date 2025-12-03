@@ -51,6 +51,14 @@ Player::Player()
 			is_roll_cd = false;
 		});
 
+	timer_bullet_time.set_wait_time(3.0f);
+	timer_bullet_time.set_one_shot(true);
+	timer_bullet_time.set_callback([this]()
+		{
+			is_in_bullet_time = false;
+			BulletTimeManager::instance()->set_status(BulletTimeManager::Status::Exiting);
+		});
+
 	// Attack 1 Animation
 	AnimationGroup& animation_attack_1 = animation_pool["attack_1"];
 	Animation& attack_1_left = animation_attack_1.left;
@@ -213,6 +221,7 @@ Player::Player()
 	state_machine.register_state("attack_3", new PlayerAttack3());
 	state_machine.register_state("hurt", new PlayerHurt());
 	state_machine.register_state("dead", new PlayerDead());
+	state_machine.register_state("bullet_time", new PlayerBulletTime());
 
 	state_machine.set_entry("idle");
 }
@@ -258,7 +267,7 @@ void Player::on_input(const ExMessage& msg)
 				break;
 
 			case VK_SPACE: // Space key
-				//Super Skill
+				is_bullet_time_key_down = true;
 				break;
 		}
 		break; // FIXED: Add missing break
@@ -288,7 +297,7 @@ void Player::on_input(const ExMessage& msg)
 				break;
 
 			case VK_SPACE: // Space key
-				//Super Skill
+				is_bullet_time_key_down = false;
 				break;
 		}
 		break;
@@ -302,8 +311,7 @@ void Player::on_update(float delta)
 		velocity.x = get_move_axis() * SPEED_RUN;
 	}
 
-	// Only allow direction changes when NOT attacking
-	if (get_move_axis() != 0 && !is_attacking)
+	if (get_move_axis() != 0)
 	{
 		is_facing_left = get_move_axis() < 0;
 	}
@@ -386,3 +394,12 @@ void Player::throw_bullet()
 	Bullet* bullet = new Bullet(is_facing_left, get_logical_center() + Vector2(0, -20));
 	bullet_pool.push_back(bullet);
 }
+
+void Player::enter_bullet_time()
+{
+	// Placeholder for bullet time logic
+	state_machine.switch_to("bullet_time");
+	BulletTimeManager::instance()->set_status(BulletTimeManager::Status::Entering);
+	is_in_bullet_time = true;
+}
+

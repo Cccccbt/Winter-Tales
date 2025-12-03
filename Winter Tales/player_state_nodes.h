@@ -145,3 +145,17 @@ private:
 	Timer timer;
 	bool has_left_ground;  // ADD THIS
 };
+
+class PlayerBulletTime : public StateNode
+{
+public:
+	PlayerBulletTime();
+	~PlayerBulletTime() = default;
+	void on_enter() override;
+	void on_update(float delta) override;
+	void on_exit() override;
+
+private:
+	Timer timer;
+
+};

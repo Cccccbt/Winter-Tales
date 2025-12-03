@@ -72,7 +72,11 @@ void PlayerAttack1::on_update(float delta)
 	// Only transition out when attack is finished (timer callback sets is_attacking = false)
 	if (!player->get_attacking())
 	{
-		if (player->get_move_axis() == 0)
+		if (player->can_bullet_time())
+		{
+			player->switch_state("bullet_time");
+		}
+		else if (player->get_move_axis() == 0)
 		{
 			player->switch_state("idle");
 		}
@@ -568,4 +572,39 @@ void PlayerHurt::on_update(float delta)
 void PlayerHurt::on_exit()
 {
 	// Hurt state typically doesn't need exit logic
+}
+
+PlayerBulletTime::PlayerBulletTime()
+{
+	timer.set_wait_time(2.0f);
+	timer.set_one_shot(true);
+	// FIXED: Use []
+	timer.set_callback([]()
+	{
+		CharacterManager::instance()->get_player()->enter_bullet_time();
+	});
+}
+
+void PlayerBulletTime::on_enter()
+{
+	Player* player = CharacterManager::instance()->get_player();
+	player->set_animation("bullet_time");
+	player->enter_bullet_time();
+}
+
+void PlayerBulletTime::on_update(float delta)
+{
+	timer.on_update(delta);
+	
+	Player* player = CharacterManager::instance()->get_player();
+	if (!player->get_in_bullet_time())
+	{
+		player->switch_state("idle");
+	}
+}
+
+void PlayerBulletTime::on_exit()
+{
+	// Bullet time state typically doesn't need exit logic
+	BulletTimeManager::instance()->set_status(BulletTimeManager::Status::Exiting);
 }
