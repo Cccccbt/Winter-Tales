@@ -80,6 +80,9 @@ public:
         void on_bite();
         void on_run();
 
+        void enter_hurt_invulnerability();
+        void clear_hurt_invulnerability();
+
         float get_phase_walk_speed() const;
         float get_phase_run_speed() const;
         int get_phase_index() const
