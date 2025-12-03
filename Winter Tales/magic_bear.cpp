@@ -19,17 +19,22 @@ MagicBear::MagicBear()
 
 	hit_box->set_layer_src(CollisionLayer::None);
 	body_hit_box->set_layer_src(CollisionLayer::None);
-	hurt_box->set_layer_src(CollisionLayer::Enemy);
+        hurt_box->set_layer_src(CollisionLayer::Enemy);
 
-	hit_box->set_layer_dst(CollisionLayer::Player);
-	body_hit_box->set_layer_dst(CollisionLayer::Player);
-	hurt_box->set_layer_dst(CollisionLayer::None);
+        hit_box->set_layer_dst(CollisionLayer::Player);
+        body_hit_box->set_layer_dst(CollisionLayer::Player);
+        hurt_box->set_layer_dst(CollisionLayer::None);
 
-	hurt_box->set_on_collide(
-		[this]() 
-		{
-			decrease_hp(1);
-		});
+        hurt_box->set_on_collide(
+                [this]()
+                {
+                        if (is_invulnerable)
+                        {
+                                return;
+                        }
+
+                        on_hurt();
+                });
 
 	AnimationGroup& idle_animation = animation_pool["idle"];
 	Animation& idle_left = idle_animation.left;
@@ -172,14 +177,25 @@ MagicBear::~MagicBear()
 void MagicBear::on_hurt()
 {
         std::cout << "MagicBear hurt! HP: " << hp << std::endl;
-        if (hp <= 0)
-        {
-                switch_state("dead");
-        }
-        else
-        {
-                switch_state("hurt");
-        }
+        enter_hurt_invulnerability();
+
+        switch_state(hp <= 0 ? "dead" : "hurt");
+}
+
+void MagicBear::enter_hurt_invulnerability()
+{
+        is_invulnerable_status.pause();
+        is_invulnerable_blink.pause();
+        is_blink_invisiable = false;
+        is_invulnerable = true;
+}
+
+void MagicBear::clear_hurt_invulnerability()
+{
+        is_invulnerable = false;
+        is_invulnerable_status.pause();
+        is_invulnerable_blink.pause();
+        is_blink_invisiable = false;
 }
 
 void MagicBear::on_input(const ExMessage& msg)

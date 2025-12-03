@@ -67,11 +67,11 @@ void MagicBearIdle::on_update(float delta)
         {
                 bear->switch_state("attack1");
         }
-        else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
+        else if (bear->get_phase_index() >= 2 && (bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
         {
                 bear->switch_state("attack3");
         }
-        else if (bear->get_phase_index() >= 2 && (bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
+        else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
         {
                 bear->switch_state("attack4");
         }
@@ -136,11 +136,11 @@ void MagicBearWalk::on_update(float delta)
         {
                 bear->switch_state("attack1");
         }
-        else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
+        else if (bear->get_phase_index() >= 2 && (bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
         {
                 bear->switch_state("attack3");
         }
-        else if (bear->get_phase_index() >= 2 && (bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
+        else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
         {
                 bear->switch_state("attack4");
         }
@@ -460,6 +460,7 @@ void MagicBearHurt::on_enter()
         bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
         bear->get_hit_box()->set_enabled(false);
         enter_facing_left = bear->get_is_facing_left();
+        bear->enter_hurt_invulnerability();
         hurt_timer.restart();
         std::cout << "MagicBear entered Hurt state." << std::endl;
 }
@@ -480,6 +481,7 @@ void MagicBearHurt::on_exit()
 {
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
         bear->get_hit_box()->set_enabled(false);
+        bear->clear_hurt_invulnerability();
         std::cout << "MagicBear exited Hurt state." << std::endl;
 }
 
