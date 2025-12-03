@@ -587,9 +587,9 @@ PlayerBulletTime::PlayerBulletTime()
 
 void PlayerBulletTime::on_enter()
 {
-	Player* player = CharacterManager::instance()->get_player();
-	player->set_animation("bullet_time");
-	player->enter_bullet_time();
+        Player* player = CharacterManager::instance()->get_player();
+        player->set_animation("bullet_time");
+        player->enter_bullet_time();
 }
 
 void PlayerBulletTime::on_update(float delta)
@@ -605,6 +605,7 @@ void PlayerBulletTime::on_update(float delta)
 
 void PlayerBulletTime::on_exit()
 {
-	// Bullet time state typically doesn't need exit logic
-	BulletTimeManager::instance()->set_status(BulletTimeManager::Status::Exiting);
+        // Bullet time state typically doesn't need exit logic
+        CharacterManager::instance()->get_player()->set_in_bullet_time(false);
+        BulletTimeManager::instance()->set_status(BulletTimeManager::Status::Exiting);
 }

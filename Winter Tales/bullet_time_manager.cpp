@@ -1,4 +1,5 @@
 #include "bullet_time_manager.h"
+#include <cmath>
 
 BulletTimeManager* BulletTimeManager::manager = nullptr;
 
@@ -40,8 +41,8 @@ void BulletTimeManager::set_status(Status new_status)
 
 float BulletTimeManager::on_update(float delta)
 {
-	float delta_progress = SPEED_PROGRESS * delta;
-	progress += (status == Status::Entering) ? delta_progress : -delta_progress;
+        float delta_progress = SPEED_PROGRESS * delta;
+        progress += (status == Status::Entering) ? delta_progress : -delta_progress;
 
 	if (progress < 0.0f)
 	{
@@ -52,8 +53,14 @@ float BulletTimeManager::on_update(float delta)
 		progress = 1.0f;
 	}
 
-	return delta * lerp(1.0f, DST_DELTA_FACTOR, progress);
+        float scaled_delta = delta * lerp(1.0f, DST_DELTA_FACTOR, progress);
+        is_bullet_time_working = std::fabs(scaled_delta - delta) > 1e-6f;
+
+        return scaled_delta;
 }
 
-BulletTimeManager::BulletTimeManager() = default;
+BulletTimeManager::BulletTimeManager()
+        : progress(0.0f)
+{
+}
 BulletTimeManager::~BulletTimeManager() = default;
