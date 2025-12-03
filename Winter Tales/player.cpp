@@ -77,22 +77,9 @@ Player::Player()
 	attack_2_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
 	attack_2_right.add_frame(ResourceManager::instance()->find_image("player_attack_2_right"), 14);
 
-	// Attack 3 Animation
-	AnimationGroup& animation_attack_3 = animation_pool["attack_3"];
-	Animation& attack_3_left = animation_attack_3.left;
-	attack_3_left.set_interval(0.05f);
-	attack_3_left.set_is_loop(false);
-	attack_3_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
-	attack_3_left.add_frame(ResourceManager::instance()->find_image("player_attack_3_left"), 6);
-	Animation& attack_3_right = animation_attack_3.right;
-	attack_3_right.set_interval(0.05f);
-	attack_3_right.set_is_loop(false);
-	attack_3_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
-	attack_3_right.add_frame(ResourceManager::instance()->find_image("player_attack_3_right"), 6);
-
-	// Idle Animation
-	AnimationGroup& animation_idle = animation_pool["idle"];
-	Animation& idle_left = animation_idle.left;
+        // Idle Animation
+        AnimationGroup& animation_idle = animation_pool["idle"];
+        Animation& idle_left = animation_idle.left;
 	idle_left.set_interval(0.1f);
 	idle_left.set_is_loop(true);
 	idle_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
@@ -205,14 +192,13 @@ Player::Player()
 
 	//Initialize StateMachine
 	state_machine.register_state("idle", new PlayerIdle());
-	state_machine.register_state("run", new PlayerRun());
-	state_machine.register_state("jump", new PlayerJump());
-	state_machine.register_state("roll", new PlayerRoll());
-	state_machine.register_state("attack_1", new PlayerAttack1());
-	state_machine.register_state("attack_2", new PlayerAttack2());
-	state_machine.register_state("attack_3", new PlayerAttack3());
-	state_machine.register_state("hurt", new PlayerHurt());
-	state_machine.register_state("dead", new PlayerDead());
+        state_machine.register_state("run", new PlayerRun());
+        state_machine.register_state("jump", new PlayerJump());
+        state_machine.register_state("roll", new PlayerRoll());
+        state_machine.register_state("attack_1", new PlayerAttack1());
+        state_machine.register_state("attack_2", new PlayerAttack2());
+        state_machine.register_state("hurt", new PlayerHurt());
+        state_machine.register_state("dead", new PlayerDead());
 
 	state_machine.set_entry("idle");
 }

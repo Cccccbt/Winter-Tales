@@ -35,10 +35,9 @@ static const std::vector<ImageResInfo> image_info_list =
 
 	{"player_attack_1_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Attack_1.png")},
 	{"player_attack_2_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Attack_2.png")},
-	{"player_attack_3_right", _T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Attack_3.png")},
-	{"player_idle_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Idle.png")},
-	{"player_idle_2_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Idle_2.png")},
-	{"player_run_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Run.png")},
+        {"player_idle_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Idle.png")},
+        {"player_idle_2_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Idle_2.png")},
+        {"player_run_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Run.png")},
 	{"player_hurt_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Hurt.png")},
 	{"player_dead_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Dead.png")},
 	{"player_jump_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Jump.png")},
@@ -130,12 +129,11 @@ void ResourceManager::load()
 	flip_image("little_match_girl_idle_right", "little_match_girl_idle_left");
 	flip_image("little_match_girl_roll_right", "little_match_girl_roll_left");
 
-	// Player sprite flips
-	flip_image("player_attack_1_right", "player_attack_1_left", 9);
-	flip_image("player_attack_2_right", "player_attack_2_left", 14);
-	flip_image("player_attack_3_right", "player_attack_3_left", 6);
-	flip_image("player_idle_right", "player_idle_left", 6);
-	flip_image("player_idle_2_right", "player_idle_2_left", 18);
+        // Player sprite flips
+        flip_image("player_attack_1_right", "player_attack_1_left", 9);
+        flip_image("player_attack_2_right", "player_attack_2_left", 14);
+        flip_image("player_idle_right", "player_idle_left", 6);
+        flip_image("player_idle_2_right", "player_idle_2_left", 18);
 	flip_image("player_run_right", "player_run_left", 10);
 	flip_image("player_hurt_right", "player_hurt_left", 4);
 	flip_image("player_dead_right", "player_dead_left", 4);

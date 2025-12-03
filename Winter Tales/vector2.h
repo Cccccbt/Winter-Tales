@@ -1,112 +1,100 @@
 #pragma once
+
 #include <cmath>
 
-
-//Used in calculation
-
+// Simple 2D vector with basic arithmetic helpers used throughout gameplay
+// code for positioning, velocity, and offset calculations.
 class Vector2
 {
 public:
-	float x, y;
+        float x = 0.0f;
+        float y = 0.0f;
 
-	Vector2() = default;
+        Vector2() = default;
+        Vector2(float a, float b) : x(a), y(b) {}
+        ~Vector2() = default;
 
-	Vector2(float a, float b)
-		:x(a), y(b) {};
+        // Basic arithmetic operators operating component-wise.
+        Vector2 operator+(const Vector2& v) const
+        {
+                return Vector2(x + v.x, y + v.y);
+        }
 
-	~Vector2() = default;
+        Vector2 operator-(const Vector2& v) const
+        {
+                return Vector2(x - v.x, y - v.y);
+        }
 
-	//Vector2 v1 = Vector(2, 4);
-	//Vector2 v2 = vector (3, 4);
-	
-	Vector2 operator+(const Vector2& v)
-	{
-		return Vector2(x + v.x, y + v.y);
-	}
+        Vector2 operator*(const Vector2& v) const
+        {
+                return Vector2(x * v.x, y * v.y);
+        }
 
-	// v1 + v2 == Vector2(5, 8)
+        Vector2 operator/(const Vector2& v) const
+        {
+                return Vector2(x / v.x, y / v.y);
+        }
 
-	Vector2 operator-(const Vector2& v) const
-	{
-		return Vector2(x - v.x, y - v.y);
-	}
+        // Scalar arithmetic for convenient scaling.
+        Vector2 operator+(float num) const
+        {
+                return Vector2(x + num, y + num);
+        }
 
-	Vector2 operator*(const Vector2& v)
-	{
-		return Vector2(x * v.x, y * v.y);
-	}
+        Vector2 operator-(float num) const
+        {
+                return Vector2(x - num, y - num);
+        }
 
-	Vector2 operator/(const Vector2& v)
-	{
-		return Vector2(x / v.x, y / v.y);
-	}
+        Vector2 operator*(float num) const
+        {
+                return Vector2(x * num, y * num);
+        }
 
-	Vector2 operator+(const float& num)
-	{
-		return Vector2(x + num, y + num);
-	}
+        Vector2 operator/(float num) const
+        {
+                return Vector2(x / num, y / num);
+        }
 
-	Vector2 operator-(const float& num)
-	{
-		return Vector2(x - num, y - num);
-	}
+        // In-place arithmetic.
+        void operator+=(const Vector2& v)
+        {
+                x += v.x;
+                y += v.y;
+        }
 
-	Vector2 operator*(float& num)
-	{
-		return Vector2(x * num, y * num);
-	}
+        void operator-=(const Vector2& v)
+        {
+                x -= v.x;
+                y -= v.y;
+        }
 
-	Vector2 operator/(float& num)
-	{
-		return Vector2(x / num, y / num);
-	}
+        void operator*=(const Vector2& v)
+        {
+                x *= v.x;
+                y *= v.y;
+        }
 
-	Vector2 operator*(float scalar) const {
-		return Vector2(x * scalar, y * scalar);
-	}
+        void operator/=(const Vector2& v)
+        {
+                x /= v.x;
+                y /= v.y;
+        }
 
-	void operator+=(const Vector2& v)
-	{
-		x += v.x;
-		y += v.y;
-	}
-	// v1 += v2
+        float length() const
+        {
+                return std::sqrt(x * x + y * y);
+        }
 
-	void operator-=(Vector2& v)
-	{
-		x -= v.x;
-		y -= v.y;
-	}
+        // Normalize in place and return the normalized copy; returns zero vector
+        // when the magnitude is 0 to avoid division by zero.
+        Vector2 normalize()
+        {
+                if (length() == 0)
+                        return Vector2();
+                x = x / length();
+                y = y / length();
 
-	void operator*=(Vector2& v)
-	{
-		x *= v.x;
-		y *= v.y;
-	}
-
-	void operator/=(Vector2& v)
-	{
-		x /= v.x;
-		y /= v.y;
-	}
-
-	float length()
-	{
-		return sqrt(x * x + y * y);
-	}
-
-	Vector2 normalize()
-	{
-		if (this->length() == 0)
-			return Vector2();
-		x = x / this->length();
-		y = y / this->length();
-
-		return Vector2(x, y);
-	}
-
-	Vector2 operator+(const Vector2& v) const
-	{
-		return Vector2(x + v.x, y + v.y);
-	}
+                return Vector2(x, y);
+        }
 };

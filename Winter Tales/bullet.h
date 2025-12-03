@@ -1,64 +1,66 @@
 #pragma once
+
+#include <unordered_map>
+#include "animation.h"
+#include "collision_box.h"
+#include "state_machine.h"
 #include "state_node.h"
 #include "timer.h"
 #include "vector2.h"
-#include "collision_box.h"
-#include "animation.h"
-#include "state_machine.h"
-#include <unordered_map>
 
+// Projectile fired by the player.
 class Bullet
 {
 public:
-	Bullet(bool is_facing_left = false, const Vector2& position = Vector2());
-	~Bullet();
-	void on_update(float delta);
-	void on_render();
+        Bullet(bool is_facing_left = false, const Vector2& position = Vector2());
+        ~Bullet();
 
-	void set_position(const Vector2& position)
-	{
-		this->position = position;
-	}
+        void on_update(float delta);
+        void on_render();
 
-	const Vector2& get_position() const
-	{
-		return position;
-	}
+        void set_position(const Vector2& position)
+        {
+                this->position = position;
+        }
 
-	CollisionBox* get_hit_box()
-	{
-		return hit_box;
-	}
+        const Vector2& get_position() const
+        {
+                return position;
+        }
 
-	void set_facing_left(bool flag)
-	{
-		is_facing_left = flag;
-	}
+        CollisionBox* get_hit_box()
+        {
+                return hit_box;
+        }
 
-	void set_enabled(bool flag)
-	{
-		is_enabled = flag;
-	}
+        void set_facing_left(bool flag)
+        {
+                is_facing_left = flag;
+        }
 
-	bool get_enabled() const
-	{
-		return is_enabled;
-	}
+        void set_enabled(bool flag)
+        {
+                is_enabled = flag;
+        }
 
-	bool get_facing_left() const
-	{
-		return is_facing_left;
-	}
+        bool get_enabled() const
+        {
+                return is_enabled;
+        }
 
-	void on_destroy();
+        bool get_facing_left() const
+        {
+                return is_facing_left;
+        }
 
+        void on_destroy();
 
 private:
-	Vector2 position;
-	const Vector2 SPEED = Vector2(300.0f, 0.0f);
-	bool is_facing_left = false;
-	bool is_enabled = true;
-	CollisionBox* hit_box;
-	AnimationGroup* current_animation;
-	std::unordered_map<std::string, AnimationGroup> animation_pool;
+        Vector2 position;
+        const Vector2 SPEED = Vector2(300.0f, 0.0f);
+        bool is_facing_left = false;
+        bool is_enabled = true;
+        CollisionBox* hit_box;
+        AnimationGroup* current_animation;
+        std::unordered_map<std::string, AnimationGroup> animation_pool;
 };

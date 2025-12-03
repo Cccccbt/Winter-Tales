@@ -8,8 +8,6 @@ static const char* get_next_attack_state(const Player* player)
         {
         case 1:
                 return "attack_2";
-        case 2:
-                return "attack_3";
         default:
                 return "attack_1";
         }
@@ -145,17 +143,7 @@ void PlayerAttack2::on_update(float delta)
 
 
         Player* player = CharacterManager::instance()->get_player();
-		player->set_velocity(Vector2(0, player->get_velocity().y));
-
-        // Allow chaining to the third attack while the second animation is playing
-        if (player->can_attack() && !player->get_attacking())
-        {
-                if (player->get_attack_combo() == 2 && player->is_attack3_available())
-                {
-                        player->switch_state("attack_3");
-                        return;
-                }
-        }
+                player->set_velocity(Vector2(0, player->get_velocity().y));
 
         if (player->get_hp() <= 0)
         {
@@ -192,82 +180,10 @@ void PlayerAttack2::update_hit_box_position()
 
 }
 
-PlayerAttack3::PlayerAttack3()
-{
-	timer.set_wait_time(0.35f);
-	timer.set_one_shot(true);
-	// FIXED: Use []
-	timer.set_callback([]()
-	{
-		CharacterManager::instance()->get_player()->set_attacking(false);
-	});
-}
-
-void PlayerAttack3::on_enter()
-{
-        Player* player = CharacterManager::instance()->get_player();
-        player->set_animation("attack_3");
-        player->set_attacking(true);
-        player->on_attack();
-        player->disable_attack3();
-
-
-	CollisionBox* hit_box = player->get_hit_box();
-	// MOVED: Set hit box size here in on_enter(), not in constructor
-	hit_box->set_size(Vector2(16, 16)); // Reset to default size
-	hit_box->set_enabled(true);
-	update_hit_box_position();
-
-	timer.restart();
-	std::cout << "Enter PlayerAttack3, attack_combo " << player->get_attack_combo() << std::endl;
-}
-
-void PlayerAttack3::on_update(float delta)
-{
-	timer.on_update(delta);
-	update_hit_box_position();
-
-	Player* player = CharacterManager::instance()->get_player();
-	player->set_velocity(Vector2(0, player->get_velocity().y));
-
-	if (player->get_hp() <= 0)
-	{
-		player->switch_state("dead");
-	}
-	else if (!player->get_attacking())
-	{
-		if (player->get_move_axis() == 0)
-		{
-			player->switch_state("idle");
-		}
-		else if (player->is_on_floor())
-		{
-			player->switch_state("run");
-		}
-	}
-}
-
-void PlayerAttack3::on_exit()
-{
-	CollisionBox* hit_box = CharacterManager::instance()->get_player()->get_hit_box();
-	hit_box->set_enabled(false);
-	CharacterManager::instance()->get_player()->set_attacking(false);
-	std::cout << "Exit PlayerAttack3, attack_combo " << CharacterManager::instance()->get_player()->get_attack_combo() << std::endl;
-}
-
-void PlayerAttack3::update_hit_box_position()
-{
-	Player* player = CharacterManager::instance()->get_player();
-	CollisionBox* hit_box = player->get_hit_box();
-	Vector2 player_pos = player->get_position();
-	Vector2 hit_box_size = hit_box->get_size();
-	hit_box->set_position(player->get_logical_center() + (player->get_is_facing_left() ? Vector2(-30, -20) : Vector2(30, -20)));
-}
-
 PlayerDead::PlayerDead()
 {
-	timer.set_wait_time(2.0f);
-	timer.set_one_shot(true);
+        timer.set_wait_time(2.0f);
+        timer.set_one_shot(true);
 	// FIXED: Use []
 	timer.set_callback([]()
 	{
