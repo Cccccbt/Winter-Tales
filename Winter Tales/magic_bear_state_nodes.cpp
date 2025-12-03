@@ -292,11 +292,12 @@ MagicBearAttack3::~MagicBearAttack3()
 void MagicBearAttack3::on_enter()
 {
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+        bear->mark_attack3_used();
         bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
         bear->set_animation("attack3");
         //bear->on_ray();
         bear->get_hit_box()->set_enabled(false);
-		enter_facing_left = bear->get_is_facing_left();
+                enter_facing_left = bear->get_is_facing_left();
         timer_attack.restart();
 		timer_ray.restart();
         std::cout << "MagicBear entered Attack3 state." << std::endl;

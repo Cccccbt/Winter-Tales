@@ -522,12 +522,17 @@ void MagicBear::update_phase()
 
 bool MagicBear::consume_pending_sneer()
 {
-	if (pending_phase_sneer)
-	{
-		pending_phase_sneer = false;
-		return true;
-	}
-	return false;
+        if (pending_phase_sneer)
+        {
+                pending_phase_sneer = false;
+                return true;
+        }
+        return false;
+}
+
+void MagicBear::mark_attack3_used()
+{
+        attack3_used = true;
 }
 
 

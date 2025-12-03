@@ -21,15 +21,15 @@ public:
 		return can_attack_ball() || can_attack_ray() || can_attack_bite();
 	};
 
-	bool can_attack_ball() const
-	{
-		return !is_global_attack_on_cd && !is_ball_on_cd;
-	};
+        bool can_attack_ball() const
+        {
+                return !is_global_attack_on_cd && !is_ball_on_cd;
+        };
 
-	bool can_attack_ray() const
-	{
-		return !is_global_attack_on_cd && !is_ray_on_cd;
-	};
+        bool can_attack_ray() const
+        {
+                return !attack3_used && phase == 3 && !is_global_attack_on_cd && !is_ray_on_cd;
+        };
 
 	Vector2 get_logical_center() const
 	{
@@ -92,6 +92,12 @@ public:
 
         bool consume_pending_sneer();
 
+        void mark_attack3_used();
+        bool has_used_attack3() const
+        {
+                return attack3_used;
+        }
+
         void start_global_attack_cooldown();
         void start_attack1_cooldown();
         void start_attack2_cooldown();
@@ -113,6 +119,7 @@ private:
         float hp_max = 10.0f;
         int phase = 1;
         bool pending_phase_sneer = false;
+        bool attack3_used = false;
 
         bool is_global_attack_on_cd = false;
         bool is_ball_on_cd = false;
