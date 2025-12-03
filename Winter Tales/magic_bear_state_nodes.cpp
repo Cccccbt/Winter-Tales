@@ -67,11 +67,11 @@ void MagicBearIdle::on_update(float delta)
         {
                 bear->switch_state("attack1");
         }
-        else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
+        else if (bear->get_phase_index() >= 2 && (bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
         {
                 bear->switch_state("attack3");
         }
-        else if (bear->get_phase_index() >= 2 && (bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
+        else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
         {
                 bear->switch_state("attack4");
         }
@@ -136,11 +136,11 @@ void MagicBearWalk::on_update(float delta)
         {
                 bear->switch_state("attack1");
         }
-        else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
+        else if (bear->get_phase_index() >= 2 && (bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
         {
                 bear->switch_state("attack3");
         }
-        else if (bear->get_phase_index() >= 2 && (bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
+        else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
         {
                 bear->switch_state("attack4");
         }
@@ -345,6 +345,29 @@ MagicBearAttack4::MagicBearAttack4()
         {
                 CharacterManager::instance()->get_magic_bear()->switch_state("idle");
         });
+
+        timer_ball.set_wait_time(0.45f);
+        timer_ball.set_one_shot(false);
+        timer_ball.set_callback([this]()
+        {
+                MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+                if (ball_cast_count < 3)
+                {
+                        if (bear->on_ball())
+                        {
+                                ++ball_cast_count;
+                        }
+                        else
+                        {
+                                timer_ball.pause();
+                                return;
+                        }
+                        if (ball_cast_count >= 3)
+                        {
+                                timer_ball.pause();
+                        }
+                }
+        });
 }
 
 MagicBearAttack4::~MagicBearAttack4()
@@ -358,16 +381,28 @@ void MagicBearAttack4::on_enter()
         bear->set_animation("attack4");
         //bear->on_ball();
         bear->get_hit_box()->set_enabled(false);
-		enter_facing_left = bear->get_is_facing_left();
+                enter_facing_left = bear->get_is_facing_left();
         timer_attack.restart();
+        ball_cast_count = 0;
+        bool spawned_first_ball = bear->on_ball();
+        if (spawned_first_ball)
+        {
+                ++ball_cast_count;
+                timer_ball.restart();
+        }
+        else
+        {
+                timer_ball.pause();
+        }
         std::cout << "MagicBear entered Attack4 state." << std::endl;
 }
 
 void MagicBearAttack4::on_update(float delta)
 {
         timer_attack.on_update(delta);
+        timer_ball.on_update(delta);
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
-		bear->set_is_facing_left(enter_facing_left);
+                bear->set_is_facing_left(enter_facing_left);
         if (bear->get_hp() <= 0)
         {
                 bear->switch_state("dead");
@@ -378,6 +413,7 @@ void MagicBearAttack4::on_update(float delta)
 void MagicBearAttack4::on_exit()
 {
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+        timer_ball.pause();
         bear->start_attack4_cooldown();
         bear->start_global_attack_cooldown();
         std::cout << "MagicBear exited Attack4 state." << std::endl;
@@ -460,6 +496,7 @@ void MagicBearHurt::on_enter()
         bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
         bear->get_hit_box()->set_enabled(false);
         enter_facing_left = bear->get_is_facing_left();
+        bear->enter_hurt_invulnerability();
         hurt_timer.restart();
         std::cout << "MagicBear entered Hurt state." << std::endl;
 }
@@ -480,6 +517,7 @@ void MagicBearHurt::on_exit()
 {
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
         bear->get_hit_box()->set_enabled(false);
+        bear->clear_hurt_invulnerability();
         std::cout << "MagicBear exited Hurt state." << std::endl;
 }
 

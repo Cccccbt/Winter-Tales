@@ -86,9 +86,11 @@ public:
 	virtual void on_update(float delta) override;
 	virtual void on_exit() override;
 private:
-	Timer timer_attack;
-	void update_collision_box();
-	bool enter_facing_left;
+        Timer timer_attack;
+        Timer timer_ball;
+        void update_collision_box();
+        bool enter_facing_left;
+        int ball_cast_count = 0;
 };
 
 class MagicBearSneer : public StateNode
