@@ -38,7 +38,7 @@ private:
 	Timer timer_color_change;
 	Timer timer_life;
 	Vector2 position;
-	const Vector2 size = Vector2(576.0f, 14.0f);
+	const Vector2 size = Vector2(276.0f, 14.0f);
 	bool is_facing_left = false;
 	bool is_enabled = true;
 	CollisionBox* hit_box = nullptr;

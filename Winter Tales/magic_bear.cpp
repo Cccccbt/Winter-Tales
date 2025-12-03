@@ -1,4 +1,4 @@
-#include "magic_bear.h"
+﻿#include "magic_bear.h"
 #include <algorithm>
 
 MagicBear::MagicBear()
