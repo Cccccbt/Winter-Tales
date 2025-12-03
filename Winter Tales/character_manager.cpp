@@ -1,6 +1,7 @@
 #include "character_manager.h"
 #include "player.h"
 #include "magic_bear.h"
+#include "bullet_time_manager.h"
 
 CharacterManager* CharacterManager::character_manager = nullptr;
 
@@ -62,8 +63,8 @@ void CharacterManager::on_update(float delta)
 		
 	}
 	
-	player->on_update(delta);
 	magic_bear->on_update(delta);
+	player->on_update(delta);
 }
 
 void CharacterManager::on_render()
@@ -72,8 +73,12 @@ void CharacterManager::on_render()
 	{
 		i->second->on_render();
 	}
-	player->on_render();
+
 	magic_bear->on_render();
+
+	BulletTimeManager::instance()->post_process();
+
+	player->on_render();
 }
 
 CharacterManager::CharacterManager()
