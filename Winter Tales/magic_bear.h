@@ -80,6 +80,9 @@ public:
         void on_bite();
         void on_run();
 
+        void enter_hurt_invulnerability();
+        void clear_hurt_invulnerability();
+
         float get_phase_walk_speed() const;
         float get_phase_run_speed() const;
         int get_phase_index() const
@@ -97,7 +100,7 @@ public:
         void update_attack_cooldowns(float delta);
 private:
         const float GLOBAL_ATTACK_CD = 1.0f;
-        const float BALL_ATTACK_CD = 3.0f;
+        const float BALL_ATTACK_CD = 5.0f;
         const float RAY_ATTACK_CD = 5.0f;
         const float BITE_ATTACK_CD = 2.0f;
         const float RUN_ATTACK_CD = 2.0f;
