@@ -19,7 +19,7 @@ public:
 private:
 	static BulletTimeManager* manager;
 
-	float progress;
+        float progress = 0.0f;
 	Status status = Status::Exiting;
 	const float SPEED_PROGRESS = 2.0f;
 	const float DST_DELTA_FACTOR = 0.25f;
