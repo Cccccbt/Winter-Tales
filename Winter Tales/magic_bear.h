@@ -21,15 +21,15 @@ public:
 		return can_attack_ball() || can_attack_ray() || can_attack_bite();
 	};
 
-	bool can_attack_ball() const
-	{
-		return !is_global_attack_on_cd && !is_ball_on_cd;
-	};
+        bool can_attack_ball() const
+        {
+                return !is_global_attack_on_cd && !is_ball_on_cd;
+        };
 
-	bool can_attack_ray() const
-	{
-		return !is_global_attack_on_cd && !is_ray_on_cd;
-	};
+        bool can_attack_ray() const
+        {
+                return !attack3_used && phase == 3 && !is_global_attack_on_cd && !is_ray_on_cd;
+        };
 
 	Vector2 get_logical_center() const
 	{
@@ -41,10 +41,15 @@ public:
 		return !is_global_attack_on_cd && !is_bite_on_cd;
 	};
 
-	bool can_attack_run() const
-	{
-		return !is_global_attack_on_cd && !is_run_on_cd;
-	};
+        bool can_attack_run() const
+        {
+                return !is_global_attack_on_cd && !is_run_on_cd;
+        };
+
+        bool is_global_attack_cooling() const
+        {
+                return is_global_attack_on_cd;
+        }
 
 	float get_walk_speed() const
 	{
@@ -68,33 +73,77 @@ public:
 	virtual void on_hurt() override;
 	virtual void on_input(const ExMessage& msg) override;
 	virtual void on_update(float delta) override;
-	virtual void on_render() override;
+        virtual void on_render() override;
 
-	void on_ball();
-	void on_ray();
-	void on_bite();
-	void on_run();
+        bool on_ball();
+        void on_ray(bool);
+        void on_bite();
+        void on_run();
+
+        void enter_hurt_invulnerability();
+        void clear_hurt_invulnerability();
+
+        float get_phase_walk_speed() const;
+        float get_phase_run_speed() const;
+        int get_phase_index() const
+        {
+                return phase;
+        }
+
+        bool consume_pending_sneer();
+
+        void mark_attack3_used();
+        bool has_used_attack3() const
+        {
+                return attack3_used;
+        }
+
+        void start_global_attack_cooldown();
+        void start_attack1_cooldown();
+        void start_attack2_cooldown();
+        void start_attack3_cooldown();
+        void start_attack4_cooldown();
+        void update_attack_cooldowns(float delta);
 private:
-	const float GLOBAL_ATTACK_CD = 1.0f;
-	const float BALL_ATTACK_CD = 3.0f;
-	const float RAY_ATTACK_CD = 5.0f;
-	const float BITE_ATTACK_CD = 2.0f;
-	const float RUN_ATTACK_CD = 2.0f;
-	const float WALK_SPEED = 150.0f;
-	const float RUN_SPEED = 250.0f;
-	const float CLOSE_RANGE = 100.0f;
-	const float FAR_RANGE = 300.0f;
-	const float MID_RANGE = 200.0f;
+        const float GLOBAL_ATTACK_CD = 1.0f;
+        const float BALL_ATTACK_CD = 5.0f;
+        const float RAY_ATTACK_CD = 5.0f;
+        const float BITE_ATTACK_CD = 2.0f;
+        const float RUN_ATTACK_CD = 2.0f;
+        const float WALK_SPEED = 150.0f;
+        const float RUN_SPEED = 250.0f;
+        const float CLOSE_RANGE = 50.0f;
+        const float FAR_RANGE = 300.0f;
+        const float MID_RANGE = 200.0f;
 
-	bool is_global_attack_on_cd = false;
-	bool is_ball_on_cd = false;
-	bool is_ray_on_cd = false;
-	bool is_bite_on_cd = false;
-	bool is_run_on_cd = false;
+        float hp_max = 10.0f;
+        int phase = 1;
+        bool pending_phase_sneer = false;
+        bool attack3_used = false;
 
-	bool is_balling = false;
-	bool is_raying = false;
-	bool is_biting = false;
+        bool is_global_attack_on_cd = false;
+        bool is_ball_on_cd = false;
+        bool is_ray_on_cd = false;
+        bool is_bite_on_cd = false;
+        bool is_run_on_cd = false;
+
+        Timer global_cd_timer;
+        Timer ball_cd_timer;
+        Timer ray_cd_timer;
+        Timer bite_cd_timer;
+        Timer run_cd_timer;
+
+        void setup_cooldown_timers();
+        float get_phase_based_global_cd() const;
+        float get_attack1_cd() const;
+        float get_attack2_cd() const;
+        float get_attack3_cd() const;
+        float get_attack4_cd() const;
+        void update_phase();
+
+        bool is_balling = false;
+        bool is_raying = false;
+        bool is_biting = false;
 
 	CollisionBox* body_hit_box = nullptr;
 

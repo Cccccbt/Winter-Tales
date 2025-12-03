@@ -11,7 +11,7 @@ Bullet::Bullet(bool is_facing_left, const Vector2& position)
 	hit_box = CollisionManager::instance()->create_collision_box();
 	if (hit_box) {
 		hit_box->set_size(Vector2(16, 8));
-		hit_box->set_layer_src(CollisionLayer::Player);
+		hit_box->set_layer_src(CollisionLayer::None);
 		hit_box->set_layer_dst(CollisionLayer::Enemy);
 		hit_box->set_enabled(true);
 		hit_box->set_position(position);

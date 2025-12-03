@@ -20,12 +20,28 @@ MagicBearRay::MagicBearRay(bool is_facing_left, const Vector2& position)
 		});
 	timer_life.restart();
 	timer_color_change.restart();
+	
 	hit_box = CollisionManager::instance()->create_collision_box();
 	hit_box->set_size(size);
 	hit_box->set_layer_src(CollisionLayer::None);
 	hit_box->set_layer_dst(CollisionLayer::Player);
 	hit_box->set_enabled(true);
-	hit_box->set_position(position);
+	
+	// Position the ray based on facing direction
+	// If facing left, extend ray to the left; if facing right, extend to the right
+	Vector2 ray_position;
+	if (is_facing_left)
+	{
+		// Ray extends to the left from the bear's position
+		ray_position = Vector2(position.x - size.x / 2.0f, position.y);
+	}
+	else
+	{
+		// Ray extends to the right from the bear's position
+		ray_position = Vector2(position.x + size.x / 2.0f, position.y);
+	}
+	
+	hit_box->set_position(ray_position);
 }
 
 MagicBearRay::~MagicBearRay()
@@ -45,10 +61,23 @@ void MagicBearRay::on_render()
 {
 	if (!is_enabled) return;
 
-	int x = (int)position.x;
-	int y = (int)position.y;
+	// Calculate render position based on facing direction
 	int width = (int)size.x;
 	int height = (int)size.y;
+	int x, y;
+	
+	if (is_facing_left)
+	{
+		// Render ray extending to the left
+		x = (int)(position.x - width);
+		y = (int)(position.y - height / 2);
+	}
+	else
+	{
+		// Render ray extending to the right
+		x = (int)position.x;
+		y = (int)(position.y - height / 2);
+	}
 
 	COLORREF color;
 	switch (current_color)

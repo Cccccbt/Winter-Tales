@@ -150,7 +150,7 @@ void PlayerAttack2::on_update(float delta)
         // Allow chaining to the third attack while the second animation is playing
         if (player->can_attack() && !player->get_attacking())
         {
-                if (player->get_attack_combo() == 2)
+                if (player->get_attack_combo() == 2 && player->is_attack3_available())
                 {
                         player->switch_state("attack_3");
                         return;
@@ -205,10 +205,11 @@ PlayerAttack3::PlayerAttack3()
 
 void PlayerAttack3::on_enter()
 {
-	Player* player = CharacterManager::instance()->get_player();
-	player->set_animation("attack_3");
-	player->set_attacking(true);
-	player->on_attack();
+        Player* player = CharacterManager::instance()->get_player();
+        player->set_animation("attack_3");
+        player->set_attacking(true);
+        player->on_attack();
+        player->disable_attack3();
 
 
 	CollisionBox* hit_box = player->get_hit_box();
@@ -312,21 +313,18 @@ void PlayerIdle::on_update(float delta)
 		player->switch_state("dead");
 	}
 
-	else if (player->can_attack())
-	{
-		switch (player->get_attack_combo())
-		{
-		case 0:
-			player->switch_state("attack_1");
-			break;
-		case 1:
-			player->switch_state("attack_2");
-			break;
-		case 2:
-			player->switch_state("attack_3");
-			break;
-		}
-	}
+        else if (player->can_attack())
+        {
+                switch (player->get_attack_combo())
+                {
+                case 0:
+                        player->switch_state("attack_1");
+                        break;
+                case 1:
+                        player->switch_state("attack_2");
+                        break;
+                }
+        }
 
 	else if (player->get_move_axis() != 0)
 	{
@@ -360,14 +358,18 @@ void PlayerJump::on_enter()
 	Player* player = CharacterManager::instance()->get_player();
 	player->set_animation("jump");
 	player->on_jump();
-	has_left_ground = false;  // Reset flag when entering jump state
+	has_left_ground = false;  // Reset flag
 	std::cout << "Enter Jump" << std::endl;
-	//Play jump sound
 }
 
 void PlayerJump::on_update(float delta)
 {
 	Player* player = CharacterManager::instance()->get_player();
+	
+	// Debug output to diagnose the issue
+	std::cout << "Jump Update - OnFloor: " << player->is_on_floor() 
+	          << " HasLeftGround: " << has_left_ground 
+	          << " VelY: " << player->get_velocity().y << std::endl;
 	
 	if (player->get_hp() <= 0)
 	{
@@ -379,39 +381,47 @@ void PlayerJump::on_update(float delta)
         if (player->can_attack())
         {
                 player->switch_state(get_next_attack_state(player));
-                std::cout << "Exit Jump to Attack";
+                std::cout << "Exit Jump to Attack\n";
                 return;
         }
 
-	// Track when player leaves the ground
-	if (!player->is_on_floor())
-	{
-		has_left_ground = true;
-	}
+        if (player->can_roll())
+        {
+                player->switch_state("roll");
+                std::cout << "Exit Jump to Roll\n";
+                return;
+        }
 
-	// Only transition when:
-	// 1. Player has left the ground (prevents immediate exit)
-	// 2. Player is falling downward (velocity.y > 0)
-	// 3. Player touches the floor
-	if (has_left_ground && player->is_on_floor())
+        // Mark as having left ground once we're airborne
+        if (!player->is_on_floor())
+        {
+                has_left_ground = true;
+        }
+
+	// Only allow landing if:
+	// 1. We've left the ground (prevents immediate exit)
+	// 2. We're currently on the floor
+	// 3. We're falling (velocity.y >= 0, not moving upward)
+	if (has_left_ground && player->is_on_floor() && player->get_velocity().y >= 0)
 	{
 		player->on_land();
+		std::cout << "Landing detected!\n";
+		
 		if (player->get_move_axis() == 0)
 		{
 			player->switch_state("idle");
-			std::cout<<"Exit Jump to Idle\n";
+			std::cout << "Exit Jump to Idle\n";
 		}
 		else
 		{
 			player->switch_state("run");
-			std::cout << "Exit Jump to Run";
+			std::cout << "Exit Jump to Run\n";
 		}
 	}
 }
 
 void PlayerJump::on_exit()
 {
-	// Jump state typically doesn't need exit logic
 	std::cout << "Exit Jump\n";
 }
 
@@ -442,15 +452,19 @@ void PlayerRoll::on_update(float delta)
 {
 	timer.on_update(delta);
 
-	Player* player = CharacterManager::instance()->get_player();
-	if (!player->get_rolling())
-	{
-		if (player->get_move_axis() != 0)
-		{
-			player->switch_state("run");
-		}
-		else if (player->can_jump())
-		{
+        Player* player = CharacterManager::instance()->get_player();
+        if (!player->get_rolling())
+        {
+                if (!player->is_on_floor())
+                {
+                        player->switch_state("jump");
+                }
+                else if (player->get_move_axis() != 0)
+                {
+                        player->switch_state("run");
+                }
+                else if (player->can_jump())
+                {
 			player->switch_state("jump");
 		}
 
@@ -488,21 +502,18 @@ void PlayerRun::on_update(float delta)
 	{
 		player->switch_state("dead");
 	}
-	else if (player->can_attack())
-	{
-		switch (player->get_attack_combo())
-		{
-		case 0:
-			player->switch_state("attack_1");
-			break;
-		case 1:
-			player->switch_state("attack_2");
-			break;
-		case 2:
-			player->switch_state("attack_3");
-			break;
-		}
-	}
+        else if (player->can_attack())
+        {
+                switch (player->get_attack_combo())
+                {
+                case 0:
+                        player->switch_state("attack_1");
+                        break;
+                case 1:
+                        player->switch_state("attack_2");
+                        break;
+                }
+        }
 	else if (player->get_move_axis() == 0)
 	{
 		player->switch_state("idle");
