@@ -59,11 +59,14 @@ public:
 		return hurt_box;
 	}
 
-	void make_invulnerable()
-	{
-		is_invulnerable = true;
-		is_invulnerable_status.restart();
-	}
+        void make_invulnerable()
+        {
+                is_invulnerable = true;
+                is_invulnerable_status.restart();
+                is_invulnerable_blink.restart();
+                is_invulnerable_blink.resume();
+                is_blink_invisiable = false;
+        }
 
 	bool get_is_facing_left() const
 	{

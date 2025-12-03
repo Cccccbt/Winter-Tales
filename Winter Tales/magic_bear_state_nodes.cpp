@@ -439,6 +439,50 @@ void MagicBearSneer::on_exit()
         std::cout << "MagicBear exited Sneer state." << std::endl;
 }
 
+MagicBearHurt::MagicBearHurt()
+{
+        hurt_timer.set_wait_time(0.6f);
+        hurt_timer.set_one_shot(true);
+        hurt_timer.set_callback([]()
+        {
+                CharacterManager::instance()->get_magic_bear()->switch_state("idle");
+        });
+}
+
+MagicBearHurt::~MagicBearHurt()
+{
+}
+
+void MagicBearHurt::on_enter()
+{
+        MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+        bear->set_animation("hurt");
+        bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
+        bear->get_hit_box()->set_enabled(false);
+        enter_facing_left = bear->get_is_facing_left();
+        hurt_timer.restart();
+        std::cout << "MagicBear entered Hurt state." << std::endl;
+}
+
+void MagicBearHurt::on_update(float delta)
+{
+        hurt_timer.on_update(delta);
+        MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+        bear->set_is_facing_left(enter_facing_left);
+        if (bear->get_hp() <= 0)
+        {
+                bear->switch_state("dead");
+                return;
+        }
+}
+
+void MagicBearHurt::on_exit()
+{
+        MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+        bear->get_hit_box()->set_enabled(false);
+        std::cout << "MagicBear exited Hurt state." << std::endl;
+}
+
 MagicBearDead::MagicBearDead()
 {
 }
