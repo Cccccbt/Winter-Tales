@@ -1,4 +1,4 @@
-#include "magic_bear_state_nodes.h"
+﻿#include "magic_bear_state_nodes.h"
 #include <iostream>
 MagicBearIdle::MagicBearIdle()
 {
@@ -28,53 +28,54 @@ void MagicBearIdle::on_enter()
 
 void MagicBearIdle::on_update(float delta)
 {
-        MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+    MagicBear* bear = CharacterManager::instance()->get_magic_bear();
 
-        timer_idle.on_update(delta);
+    timer_idle.on_update(delta);
 
-        if (bear->get_hp() <= 0)
-        {
-                bear->switch_state("dead");
-                return;
-        }
+    if (bear->get_hp() <= 0)
+    {
+        bear->switch_state("dead");
+        return;
+    }
 
-        if (bear->consume_pending_sneer())
-        {
-                bear->switch_state("sneer");
-                return;
-        }
+    if (bear->consume_pending_sneer())
+    {
+        bear->switch_state("sneer");
+        return;
+    }
 
-        if (bear->is_global_attack_cooling())
-        {
-                if (!bear->is_player_in_close_range())
-                {
-                        bear->switch_state("walk");
-                }
-                return;
-        }
-
+    if (bear->is_global_attack_cooling())
+    {
         if (!bear->is_player_in_close_range())
         {
-                bear->switch_state("walk");
-                return;
+            bear->switch_state("walk");
         }
+        return;
+    }
 
-        if (bear->is_player_in_close_range() && bear->can_attack_run())
-        {
-                bear->switch_state("attack2");
-        }
-        else if (bear->is_player_in_close_range() && bear->can_attack_bite())
-        {
-                bear->switch_state("attack1");
-        }
-        else if (bear->get_phase_index() >= 2 && (bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
-        {
-                bear->switch_state("attack3");
-        }
-        else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
-        {
-                bear->switch_state("attack4");
-        }
+    if (!bear->is_player_in_close_range())
+    {
+        bear->switch_state("walk");
+        return;
+    }
+
+    // ✅ FIXED: Check attacks in order 1 → 2 → 3 → 4
+    if (bear->is_player_in_close_range() && bear->can_attack_bite())
+    {
+        bear->switch_state("attack1");  // Attack 1: Bite (close range)
+    }
+    else if (bear->is_player_in_close_range() && bear->can_attack_run())
+    {
+        bear->switch_state("attack2");  // Attack 2: Run (close range)
+    }
+    else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
+    {
+        bear->switch_state("attack3");  // Attack 3: Ray (mid/far range)
+    }
+    else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
+    {
+        bear->switch_state("attack4");  // Attack 4: Ball (mid/far range)
+    }
 
 }
 void MagicBearIdle::on_exit()
@@ -111,39 +112,40 @@ void MagicBearWalk::on_enter()
 
 void MagicBearWalk::on_update(float delta)
 {
-        MagicBear* bear = CharacterManager::instance()->get_magic_bear();
-        bear->set_velocity(Vector2(bear->get_is_facing_left() ? -bear->get_phase_walk_speed() : bear->get_phase_walk_speed(), bear->get_velocity().y));
+    MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+    bear->set_velocity(Vector2(bear->get_is_facing_left() ? -bear->get_phase_walk_speed() : bear->get_phase_walk_speed(), bear->get_velocity().y));
 
-        timer_walk.on_update(delta);
+    timer_walk.on_update(delta);
 
-        if (bear->get_hp() <= 0)
-        {
-                bear->switch_state("dead");
-                return;
-        }
+    if (bear->get_hp() <= 0)
+    {
+        bear->switch_state("dead");
+        return;
+    }
 
-        if (bear->consume_pending_sneer())
-        {
-                bear->switch_state("sneer");
-                return;
-        }
+    if (bear->consume_pending_sneer())
+    {
+        bear->switch_state("sneer");
+        return;
+    }
 
-        if (bear->is_player_in_close_range() && bear->can_attack_run())
-        {
-                bear->switch_state("attack2");
-        }
-        else if (bear->is_player_in_close_range() && bear->can_attack_bite())
-        {
-                bear->switch_state("attack1");
-        }
-        else if (bear->get_phase_index() >= 2 && (bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
-        {
-                bear->switch_state("attack3");
-        }
-        else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
-        {
-                bear->switch_state("attack4");
-        }
+    // ✅ FIXED: Check attacks in order 1 → 2 → 3 → 4
+    if (bear->is_player_in_close_range() && bear->can_attack_bite())
+    {
+        bear->switch_state("attack1");  // Attack 1: Bite (close range)
+    }
+    else if (bear->is_player_in_close_range() && bear->can_attack_run())
+    {
+        bear->switch_state("attack2");  // Attack 2: Run (close range)
+    }
+    else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
+    {
+        bear->switch_state("attack3");  // Attack 3: Ray (mid/far range)
+    }
+    else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
+    {
+        bear->switch_state("attack4");  // Attack 4: Ball (mid/far range)
+    }
 }
 void MagicBearWalk::on_exit()
 {
@@ -548,6 +550,18 @@ void MagicBearDead::on_exit()
 	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
 	std::cout << "MagicBear exited Dead state." << std::endl;
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
