@@ -196,17 +196,30 @@ Player::Player()
 
 
 	// Charge Animation
-	AnimationGroup& animation_charge = animation_pool["charge"];
-	Animation& charge_left = animation_charge.left;
-	charge_left.set_interval(0.08f);
-	charge_left.set_is_loop(true);
-	charge_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
-	charge_left.add_frame(ResourceManager::instance()->find_image("player_charge_left"), 6);
-	Animation& charge_right = animation_charge.right;
-	charge_right.set_interval(0.08f);
-	charge_right.set_is_loop(true);
-	charge_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
-	charge_right.add_frame(ResourceManager::instance()->find_image("player_charge_right"), 6);
+        AnimationGroup& animation_charge = animation_pool["charge"];
+        Animation& charge_left = animation_charge.left;
+        charge_left.set_interval(0.08f);
+        charge_left.set_is_loop(true);
+        charge_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
+        charge_left.add_frame(ResourceManager::instance()->find_image("player_charge_left"), 6);
+        Animation& charge_right = animation_charge.right;
+        charge_right.set_interval(0.08f);
+        charge_right.set_is_loop(true);
+        charge_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
+        charge_right.add_frame(ResourceManager::instance()->find_image("player_charge_right"), 6);
+
+        // Bullet Time Animation (reuse charge animation frames)
+        AnimationGroup& animation_bullet_time = animation_pool["bullet_time"];
+        Animation& bullet_time_left = animation_bullet_time.left;
+        bullet_time_left.set_interval(0.08f);
+        bullet_time_left.set_is_loop(true);
+        bullet_time_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
+        bullet_time_left.add_frame(ResourceManager::instance()->find_image("player_charge_left"), 6);
+        Animation& bullet_time_right = animation_bullet_time.right;
+        bullet_time_right.set_interval(0.08f);
+        bullet_time_right.set_is_loop(true);
+        bullet_time_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
+        bullet_time_right.add_frame(ResourceManager::instance()->find_image("player_charge_right"), 6);
 
 	// Set initial animation
 	current_animation = &animation_pool["idle"];
