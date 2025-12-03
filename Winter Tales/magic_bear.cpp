@@ -121,19 +121,13 @@ MagicBear::MagicBear()
 	attack3_left.set_is_loop(false);
 	attack3_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
 	attack3_left.add_frame(ResourceManager::instance()->find_image("magic_bear_attack_3_left"), 6);
-	attack3_left.set_on_finished([this]()
-	{
-		on_ray();
-	});
+	
 	Animation& attack3_right = attack3_animation.right;
 	attack3_right.set_interval(0.15f);
 	attack3_right.set_is_loop(false);
 	attack3_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
 	attack3_right.add_frame(ResourceManager::instance()->find_image("magic_bear_attack_3_right"), 6);
-	attack3_right.set_on_finished([this]()
-		{
-			on_ray();
-		});
+	
 
 	AnimationGroup& attack4_animation = animation_pool["attack4"];
 	Animation& attack4_left = attack4_animation.left;
@@ -267,10 +261,10 @@ void MagicBear::on_ball()
 	bear_ball_list.push_back(new_ball);
 }
 
-void MagicBear::on_ray()
+void MagicBear::on_ray(bool flag)
 {
 	// Implementation of on_ray
-	MagicBearRay* new_ray = new MagicBearRay(is_facing_left, Vector2(get_logical_center().x, get_logical_center().y - 28.0f));
+	MagicBearRay* new_ray = new MagicBearRay(flag, Vector2(get_logical_center().x, get_logical_center().y - 28.0f));
 	bear_ray_list.push_back(new_ray);
 }
 

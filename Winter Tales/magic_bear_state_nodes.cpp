@@ -274,6 +274,13 @@ MagicBearAttack3::MagicBearAttack3()
         {
                 CharacterManager::instance()->get_magic_bear()->switch_state("idle");
         });
+
+		timer_ray.set_wait_time(0.9f);
+		timer_ray.set_one_shot(true);
+        timer_ray.set_callback([this]()
+        {
+            CharacterManager::instance()->get_magic_bear()->on_ray(enter_facing_left);
+			});
 }
 
 MagicBearAttack3::~MagicBearAttack3()
@@ -289,12 +296,14 @@ void MagicBearAttack3::on_enter()
         bear->get_hit_box()->set_enabled(false);
 		enter_facing_left = bear->get_is_facing_left();
         timer_attack.restart();
+		timer_ray.restart();
         std::cout << "MagicBear entered Attack3 state." << std::endl;
 }
 
 void MagicBearAttack3::on_update(float delta)
 {
         timer_attack.on_update(delta);
+		timer_ray.on_update(delta);
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
 		bear->set_is_facing_left(enter_facing_left);
         update_collision_box();

@@ -71,6 +71,7 @@ public:
 	virtual void on_exit() override;
 private:
 	Timer timer_attack;
+	Timer timer_ray;
 	void update_collision_box();
 	bool enter_facing_left;
 };
