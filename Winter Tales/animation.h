@@ -17,22 +17,28 @@ public:
 	Animation()
 	{
 		timer.set_one_shot(false);
-		timer.set_callback
-		([&]()
-			{
-				idx_frame++;
+                timer.set_callback
+                ([&]()
+                        {
+                                if (frame_list.empty())
+                                {
+                                        idx_frame = 0;
+                                        return;
+                                }
 
-				if (idx_frame >= frame_list.size())
-				{
-					idx_frame = is_loop ? 0 : frame_list.size() - 1;
-					if (on_finished && !is_loop)
-					{
-						on_finished();
-					}
-				}
-			}
-		);
-	};
+                                idx_frame++;
+
+                                if (idx_frame >= frame_list.size())
+                                {
+                                        idx_frame = is_loop ? 0 : frame_list.size() - 1;
+                                        if (on_finished && !is_loop)
+                                        {
+                                                on_finished();
+                                        }
+                                }
+                        }
+                );
+        };
 
 	~Animation() = default;
 
@@ -120,15 +126,25 @@ public:
 		}
 	}
 
-	void on_update(float delta)
-	{
-		timer.on_update(delta);
-		//std::cout << idx_frame << std::endl;
-	}
+        void on_update(float delta)
+        {
+                if (frame_list.empty())
+                {
+                        return;
+                }
 
-	void on_render()
-	{
-		Rect rect_dst;
+                timer.on_update(delta);
+                //std::cout << idx_frame << std::endl;
+        }
+
+        void on_render()
+        {
+                if (frame_list.empty())
+                {
+                        return;
+                }
+
+                Rect rect_dst;
 		rect_dst.x = (int)(position.x - frame_list[idx_frame].rect_src.w / 2);
 		rect_dst.y = (AnchorMode::Centered == anchor_mode) ? (int)(position.y - frame_list[idx_frame].rect_src.h / 2) : (int)(position.y - frame_list[idx_frame].rect_src.h);
 		rect_dst.w = frame_list[idx_frame].rect_src.w;
