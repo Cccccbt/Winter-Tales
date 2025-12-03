@@ -18,13 +18,15 @@ Character::Character()
 	is_invulnerable_status.set_wait_time(1.0f);
 	is_invulnerable_status.set_one_shot(true);
 	// FIXED: Use [this] instead of [&]
-	is_invulnerable_status.set_callback
-	(
-		[this]() 
-		{
-			is_invulnerable = false;  // 
-		}
-	);
+        is_invulnerable_status.set_callback
+        (
+                [this]()
+                {
+                        is_invulnerable = false;
+                        is_blink_invisiable = false;
+                        is_invulnerable_blink.pause();
+                }
+        );
 
 	is_invulnerable_blink.set_wait_time(0.075f);
 	is_invulnerable_blink.set_one_shot(false);
@@ -79,10 +81,10 @@ void Character::on_update(float delta)
 	position.x += velocity.x * delta;
 	position.y += velocity.y * delta;
 
-	if (is_blink_invisiable)
-	{
-		is_invulnerable_blink.on_update(delta);
-	}
+        if (is_invulnerable)
+        {
+                is_invulnerable_blink.on_update(delta);
+        }
 
 	// Screen boundaries (X axis)
 	if (position.x <= 0)

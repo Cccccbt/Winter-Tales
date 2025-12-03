@@ -153,11 +153,12 @@ MagicBear::MagicBear()
 	state_machine.register_state("walk", new MagicBearWalk());
 	state_machine.register_state("attack1", new MagicBearAttack1());
 	state_machine.register_state("attack2", new MagicBearAttack2());
-	state_machine.register_state("attack3", new MagicBearAttack3());
-	state_machine.register_state("attack4", new MagicBearAttack4());
-	state_machine.register_state("sneer", new MagicBearSneer());
-	state_machine.register_state("dead", new MagicBearDead());
-	state_machine.set_entry("idle");
+        state_machine.register_state("attack3", new MagicBearAttack3());
+        state_machine.register_state("attack4", new MagicBearAttack4());
+        state_machine.register_state("sneer", new MagicBearSneer());
+        state_machine.register_state("hurt", new MagicBearHurt());
+        state_machine.register_state("dead", new MagicBearDead());
+        state_machine.set_entry("idle");
 
 	setup_cooldown_timers();
 
@@ -170,8 +171,15 @@ MagicBear::~MagicBear()
 
 void MagicBear::on_hurt()
 {
-	// Already calls decrease_hp in hurt_box callback, but you can add here too
-    std::cout << "MagicBear hurt! HP: " << hp << std::endl;
+        std::cout << "MagicBear hurt! HP: " << hp << std::endl;
+        if (hp <= 0)
+        {
+                switch_state("dead");
+        }
+        else
+        {
+                switch_state("hurt");
+        }
 }
 
 void MagicBear::on_input(const ExMessage& msg)
