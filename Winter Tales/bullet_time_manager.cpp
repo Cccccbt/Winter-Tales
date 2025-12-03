@@ -13,11 +13,16 @@ BulletTimeManager* BulletTimeManager::instance()
 
 void BulletTimeManager::post_process()
 {
-	DWORD* buffer = GetImageBuffer();
-	int w = getwidth(), h = getheight();
-	for (int y = 0; y < h; ++y)
-	{
-		for (int x = 0; x < w; ++x)
+        if (progress <= 0.0f)
+        {
+                return;
+        }
+
+        DWORD* buffer = GetImageBuffer();
+        int w = getwidth(), h = getheight();
+        for (int y = 0; y < h; ++y)
+        {
+                for (int x = 0; x < w; ++x)
 		{
 			int idx = y * w + x;
 			DWORD& pixel = buffer[idx];
@@ -52,7 +57,12 @@ float BulletTimeManager::on_update(float delta)
 		progress = 1.0f;
 	}
 
-	return delta * lerp(1.0f, DST_DELTA_FACTOR, progress);
+        return delta * lerp(1.0f, DST_DELTA_FACTOR, progress);
+}
+
+bool BulletTimeManager::is_active() const
+{
+        return progress > 0.0f;
 }
 
 BulletTimeManager::BulletTimeManager() = default;
