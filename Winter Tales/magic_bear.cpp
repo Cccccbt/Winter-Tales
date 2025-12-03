@@ -12,7 +12,7 @@ MagicBear::MagicBear()
 	hurt_box = CollisionManager::instance()->create_collision_box();
 
 	hit_box->set_size(Vector2(56, 32));
-	body_hit_box->set_size(Vector2(56, 32));
+	body_hit_box->set_size(Vector2(102, 64));
 	hurt_box->set_size(Vector2(56, 32));
 
 	hit_box->set_layer_src(CollisionLayer::None);
@@ -180,7 +180,8 @@ void MagicBear::on_update(float delta)
 	Character::on_update(delta);
 
 	hit_box->set_position(get_logical_center());
-	body_hit_box->set_position(get_logical_center());
+
+	body_hit_box->set_position(get_logical_center() + (is_facing_left ? Vector2(16, -24) : Vector2(-16, -24)));
 
 	for (auto& ball : bear_ball_list)
 	{
