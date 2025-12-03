@@ -237,8 +237,8 @@ Player::~Player()
 
 void Player::on_input(const ExMessage& msg)
 {
-	if (hp < 0)
-		return;
+        if (hp < 0)
+                return;
 
 	switch (msg.message)
 	{
@@ -301,24 +301,45 @@ void Player::on_input(const ExMessage& msg)
 				break;
 		}
 		break;
-	}
+        }
+}
+
+bool Player::can_bullet_time() const
+{
+        if (is_in_bullet_time)
+        {
+                return false;
+        }
+
+        if (BulletTimeManager::instance()->is_working())
+        {
+                return false;
+        }
+
+        return current_mp >= 1 && is_bullet_time_key_down;
 }
 
 void Player::on_update(float delta)
 {
-	if (hp > 0 && !is_rolling)
-	{
-		velocity.x = get_move_axis() * SPEED_RUN;
-	}
+        if (can_bullet_time())
+        {
+                switch_state("bullet_time");
+        }
+
+        if (hp > 0 && !is_rolling)
+        {
+                velocity.x = get_move_axis() * SPEED_RUN;
+        }
 
 	if (get_move_axis() != 0)
 	{
 		is_facing_left = get_move_axis() < 0;
 	}
 
-	timer_roll_cd.on_update(delta);
-	timer_attack_cd.on_update(delta);
-	timer_combo_reset.on_update(delta);
+        timer_roll_cd.on_update(delta);
+        timer_attack_cd.on_update(delta);
+        timer_combo_reset.on_update(delta);
+        timer_bullet_time.on_update(delta);
 
 	Character::on_update(delta);
 	hurt_box->set_position(is_facing_left ? get_logical_center() + Vector2(8, 0) : get_logical_center() - Vector2(8, 0));
@@ -397,9 +418,8 @@ void Player::throw_bullet()
 
 void Player::enter_bullet_time()
 {
-	// Placeholder for bullet time logic
-	state_machine.switch_to("bullet_time");
-	BulletTimeManager::instance()->set_status(BulletTimeManager::Status::Entering);
-	is_in_bullet_time = true;
+        BulletTimeManager::instance()->set_status(BulletTimeManager::Status::Entering);
+        is_in_bullet_time = true;
+        timer_bullet_time.restart();
 }
 

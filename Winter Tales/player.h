@@ -63,10 +63,7 @@ public:
 		return is_jump_key_down && is_on_floor();
 	};
 
-	bool can_bullet_time() const
-	{
-		return current_mp >= mp_max && is_bullet_time_key_down && is_in_bullet_time;
-	};
+        bool can_bullet_time() const;
 
 	void decrease_mp(int m)
 	{
