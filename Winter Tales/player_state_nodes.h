@@ -1,147 +1,134 @@
 #pragma once
+
 #include "state_node.h"
 #include "timer.h"
 
+// State machine nodes controlling the player's movement and attack sequences.
 class PlayerAttack1 : public StateNode
 {
 public:
-	PlayerAttack1();
-	~PlayerAttack1() = default;
+        PlayerAttack1();
+        ~PlayerAttack1() = default;
 
-	void on_enter() override;
-	void on_update(float delta) override;
-	void on_exit() override;
+        void on_enter() override;
+        void on_update(float delta) override;
+        void on_exit() override;
 
 private:
-	Timer timer;
-	void update_hit_box_position();
+        Timer timer;
+        void update_hit_box_position();
 };
 
 class PlayerAttack2 : public StateNode
 {
 public:
-	PlayerAttack2();
-	~PlayerAttack2() = default;
+        PlayerAttack2();
+        ~PlayerAttack2() = default;
 
-	void on_enter() override;
-	void on_update(float delta) override;
-	void on_exit() override;
-
-private:
-	Timer timer;
-	void update_hit_box_position();
-};
-
-class PlayerAttack3 : public StateNode
-{
-public:
-	PlayerAttack3();
-	~PlayerAttack3() = default;
-
-	void on_enter() override;
-	void on_update(float delta) override;
-	void on_exit() override;
+        void on_enter() override;
+        void on_update(float delta) override;
+        void on_exit() override;
 
 private:
-	Timer timer;
-	void update_hit_box_position();
+        Timer timer;
+        void update_hit_box_position();
 };
 
 class PlayerRoll : public StateNode
 {
 public:
-	PlayerRoll();
-	~PlayerRoll() = default;
+        PlayerRoll();
+        ~PlayerRoll() = default;
 
-	void on_enter() override;
-	void on_update(float delta) override;
-	void on_exit() override;
+        void on_enter() override;
+        void on_update(float delta) override;
+        void on_exit() override;
 
 private:
-	Timer timer;
+        Timer timer;
 };
 
 class PlayerIdle : public StateNode
 {
 public:
-	PlayerIdle();
-	~PlayerIdle() = default;
+        PlayerIdle();
+        ~PlayerIdle() = default;
 
-	void on_enter() override;
-	void on_update(float delta) override;
-	void on_exit() override;
+        void on_enter() override;
+        void on_update(float delta) override;
+        void on_exit() override;
 
 private:
-	Timer timer;
+        Timer timer;
 };
 
 class PlayerIdle2 : public StateNode
 {
 public:
-	PlayerIdle2();
-	~PlayerIdle2() = default;
+        PlayerIdle2();
+        ~PlayerIdle2() = default;
 
-	void on_enter() override;
-	void on_update(float delta) override;
-	void on_exit() override;
+        void on_enter() override;
+        void on_update(float delta) override;
+        void on_exit() override;
 
 private:
-	Timer timer;
+        Timer timer;
 };
 
 class PlayerRun : public StateNode
 {
 public:
-	PlayerRun();
-	~PlayerRun() = default;
+        PlayerRun();
+        ~PlayerRun() = default;
 
-	void on_enter() override;
-	void on_update(float delta) override;
-	void on_exit() override;
+        void on_enter() override;
+        void on_update(float delta) override;
+        void on_exit() override;
 
 private:
-	Timer timer;
+        Timer timer;
 };
 
 class PlayerHurt : public StateNode
 {
 public:
-	PlayerHurt();
-	~PlayerHurt() = default;
+        PlayerHurt();
+        ~PlayerHurt() = default;
 
-	void on_enter() override;
-	void on_update(float delta) override;
-	void on_exit() override;
+        void on_enter() override;
+        void on_update(float delta) override;
+        void on_exit() override;
 
 private:
-	Timer timer;
+        Timer timer;
 };
 
 class PlayerDead : public StateNode
 {
 public:
-	PlayerDead();
-	~PlayerDead() = default;
+        PlayerDead();
+        ~PlayerDead() = default;
 
-	void on_enter() override;
-	void on_update(float delta) override;
-	void on_exit() override;
+        void on_enter() override;
+        void on_update(float delta) override;
+        void on_exit() override;
 
 private:
-	Timer timer;
+        Timer timer;
 };
 
 class PlayerJump : public StateNode
 {
 public:
-	PlayerJump();
-	~PlayerJump() = default;
+        PlayerJump();
+        ~PlayerJump() = default;
 
-	void on_enter() override;
-	void on_update(float delta) override;
-	void on_exit() override;
+        void on_enter() override;
+        void on_update(float delta) override;
+        void on_exit() override;
 
 private:
-	Timer timer;
-	bool has_left_ground;  // ADD THIS
+        Timer timer;
+        bool has_left_ground;
 };

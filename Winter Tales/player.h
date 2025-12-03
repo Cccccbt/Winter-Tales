@@ -1,41 +1,44 @@
 #pragma once
+
 #include "bullet.h"
 #include "character.h"
 
+// Player-specific behaviour including combo attacks, rolling, and bullet throws.
 class Player : public Character
 {
 public:
-	Player();
-	~Player();
-	virtual void on_hurt() override;
-	virtual void on_input(const ExMessage& msg) override;
-	virtual void on_update(float delta) override;
-	virtual void on_render() override;
+        Player();
+        ~Player();
 
-	void on_jump();
-	void on_roll();
-	void on_attack();
-	void on_land();
+        void on_hurt() override;
+        void on_input(const ExMessage& msg) override;
+        void on_update(float delta) override;
+        void on_render() override;
 
-	void set_rolling(bool flag)
-	{
-		is_rolling = flag;
-	};
+        void on_jump();
+        void on_roll();
+        void on_attack();
+        void on_land();
 
-	bool get_rolling() const
-	{
-		return is_rolling;
-	};
+        void set_rolling(bool flag)
+        {
+                is_rolling = flag;
+        };
 
-	bool can_roll() const
-	{
-		return !is_roll_cd && !is_rolling && is_roll_key_down;
-	};
+        bool get_rolling() const
+        {
+                return is_rolling;
+        };
 
-	void set_attacking(bool flag)
-	{
-		is_attacking = flag;
-	};
+        bool can_roll() const
+        {
+                return !is_roll_cd && !is_rolling && is_roll_key_down;
+        };
+
+        void set_attacking(bool flag)
+        {
+                is_attacking = flag;
+        };
 
         bool get_attacking() const
         {
@@ -47,24 +50,19 @@ public:
                 return !is_attack_cd && is_attack_key_down;
         };
 
-	bool can_jump() const
-	{
-		return is_jump_key_down && is_on_floor();
-	};
+        bool can_jump() const
+        {
+                return is_jump_key_down && is_on_floor();
+        };
 
-	int get_move_axis() const
-	{
-		return is_right_key_down - is_left_key_down;
-	}
+        int get_move_axis() const
+        {
+                return is_right_key_down - is_left_key_down;
+        }
 
         int get_attack_combo() const
         {
                 return attack_combo;
-        }
-
-        bool is_attack3_available() const
-        {
-                return !attack3_used;
         }
 
         void attack_combo_up()
@@ -72,59 +70,46 @@ public:
                 attack_combo = (attack_combo + 1) % max_attack_combo;
         }
 
-        void disable_attack3()
+        void set_attack_combo(int num)
         {
-                attack3_used = true;
-                max_attack_combo = 2;
-
-                if (attack_combo >= max_attack_combo)
-                {
-                        attack_combo = 0;
-                }
+                attack_combo = (attack_combo + num) % max_attack_combo;
         }
 
-	void set_attack_combo(int num)
-	{
-		attack_combo = (attack_combo + num) % max_attack_combo;
-	}
-
-	void throw_bullet();
+        void throw_bullet();
 
 private:
-	const float CD_ROLL = 0.75f;
-	const float CD_ATTACK = 0.5f;
-	const float CD_COMBO_RESET = 2.0f;
-	const float SPEED_RUN = 300.0f;
-	const float SPEED_ROLL = 600.0f;
-	const float SPEED_JUMP = 780.0f;  // Perfect for 1.2s animation duration
+        const float CD_ROLL = 0.75f;
+        const float CD_ATTACK = 0.5f;
+        const float CD_COMBO_RESET = 2.0f;
+        const float SPEED_RUN = 300.0f;
+        const float SPEED_ROLL = 600.0f;
+        const float SPEED_JUMP = 780.0f;  // Perfect for 1.2s animation duration
 
         Timer timer_combo_reset;
         int attack_combo = 0;
-        int max_attack_combo = 3;  // CHANGE FROM 2 TO 3!
-        bool attack3_used = false;
+        int max_attack_combo = 2;
 
-	Timer timer_roll_cd;
-	bool is_rolling = false;
-	bool is_roll_cd = false;
+        Timer timer_roll_cd;
+        bool is_rolling = false;
+        bool is_roll_cd = false;
 
-	Timer timer_attack_cd;
-	bool is_attacking = false;
-	bool is_attack_cd = false;
+        Timer timer_attack_cd;
+        bool is_attacking = false;
+        bool is_attack_cd = false;
 
-	int hp_max = 5;
-	bool is_left_key_down = false;
-	bool is_right_key_down = false;
-	bool is_jump_key_down = false;
-	bool is_roll_key_down = false;
+        int hp_max = 5;
+        bool is_left_key_down = false;
+        bool is_right_key_down = false;
+        bool is_jump_key_down = false;
+        bool is_roll_key_down = false;
         bool is_attack_key_down = false;
 
-	Animation* charge_effect_animation;
-	std::vector<Bullet*> bullet_pool;
+        Animation* charge_effect_animation;
+        std::vector<Bullet*> bullet_pool;
 
-	/// temp solution for player invulnerability
-	/// replace with proper state machine code later
-	Timer is_invulnerable_status;
-	Timer is_invulnerable_blink;
-	bool is_invulnerable = false;
-	bool is_blink_invisiable = false;
+        // Temporary invulnerability handling; replace with dedicated state later.
+        Timer is_invulnerable_status;
+        Timer is_invulnerable_blink;
+        bool is_invulnerable = false;
+        bool is_blink_invisiable = false;
 };
