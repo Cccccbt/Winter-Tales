@@ -70,6 +70,11 @@ public:
 		return is_facing_left;
 	}
 
+	void set_is_facing_left(bool flag)
+	{
+		is_facing_left = flag;
+	}
+
 	bool is_on_floor() const
 	{
 		return position.y >= FLOOR_Y;

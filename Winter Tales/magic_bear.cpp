@@ -15,7 +15,7 @@ MagicBear::MagicBear()
 
 	hit_box->set_size(Vector2(56, 32));
 	body_hit_box->set_size(Vector2(102, 64));
-	hurt_box->set_size(Vector2(56, 32));
+	hurt_box->set_size(Vector2(102, 64));
 
 	hit_box->set_layer_src(CollisionLayer::None);
 	body_hit_box->set_layer_src(CollisionLayer::None);
@@ -121,11 +121,19 @@ MagicBear::MagicBear()
 	attack3_left.set_is_loop(false);
 	attack3_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
 	attack3_left.add_frame(ResourceManager::instance()->find_image("magic_bear_attack_3_left"), 6);
+	attack3_left.set_on_finished([this]()
+	{
+		on_ray();
+	});
 	Animation& attack3_right = attack3_animation.right;
 	attack3_right.set_interval(0.15f);
 	attack3_right.set_is_loop(false);
 	attack3_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
 	attack3_right.add_frame(ResourceManager::instance()->find_image("magic_bear_attack_3_right"), 6);
+	attack3_right.set_on_finished([this]()
+		{
+			on_ray();
+		});
 
 	AnimationGroup& attack4_animation = animation_pool["attack4"];
 	Animation& attack4_left = attack4_animation.left;
@@ -133,11 +141,19 @@ MagicBear::MagicBear()
 	attack4_left.set_is_loop(false);
 	attack4_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
 	attack4_left.add_frame(ResourceManager::instance()->find_image("magic_bear_attack_4_left"), 4);
+	attack4_left.set_on_finished([this]()
+		{
+			on_ball();
+		});
 	Animation& attack4_right = attack4_animation.right;
 	attack4_right.set_interval(0.2f);
 	attack4_right.set_is_loop(false);
 	attack4_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
 	attack4_right.add_frame(ResourceManager::instance()->find_image("magic_bear_attack_4_right"), 4);
+	attack4_right.set_on_finished([this]()
+		{
+			on_ball ();
+		});
 	
 	state_machine.register_state("idle", new MagicBearIdle());
 	state_machine.register_state("walk", new MagicBearWalk());
@@ -185,7 +201,7 @@ void MagicBear::on_update(float delta)
 
 	Character::on_update(delta);
 
-	hit_box->set_position(get_logical_center());
+	hurt_box->set_position(get_logical_center() + (is_facing_left ? Vector2(16, -24) : Vector2(-16, -24)));
 
 	body_hit_box->set_position(get_logical_center() + (is_facing_left ? Vector2(16, -24) : Vector2(-16, -24)));
 
@@ -254,7 +270,7 @@ void MagicBear::on_ball()
 void MagicBear::on_ray()
 {
 	// Implementation of on_ray
-	MagicBearRay* new_ray = new MagicBearRay(is_facing_left, Vector2(get_logical_center().x, get_logical_center().y - 20.0f));
+	MagicBearRay* new_ray = new MagicBearRay(is_facing_left, Vector2(get_logical_center().x, get_logical_center().y - 28.0f));
 	bear_ray_list.push_back(new_ray);
 }
 
@@ -480,4 +496,5 @@ bool MagicBear::consume_pending_sneer()
 	}
 	return false;
 }
+
 

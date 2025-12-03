@@ -42,6 +42,7 @@ public:
 	virtual void on_exit() override;
 private:
 	Timer timer_attack;
+	bool enter_facing_left;
 	void update_collision_box();
 };
 
@@ -56,6 +57,7 @@ public:
 	virtual void on_exit() override;
 private:
 	Timer timer_attack;
+	bool enter_facing_left;
 };
 
 class MagicBearAttack3 : public StateNode
@@ -70,6 +72,7 @@ public:
 private:
 	Timer timer_attack;
 	void update_collision_box();
+	bool enter_facing_left;
 };
 
 class MagicBearAttack4 : public StateNode
@@ -84,6 +87,7 @@ public:
 private:
 	Timer timer_attack;
 	void update_collision_box();
+	bool enter_facing_left;
 };
 
 class MagicBearSneer : public StateNode
@@ -97,6 +101,7 @@ public:
 	virtual void on_exit() override;
 private:
 	Timer sneer_timer;
+	bool enter_facing_left;
 };
 
 class MagicBearHurt : public StateNode
@@ -110,6 +115,7 @@ public:
 	virtual void on_exit() override;
 private:
 	Timer hurt_timer;
+	bool enter_facing_left;
 };
 
 class MagicBearDead : public StateNode
@@ -123,4 +129,5 @@ public:
 	virtual void on_exit() override;
 private:
 	Timer dead_timer;
+	bool enter_facing_left;
 };
