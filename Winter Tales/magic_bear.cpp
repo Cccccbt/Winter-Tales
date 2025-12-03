@@ -19,17 +19,27 @@ MagicBear::MagicBear()
 
 	hit_box->set_layer_src(CollisionLayer::None);
 	body_hit_box->set_layer_src(CollisionLayer::None);
-	hurt_box->set_layer_src(CollisionLayer::Enemy);
+        hurt_box->set_layer_src(CollisionLayer::Enemy);
 
-	hit_box->set_layer_dst(CollisionLayer::Player);
-	body_hit_box->set_layer_dst(CollisionLayer::Player);
-	hurt_box->set_layer_dst(CollisionLayer::None);
+        hit_box->set_layer_dst(CollisionLayer::Player);
+        body_hit_box->set_layer_dst(CollisionLayer::Player);
+        hurt_box->set_layer_dst(CollisionLayer::None);
 
-	hurt_box->set_on_collide(
-		[this]() 
-		{
-			decrease_hp(1);
-		});
+        hurt_box->set_on_collide(
+                [this]()
+                {
+                        if (is_invulnerable)
+                        {
+                                return;
+                        }
+
+                        if (hp > 0)
+                        {
+                                --hp;
+                        }
+
+                        on_hurt();
+                });
 
 	AnimationGroup& idle_animation = animation_pool["idle"];
 	Animation& idle_left = idle_animation.left;
@@ -130,24 +140,16 @@ MagicBear::MagicBear()
 	
 
 	AnimationGroup& attack4_animation = animation_pool["attack4"];
-	Animation& attack4_left = attack4_animation.left;
-	attack4_left.set_interval(0.2f);
-	attack4_left.set_is_loop(false);
-	attack4_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
-	attack4_left.add_frame(ResourceManager::instance()->find_image("magic_bear_attack_4_left"), 4);
-	attack4_left.set_on_finished([this]()
-		{
-			on_ball();
-		});
-	Animation& attack4_right = attack4_animation.right;
-	attack4_right.set_interval(0.2f);
-	attack4_right.set_is_loop(false);
-	attack4_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
-	attack4_right.add_frame(ResourceManager::instance()->find_image("magic_bear_attack_4_right"), 4);
-	attack4_right.set_on_finished([this]()
-		{
-			on_ball ();
-		});
+        Animation& attack4_left = attack4_animation.left;
+        attack4_left.set_interval(0.2f);
+        attack4_left.set_is_loop(false);
+        attack4_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
+        attack4_left.add_frame(ResourceManager::instance()->find_image("magic_bear_attack_4_left"), 4);
+        Animation& attack4_right = attack4_animation.right;
+        attack4_right.set_interval(0.2f);
+        attack4_right.set_is_loop(false);
+        attack4_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
+        attack4_right.add_frame(ResourceManager::instance()->find_image("magic_bear_attack_4_right"), 4);
 	
 	state_machine.register_state("idle", new MagicBearIdle());
 	state_machine.register_state("walk", new MagicBearWalk());
@@ -172,14 +174,25 @@ MagicBear::~MagicBear()
 void MagicBear::on_hurt()
 {
         std::cout << "MagicBear hurt! HP: " << hp << std::endl;
-        if (hp <= 0)
-        {
-                switch_state("dead");
-        }
-        else
-        {
-                switch_state("hurt");
-        }
+        enter_hurt_invulnerability();
+
+        switch_state(hp <= 0 ? "dead" : "hurt");
+}
+
+void MagicBear::enter_hurt_invulnerability()
+{
+        is_invulnerable_status.pause();
+        is_invulnerable_blink.pause();
+        is_blink_invisiable = false;
+        is_invulnerable = true;
+}
+
+void MagicBear::clear_hurt_invulnerability()
+{
+        is_invulnerable = false;
+        is_invulnerable_status.pause();
+        is_invulnerable_blink.pause();
+        is_blink_invisiable = false;
 }
 
 void MagicBear::on_input(const ExMessage& msg)
@@ -265,11 +278,26 @@ void MagicBear::on_render()
 	Character::on_render();
 }
 
-void MagicBear::on_ball()
+bool MagicBear::on_ball()
 {
-	// Implementation of on_ball
-	MagicBearBall* new_ball = new MagicBearBall(is_facing_left, get_logical_center());
-	bear_ball_list.push_back(new_ball);
+        // Implementation of on_ball
+        int active_ball_count = 0;
+        for (auto* ball : bear_ball_list)
+        {
+                if (ball && ball->get_enabled())
+                {
+                        ++active_ball_count;
+                }
+        }
+
+        if (active_ball_count >= 3)
+        {
+                return false;
+        }
+
+        MagicBearBall* new_ball = new MagicBearBall(is_facing_left, get_logical_center());
+        bear_ball_list.push_back(new_ball);
+        return true;
 }
 
 void MagicBear::on_ray(bool flag)
