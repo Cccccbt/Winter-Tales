@@ -1,9 +1,11 @@
 #include "magic_bear.h"
+#include <algorithm>
 
 MagicBear::MagicBear()
 {
-	// Constructor implementation (if any)
-	is_facing_left = true;
+        // Constructor implementation (if any)
+        hp_max = static_cast<float>(hp);
+        is_facing_left = true;
 	position = Vector2(400.0f, 300.0f);
 	logic_height = 32.0f;
 
@@ -143,10 +145,11 @@ MagicBear::MagicBear()
 	state_machine.register_state("attack2", new MagicBearAttack2());
 	state_machine.register_state("attack3", new MagicBearAttack3());
 	state_machine.register_state("attack4", new MagicBearAttack4());
-//	state_machine.register_state("hurt", new MagicBearHurt());
-//	state_machine.register_state("dead", new MagicBearHurt()); // Reuse hurt state for dead for simplicity
-//	state_machine.register_state("sneer", new MagicBearIdle()); // Reuse idle state for sneer for simplicity
+	state_machine.register_state("sneer", new MagicBearSneer());
+	state_machine.register_state("dead", new MagicBearDead());
 	state_machine.set_entry("idle");
+
+	setup_cooldown_timers();
 
 }
 
@@ -169,14 +172,17 @@ void MagicBear::on_update(float delta)
 {
 	// Implementation of on_update
 	Player* player = CharacterManager::instance()->get_player();
-	
+
+	update_phase();
+	update_attack_cooldowns(delta);
+
 	// Update facing direction to always face the player
 	Vector2 direction_to_player = player->get_position() - get_position();
 	if (direction_to_player.x != 0)
 	{
 		is_facing_left = (direction_to_player.x < 0);
 	}
-	
+
 	Character::on_update(delta);
 
 	hit_box->set_position(get_logical_center());
@@ -262,7 +268,7 @@ void MagicBear::on_run()
 {
 	// Implementation of on_run
 	// Run attack: Bear rushes toward the player with increased speed
-	set_velocity(Vector2(is_facing_left ? -get_run_speed() : get_run_speed(), get_velocity().y));
+	set_velocity(Vector2(is_facing_left ? -get_phase_run_speed() : get_phase_run_speed(), get_velocity().y));
 }
 
 bool MagicBear::is_player_in_close_range() const
@@ -281,8 +287,197 @@ bool MagicBear::is_player_in_mid_range() const
 
 bool MagicBear::is_player_in_far_range() const
 {
-	Character* player = CharacterManager::instance()->get_player();
-	float distance = (player->get_logical_center() - get_logical_center()).length();
-	return distance > MID_RANGE && distance <= FAR_RANGE;
+Character* player = CharacterManager::instance()->get_player();
+float distance = (player->get_logical_center() - get_logical_center()).length();
+return distance > MID_RANGE && distance <= FAR_RANGE;
+}
+
+float MagicBear::get_phase_walk_speed() const
+{
+	switch (phase)
+	{
+	case 1:
+		return WALK_SPEED;
+	case 2:
+		return WALK_SPEED * 1.2f;
+	default:
+		return WALK_SPEED * 1.4f;
+	}
+}
+
+float MagicBear::get_phase_run_speed() const
+{
+	switch (phase)
+	{
+	case 1:
+		return RUN_SPEED;
+	case 2:
+		return RUN_SPEED * 1.15f;
+	default:
+		return RUN_SPEED * 1.35f;
+	}
+}
+
+float MagicBear::get_phase_based_global_cd() const
+{
+	switch (phase)
+	{
+	case 1:
+		return GLOBAL_ATTACK_CD;
+	case 2:
+		return GLOBAL_ATTACK_CD * 0.8f;
+	default:
+		return GLOBAL_ATTACK_CD * 0.6f;
+	}
+}
+
+float MagicBear::get_attack1_cd() const
+{
+	if (phase == 1)
+	{
+		return BITE_ATTACK_CD;
+	}
+	if (phase == 2)
+	{
+		return BITE_ATTACK_CD * 0.8f;
+	}
+	return BITE_ATTACK_CD * 0.5f;
+}
+
+float MagicBear::get_attack2_cd() const
+{
+	if (phase == 1)
+	{
+		return RUN_ATTACK_CD;
+	}
+	if (phase == 2)
+	{
+		return RUN_ATTACK_CD * 0.8f;
+	}
+	return RUN_ATTACK_CD * 0.55f;
+}
+
+float MagicBear::get_attack3_cd() const
+{
+	if (phase == 1)
+	{
+		return RAY_ATTACK_CD;
+	}
+	if (phase == 2)
+	{
+		return RAY_ATTACK_CD * 0.85f;
+	}
+	return RAY_ATTACK_CD * 0.75f;
+}
+
+float MagicBear::get_attack4_cd() const
+{
+	if (phase == 1)
+	{
+		return BALL_ATTACK_CD;
+	}
+	if (phase == 2)
+	{
+		return BALL_ATTACK_CD * 0.85f;
+	}
+	return BALL_ATTACK_CD * 0.75f;
+}
+
+void MagicBear::setup_cooldown_timers()
+{
+	global_cd_timer.set_one_shot(true);
+	ball_cd_timer.set_one_shot(true);
+	ray_cd_timer.set_one_shot(true);
+	bite_cd_timer.set_one_shot(true);
+	run_cd_timer.set_one_shot(true);
+
+	global_cd_timer.set_callback([this]()
+	                           { is_global_attack_on_cd = false; });
+	ball_cd_timer.set_callback([this]()
+	                         { is_ball_on_cd = false; });
+	ray_cd_timer.set_callback([this]()
+	                        { is_ray_on_cd = false; });
+	bite_cd_timer.set_callback([this]()
+	                         { is_bite_on_cd = false; });
+	run_cd_timer.set_callback([this]()
+	                        { is_run_on_cd = false; });
+}
+
+void MagicBear::update_attack_cooldowns(float delta)
+{
+	global_cd_timer.on_update(delta);
+	ball_cd_timer.on_update(delta);
+	ray_cd_timer.on_update(delta);
+	bite_cd_timer.on_update(delta);
+	run_cd_timer.on_update(delta);
+}
+
+void MagicBear::start_global_attack_cooldown()
+{
+	is_global_attack_on_cd = true;
+	global_cd_timer.set_wait_time(get_phase_based_global_cd());
+	global_cd_timer.restart();
+}
+
+void MagicBear::start_attack1_cooldown()
+{
+	is_bite_on_cd = true;
+	bite_cd_timer.set_wait_time(get_attack1_cd());
+	bite_cd_timer.restart();
+}
+
+void MagicBear::start_attack2_cooldown()
+{
+	is_run_on_cd = true;
+	run_cd_timer.set_wait_time(get_attack2_cd());
+	run_cd_timer.restart();
+}
+
+void MagicBear::start_attack3_cooldown()
+{
+	is_ray_on_cd = true;
+	ray_cd_timer.set_wait_time(get_attack3_cd());
+	ray_cd_timer.restart();
+}
+
+void MagicBear::start_attack4_cooldown()
+{
+	is_ball_on_cd = true;
+	ball_cd_timer.set_wait_time(get_attack4_cd());
+	ball_cd_timer.restart();
+}
+
+void MagicBear::update_phase()
+{
+	float ratio = hp_max > 0.0f ? static_cast<float>(hp) / hp_max : 0.0f;
+	int previous_phase = phase;
+
+	if (ratio > 0.6f)
+	{
+		phase = 1;
+	}
+	else if (ratio > 0.25f)
+	{
+		phase = 2;
+	}
+	else
+	{
+		phase = 3;
+	}
+
+	if (phase != previous_phase && phase >= 2 && hp > 0)
+	{
+		pending_phase_sneer = true;
+	}
+}
+
+bool MagicBear::consume_pending_sneer()
+{
+	if (pending_phase_sneer)
+	{
+		pending_phase_sneer = false;
+		return true;
+	}
+	return false;
 }
 
