@@ -38,10 +38,10 @@ public:
 		is_attacking = flag;
 	};
 
-    bool get_attacking() const
-    {
-            return is_attacking;
-    };
+	bool get_attacking() const
+	{
+		return is_attacking;
+	};
 
 	bool get_in_bullet_time() const
 	{
@@ -53,10 +53,10 @@ public:
 		is_in_bullet_time = flag;
 	}
 
-    bool can_attack() const
-    {
-            return !is_attack_cd && is_attack_key_down;
-    };
+	bool can_attack() const
+	{
+		return !is_attack_cd && is_attack_key_down;
+	};
 
 	bool can_jump() const
 	{
@@ -65,7 +65,8 @@ public:
 
 	bool can_bullet_time() const
 	{
-		return current_mp >= mp_max && is_bullet_time_key_down && is_in_bullet_time;
+		// Can only enter if: have enough MP, space is pressed, not already in bullet time, and bullet time effect is not active
+		return current_mp >= 1 && is_bullet_time_key_down && !is_in_bullet_time && !BulletTimeManager::instance()->is_active();
 	};
 
 	void decrease_mp(int m)
@@ -75,36 +76,37 @@ public:
 			current_mp = 0;
 	}
 
+	void increase_mp(int m)
+	{
+		current_mp += m;
+		if (current_mp > mp_max)
+			current_mp = mp_max;
+	}
+
+	int get_current_mp() const
+	{
+		return current_mp;
+	}
+
+	int get_max_mp() const
+	{
+		return mp_max;
+	}
+
 	int get_move_axis() const
 	{
 		return is_right_key_down - is_left_key_down;
 	}
 
-    int get_attack_combo() const
-    {
-            return attack_combo;
-    }
+	int get_attack_combo() const
+	{
+		return attack_combo;
+	}
 
-    bool is_attack3_available() const
-    {
-            return !attack3_used;
-    }
-
-    void attack_combo_up()
-    {
-            attack_combo = (attack_combo + 1) % max_attack_combo;
-    }
-
-    void disable_attack3()
-    {
-            attack3_used = true;
-            max_attack_combo = 2;
-
-            if (attack_combo >= max_attack_combo)
-            {
-                    attack_combo = 0;
-            }
-    }
+	void attack_combo_up()
+	{
+		attack_combo = (attack_combo + 1) % max_attack_combo;
+	}
 
 	void set_attack_combo(int num)
 	{
@@ -115,18 +117,25 @@ public:
 
 	void enter_bullet_time();
 
+	void make_bullet_time_invulnerable()
+	{
+		// Make invulnerable without blinking during bullet time
+		is_invulnerable = true;
+		is_blink_invisiable = false;  // Don't blink
+		is_invulnerable_status.restart();
+	}
+
 private:
 	const float CD_ROLL = 0.75f;
 	const float CD_ATTACK = 0.5f;
 	const float CD_COMBO_RESET = 2.0f;
 	const float SPEED_RUN = 300.0f;
 	const float SPEED_ROLL = 600.0f;
-	const float SPEED_JUMP = 780.0f;  // Perfect for 1.2s animation duration
+	const float SPEED_JUMP = 780.0f;
 
-    Timer timer_combo_reset;
-    int attack_combo = 0;
-    int max_attack_combo = 3;  // CHANGE FROM 2 TO 3!
-    bool attack3_used = false;
+	Timer timer_combo_reset;
+	int attack_combo = 0;
+	int max_attack_combo = 2;
 
 	Timer timer_roll_cd;
 	bool is_rolling = false;
@@ -149,14 +158,12 @@ private:
 	bool is_right_key_down = false;
 	bool is_jump_key_down = false;
 	bool is_roll_key_down = false;
-    bool is_attack_key_down = false;
+	bool is_attack_key_down = false;
 	bool is_bullet_time_key_down = false;
 
 	Animation* charge_effect_animation;
 	std::vector<Bullet*> bullet_pool;
 
-	/// temp solution for player invulnerability
-	/// replace with proper state machine code later
 	Timer is_invulnerable_status;
 	Timer is_invulnerable_blink;
 	bool is_invulnerable = false;

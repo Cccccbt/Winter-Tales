@@ -4,22 +4,19 @@
 // Returns the correct attack state name based on the current combo step.
 static const char* get_next_attack_state(const Player* player)
 {
-        switch (player->get_attack_combo())
-        {
-        case 1:
-                return "attack_2";
-        case 2:
-                return "attack_3";
-        default:
-                return "attack_1";
-        }
+	switch (player->get_attack_combo())
+	{
+	case 1:
+		return "attack_2";
+	default:
+		return "attack_1";
+	}
 }
 
 PlayerAttack1::PlayerAttack1()
 {
 	timer.set_wait_time(0.5f);
 	timer.set_one_shot(true);
-	// FIXED: Use [] - lambda doesn't need to capture anything
 	timer.set_callback([]()
 	{
 		CharacterManager::instance()->get_player()->set_attacking(false);
@@ -40,7 +37,6 @@ void PlayerAttack1::on_enter()
 
 	timer.restart();
 	std::cout << "Enter PlayerAttack1, attack_combo " << player->get_attack_combo() << std::endl;
-	//Play attack sound
 }
 
 void PlayerAttack1::on_update(float delta)
@@ -59,24 +55,20 @@ void PlayerAttack1::on_update(float delta)
 		return;
 	}
 
-        // Check for combo transitions while attacking
-        if (player->can_attack() && !player->get_attacking())
-        {
-                if (player->get_attack_combo() == 1)
-                {
-                        player->switch_state("attack_2");
-                        return;
-                }
-        }
+	// Check for combo transitions while attacking
+	if (player->can_attack() && !player->get_attacking())
+	{
+		if (player->get_attack_combo() == 1)
+		{
+			player->switch_state("attack_2");
+			return;
+		}
+	}
 
-	// Only transition out when attack is finished (timer callback sets is_attacking = false)
+	// Only transition out when attack is finished
 	if (!player->get_attacking())
 	{
-		if (player->can_bullet_time())
-		{
-			player->switch_state("bullet_time");
-		}
-		else if (player->get_move_axis() == 0)
+		if (player->get_move_axis() == 0)
 		{
 			player->switch_state("idle");
 		}
@@ -119,7 +111,6 @@ PlayerAttack2::PlayerAttack2()
 {
 	timer.set_wait_time(0.75f);
 	timer.set_one_shot(true);
-	// FIXED: Use []
 	timer.set_callback([]()
 	{
 		CharacterManager::instance()->get_player()->set_attacking(false);
@@ -144,28 +135,17 @@ void PlayerAttack2::on_enter()
 
 void PlayerAttack2::on_update(float delta)
 {
-        timer.on_update(delta);
-        update_hit_box_position();
+	timer.on_update(delta);
+	update_hit_box_position();
 
+	Player* player = CharacterManager::instance()->get_player();
+	player->set_velocity(Vector2(0, player->get_velocity().y));
 
-        Player* player = CharacterManager::instance()->get_player();
-		player->set_velocity(Vector2(0, player->get_velocity().y));
-
-        // Allow chaining to the third attack while the second animation is playing
-        if (player->can_attack() && !player->get_attacking())
-        {
-                if (player->get_attack_combo() == 2 && player->is_attack3_available())
-                {
-                        player->switch_state("attack_3");
-                        return;
-                }
-        }
-
-        if (player->get_hp() <= 0)
-        {
-                player->switch_state("dead");
-        }
-        else if (!player->get_attacking())
+	if (player->get_hp() <= 0)
+	{
+		player->switch_state("dead");
+	}
+	else if (!player->get_attacking())
 	{
 		if (player->get_move_axis() == 0)
 		{
@@ -193,86 +173,12 @@ void PlayerAttack2::update_hit_box_position()
 	Vector2 player_pos = player->get_position();
 	Vector2 hit_box_size = hit_box->get_size();
 	hit_box->set_position(player->get_logical_center() + (player->get_is_facing_left() ? Vector2(-56, -20) : Vector2(56, -20)));
-
-}
-
-PlayerAttack3::PlayerAttack3()
-{
-	timer.set_wait_time(0.35f);
-	timer.set_one_shot(true);
-	// FIXED: Use []
-	timer.set_callback([]()
-	{
-		CharacterManager::instance()->get_player()->set_attacking(false);
-	});
-}
-
-void PlayerAttack3::on_enter()
-{
-        Player* player = CharacterManager::instance()->get_player();
-        player->set_animation("attack_3");
-        player->set_attacking(true);
-        player->on_attack();
-        player->disable_attack3();
-
-
-	CollisionBox* hit_box = player->get_hit_box();
-	// MOVED: Set hit box size here in on_enter(), not in constructor
-	hit_box->set_size(Vector2(16, 16)); // Reset to default size
-	hit_box->set_enabled(true);
-	update_hit_box_position();
-
-	timer.restart();
-	std::cout << "Enter PlayerAttack3, attack_combo " << player->get_attack_combo() << std::endl;
-}
-
-void PlayerAttack3::on_update(float delta)
-{
-	timer.on_update(delta);
-	update_hit_box_position();
-
-	Player* player = CharacterManager::instance()->get_player();
-	player->set_velocity(Vector2(0, player->get_velocity().y));
-
-	if (player->get_hp() <= 0)
-	{
-		player->switch_state("dead");
-	}
-	else if (!player->get_attacking())
-	{
-		if (player->get_move_axis() == 0)
-		{
-			player->switch_state("idle");
-		}
-		else if (player->is_on_floor())
-		{
-			player->switch_state("run");
-		}
-	}
-}
-
-void PlayerAttack3::on_exit()
-{
-	CollisionBox* hit_box = CharacterManager::instance()->get_player()->get_hit_box();
-	hit_box->set_enabled(false);
-	CharacterManager::instance()->get_player()->set_attacking(false);
-	std::cout << "Exit PlayerAttack3, attack_combo " << CharacterManager::instance()->get_player()->get_attack_combo() << std::endl;
-}
-
-void PlayerAttack3::update_hit_box_position()
-{
-	Player* player = CharacterManager::instance()->get_player();
-	CollisionBox* hit_box = player->get_hit_box();
-	Vector2 player_pos = player->get_position();
-	Vector2 hit_box_size = hit_box->get_size();
-	hit_box->set_position(player->get_logical_center() + (player->get_is_facing_left() ? Vector2(-30, -20) : Vector2(30, -20)));
 }
 
 PlayerDead::PlayerDead()
 {
 	timer.set_wait_time(2.0f);
 	timer.set_one_shot(true);
-	// FIXED: Use []
 	timer.set_callback([]()
 	{
 		MessageBox(GetHWnd(), _T("No......"), _T("You Dead"), MB_OK);
@@ -284,7 +190,6 @@ void PlayerDead::on_enter()
 {
 	Player* player = CharacterManager::instance()->get_player();
 	player->set_animation("dead");
-	//Play death sound
 }
 
 void PlayerDead::on_update(float delta)
@@ -299,7 +204,6 @@ void PlayerDead::on_exit()
 
 PlayerIdle::PlayerIdle()
 {
-
 }
 
 void PlayerIdle::on_enter()
@@ -316,30 +220,31 @@ void PlayerIdle::on_update(float delta)
 	{
 		player->switch_state("dead");
 	}
-
-        else if (player->can_attack())
-        {
-                switch (player->get_attack_combo())
-                {
-                case 0:
-                        player->switch_state("attack_1");
-                        break;
-                case 1:
-                        player->switch_state("attack_2");
-                        break;
-                }
-        }
-
+	else if (player->can_bullet_time())
+	{
+		player->switch_state("bullet_time");
+		std::cout << "Exit Idle to BulletTime\n";
+	}
+	else if (player->can_attack())
+	{
+		switch (player->get_attack_combo())
+		{
+		case 0:
+			player->switch_state("attack_1");
+			break;
+		case 1:
+			player->switch_state("attack_2");
+			break;
+		}
+	}
 	else if (player->get_move_axis() != 0)
 	{
 		player->switch_state("run");
 	}
-
 	else if (player->can_jump())
 	{
 		player->switch_state("jump");
 	}
-
 	else if (player->can_roll())
 	{
 		player->switch_state("roll");
@@ -348,13 +253,12 @@ void PlayerIdle::on_update(float delta)
 
 void PlayerIdle::on_exit()
 {
-	// Idle state typically doesn't need exit logic
 	std::cout << "Exit Idle" << std::endl;
 }
 
 PlayerJump::PlayerJump()
 {
-    has_left_ground = false;  // Add this member variable
+	has_left_ground = false;
 }
 
 void PlayerJump::on_enter()
@@ -362,7 +266,7 @@ void PlayerJump::on_enter()
 	Player* player = CharacterManager::instance()->get_player();
 	player->set_animation("jump");
 	player->on_jump();
-	has_left_ground = false;  // Reset flag
+	has_left_ground = false;
 	std::cout << "Enter Jump" << std::endl;
 }
 
@@ -370,7 +274,6 @@ void PlayerJump::on_update(float delta)
 {
 	Player* player = CharacterManager::instance()->get_player();
 	
-	// Debug output to diagnose the issue
 	std::cout << "Jump Update - OnFloor: " << player->is_on_floor() 
 	          << " HasLeftGround: " << has_left_ground 
 	          << " VelY: " << player->get_velocity().y << std::endl;
@@ -382,25 +285,25 @@ void PlayerJump::on_update(float delta)
 		return;
 	}
 
-        if (player->can_attack())
-        {
-                player->switch_state(get_next_attack_state(player));
-                std::cout << "Exit Jump to Attack\n";
-                return;
-        }
+	if (player->can_attack())
+	{
+		player->switch_state(get_next_attack_state(player));
+		std::cout << "Exit Jump to Attack\n";
+		return;
+	}
 
-        if (player->can_roll())
-        {
-                player->switch_state("roll");
-                std::cout << "Exit Jump to Roll\n";
-                return;
-        }
+	if (player->can_roll())
+	{
+		player->switch_state("roll");
+		std::cout << "Exit Jump to Roll\n";
+		return;
+	}
 
-        // Mark as having left ground once we're airborne
-        if (!player->is_on_floor())
-        {
-                has_left_ground = true;
-        }
+	// Mark as having left ground once we're airborne
+	if (!player->is_on_floor())
+	{
+		has_left_ground = true;
+	}
 
 	// Only allow landing if:
 	// 1. We've left the ground (prevents immediate exit)
@@ -433,7 +336,6 @@ PlayerRoll::PlayerRoll()
 {
 	timer.set_wait_time(0.35f);
 	timer.set_one_shot(true);
-	// FIXED: Use []
 	timer.set_callback([]()
 	{
 		CharacterManager::instance()->get_player()->set_rolling(false);
@@ -448,7 +350,6 @@ void PlayerRoll::on_enter()
 	player->set_rolling(true);
 	player->on_roll();
 	timer.restart();
-	//Play roll sound
 	std::cout << "Enter Roll" << std::endl;
 }
 
@@ -456,22 +357,21 @@ void PlayerRoll::on_update(float delta)
 {
 	timer.on_update(delta);
 
-        Player* player = CharacterManager::instance()->get_player();
-        if (!player->get_rolling())
-        {
-                if (!player->is_on_floor())
-                {
-                        player->switch_state("jump");
-                }
-                else if (player->get_move_axis() != 0)
-                {
-                        player->switch_state("run");
-                }
-                else if (player->can_jump())
-                {
+	Player* player = CharacterManager::instance()->get_player();
+	if (!player->get_rolling())
+	{
+		if (!player->is_on_floor())
+		{
 			player->switch_state("jump");
 		}
-
+		else if (player->get_move_axis() != 0)
+		{
+			player->switch_state("run");
+		}
+		else if (player->can_jump())
+		{
+			player->switch_state("jump");
+		}
 		else
 		{
 			player->switch_state("idle");
@@ -488,14 +388,12 @@ void PlayerRoll::on_exit()
 
 PlayerRun::PlayerRun()
 {
-
 }
 
 void PlayerRun::on_enter()
 {
 	CharacterManager::instance()->get_player()->set_animation("run");
 	std::cout << "Enter Run" << std::endl;
-	//Play run sound loop
 }
 
 void PlayerRun::on_update(float delta)
@@ -506,18 +404,23 @@ void PlayerRun::on_update(float delta)
 	{
 		player->switch_state("dead");
 	}
-        else if (player->can_attack())
-        {
-                switch (player->get_attack_combo())
-                {
-                case 0:
-                        player->switch_state("attack_1");
-                        break;
-                case 1:
-                        player->switch_state("attack_2");
-                        break;
-                }
-        }
+	else if (player->can_bullet_time())
+	{
+		player->switch_state("bullet_time");
+		std::cout << "Exit Run to BulletTime\n";
+	}
+	else if (player->can_attack())
+	{
+		switch (player->get_attack_combo())
+		{
+		case 0:
+			player->switch_state("attack_1");
+			break;
+		case 1:
+			player->switch_state("attack_2");
+			break;
+		}
+	}
 	else if (player->get_move_axis() == 0)
 	{
 		player->switch_state("idle");
@@ -534,7 +437,6 @@ void PlayerRun::on_update(float delta)
 
 void PlayerRun::on_exit()
 {
-	// Run state typically doesn't need exit logic
 	std::cout << "Exit Run" << std::endl;
 }
 
@@ -542,7 +444,6 @@ PlayerHurt::PlayerHurt()
 {
 	timer.set_wait_time(0.5f);
 	timer.set_one_shot(true);
-	// FIXED: Use []
 	timer.set_callback([]()
 	{
 		// End hurt state
@@ -566,7 +467,6 @@ void PlayerHurt::on_update(float delta)
 	{
 		player->switch_state("dead");
 	}
-	// Add logic to transition back to appropriate state after hurt animation
 }
 
 void PlayerHurt::on_exit()
@@ -576,35 +476,59 @@ void PlayerHurt::on_exit()
 
 PlayerBulletTime::PlayerBulletTime()
 {
-	timer.set_wait_time(2.0f);
+	timer.set_wait_time(1.85f);
 	timer.set_one_shot(true);
-	// FIXED: Use []
 	timer.set_callback([]()
 	{
-		CharacterManager::instance()->get_player()->enter_bullet_time();
+		CharacterManager::instance()->get_player()->set_in_bullet_time(false);
 	});
 }
 
 void PlayerBulletTime::on_enter()
 {
 	Player* player = CharacterManager::instance()->get_player();
-	player->set_animation("bullet_time");
-	player->enter_bullet_time();
+	player->set_animation("idle_2");
+	BulletTimeManager::instance()->set_status(BulletTimeManager::Status::Entering);
+	BulletTimeManager::instance()->set_speed_progress(0.5f);
+	
+	// Make player invulnerable during bullet time (no blinking)
+	player->make_bullet_time_invulnerable();
+	
+	player->set_in_bullet_time(true);
+	timer.restart();
+	std::cout << "Enter PlayerBulletTime, MP: " << player->get_current_mp() << std::endl;
 }
 
 void PlayerBulletTime::on_update(float delta)
 {
+	Player* player = CharacterManager::instance()->get_player();
+	player->set_velocity(Vector2(0, player->get_velocity().y));
+	
+	// Update bullet time effect
+	BulletTimeManager::instance()->on_update(delta);
+	
+	// Update timer with normal delta (not scaled)
 	timer.on_update(delta);
 	
-	Player* player = CharacterManager::instance()->get_player();
+	// Keep player invulnerable while bullet time is active
+	if (BulletTimeManager::instance()->is_active())
+	{
+		player->make_bullet_time_invulnerable();
+	}
+	
+	// Check if bullet time should end (timer expired or manually set to false)
 	if (!player->get_in_bullet_time())
 	{
+		// Consume 1 MP when exiting bullet time
+		player->decrease_mp(1);
+		std::cout << "Exit PlayerBulletTime, MP remaining: " << player->get_current_mp() << std::endl;
 		player->switch_state("idle");
 	}
 }
 
 void PlayerBulletTime::on_exit()
 {
-	// Bullet time state typically doesn't need exit logic
 	BulletTimeManager::instance()->set_status(BulletTimeManager::Status::Exiting);
+	BulletTimeManager::instance()->set_speed_progress(0.1f);
+	std::cout << "Exit PlayerBulletTime state" << std::endl;
 }
