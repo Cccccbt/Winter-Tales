@@ -150,7 +150,7 @@ void PlayerAttack2::on_update(float delta)
         // Allow chaining to the third attack while the second animation is playing
         if (player->can_attack() && !player->get_attacking())
         {
-                if (player->get_attack_combo() == 2)
+                if (player->get_attack_combo() == 2 && player->is_attack3_available())
                 {
                         player->switch_state("attack_3");
                         return;
@@ -205,10 +205,11 @@ PlayerAttack3::PlayerAttack3()
 
 void PlayerAttack3::on_enter()
 {
-	Player* player = CharacterManager::instance()->get_player();
-	player->set_animation("attack_3");
-	player->set_attacking(true);
-	player->on_attack();
+        Player* player = CharacterManager::instance()->get_player();
+        player->set_animation("attack_3");
+        player->set_attacking(true);
+        player->on_attack();
+        player->disable_attack3();
 
 
 	CollisionBox* hit_box = player->get_hit_box();
@@ -312,21 +313,18 @@ void PlayerIdle::on_update(float delta)
 		player->switch_state("dead");
 	}
 
-	else if (player->can_attack())
-	{
-		switch (player->get_attack_combo())
-		{
-		case 0:
-			player->switch_state("attack_1");
-			break;
-		case 1:
-			player->switch_state("attack_2");
-			break;
-		case 2:
-			player->switch_state("attack_3");
-			break;
-		}
-	}
+        else if (player->can_attack())
+        {
+                switch (player->get_attack_combo())
+                {
+                case 0:
+                        player->switch_state("attack_1");
+                        break;
+                case 1:
+                        player->switch_state("attack_2");
+                        break;
+                }
+        }
 
 	else if (player->get_move_axis() != 0)
 	{
@@ -493,21 +491,18 @@ void PlayerRun::on_update(float delta)
 	{
 		player->switch_state("dead");
 	}
-	else if (player->can_attack())
-	{
-		switch (player->get_attack_combo())
-		{
-		case 0:
-			player->switch_state("attack_1");
-			break;
-		case 1:
-			player->switch_state("attack_2");
-			break;
-		case 2:
-			player->switch_state("attack_3");
-			break;
-		}
-	}
+        else if (player->can_attack())
+        {
+                switch (player->get_attack_combo())
+                {
+                case 0:
+                        player->switch_state("attack_1");
+                        break;
+                case 1:
+                        player->switch_state("attack_2");
+                        break;
+                }
+        }
 	else if (player->get_move_axis() == 0)
 	{
 		player->switch_state("idle");
