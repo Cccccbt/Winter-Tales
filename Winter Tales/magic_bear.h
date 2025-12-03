@@ -103,7 +103,7 @@ private:
         const float RUN_ATTACK_CD = 2.0f;
         const float WALK_SPEED = 150.0f;
         const float RUN_SPEED = 250.0f;
-        const float CLOSE_RANGE = 100.0f;
+        const float CLOSE_RANGE = 50.0f;
         const float FAR_RANGE = 300.0f;
         const float MID_RANGE = 200.0f;
 

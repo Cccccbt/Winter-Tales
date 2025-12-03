@@ -360,14 +360,18 @@ void PlayerJump::on_enter()
 	Player* player = CharacterManager::instance()->get_player();
 	player->set_animation("jump");
 	player->on_jump();
-	has_left_ground = false;  // Reset flag when entering jump state
+	has_left_ground = false;  // Reset flag
 	std::cout << "Enter Jump" << std::endl;
-	//Play jump sound
 }
 
 void PlayerJump::on_update(float delta)
 {
 	Player* player = CharacterManager::instance()->get_player();
+	
+	// Debug output to diagnose the issue
+	std::cout << "Jump Update - OnFloor: " << player->is_on_floor() 
+	          << " HasLeftGround: " << has_left_ground 
+	          << " VelY: " << player->get_velocity().y << std::endl;
 	
 	if (player->get_hp() <= 0)
 	{
@@ -376,42 +380,43 @@ void PlayerJump::on_update(float delta)
 		return;
 	}
 
-        if (player->can_attack())
-        {
-                player->switch_state(get_next_attack_state(player));
-                std::cout << "Exit Jump to Attack";
-                return;
-        }
+	if (player->can_attack())
+	{
+		player->switch_state(get_next_attack_state(player));
+		std::cout << "Exit Jump to Attack\n";
+		return;
+	}
 
-	// Track when player leaves the ground
+	// Mark as having left ground once we're airborne
 	if (!player->is_on_floor())
 	{
 		has_left_ground = true;
 	}
 
-	// Only transition when:
-	// 1. Player has left the ground (prevents immediate exit)
-	// 2. Player is falling downward (velocity.y > 0)
-	// 3. Player touches the floor
-	if (has_left_ground && player->is_on_floor())
+	// Only allow landing if:
+	// 1. We've left the ground (prevents immediate exit)
+	// 2. We're currently on the floor
+	// 3. We're falling (velocity.y >= 0, not moving upward)
+	if (has_left_ground && player->is_on_floor() && player->get_velocity().y >= 0)
 	{
 		player->on_land();
+		std::cout << "Landing detected!\n";
+		
 		if (player->get_move_axis() == 0)
 		{
 			player->switch_state("idle");
-			std::cout<<"Exit Jump to Idle\n";
+			std::cout << "Exit Jump to Idle\n";
 		}
 		else
 		{
 			player->switch_state("run");
-			std::cout << "Exit Jump to Run";
+			std::cout << "Exit Jump to Run\n";
 		}
 	}
 }
 
 void PlayerJump::on_exit()
 {
-	// Jump state typically doesn't need exit logic
 	std::cout << "Exit Jump\n";
 }
 

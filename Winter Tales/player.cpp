@@ -9,6 +9,7 @@ Player::Player()
 	is_facing_left = false;
 	position = Vector2(250, 200);
 	logic_height = 64;
+	hp = 5;
 
 	hit_box->set_size(Vector2(32, 64));
 	hurt_box->set_size(Vector2(16, 64));
@@ -328,6 +329,8 @@ void Player::on_update(float delta)
 			++it;
 		}
 	}
+
+	//std::cout << "Player Position: (" << position.x << ", " << position.y << ")\n";
 }
 
 void Player::on_render()
@@ -343,7 +346,13 @@ void Player::on_render()
 
 void Player::on_hurt()
 {
-	play_audio(_T("player_hurt_sound"), false);
+    decrease_hp(1);  // Decrease player HP by 1 point
+    std::cout << "Player took damage! HP: " << hp << std::endl;
+    
+    // Optional: Transition to hurt state for visual feedback
+    // if (!is_invulnerable) {
+    //     switch_state("hurt");
+    // }
 }
 
 void Player::on_jump()

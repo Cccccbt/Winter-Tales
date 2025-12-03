@@ -14,8 +14,8 @@ MagicBear::MagicBear()
 	hurt_box = CollisionManager::instance()->create_collision_box();
 
 	hit_box->set_size(Vector2(56, 32));
-	body_hit_box->set_size(Vector2(102, 64));
-	hurt_box->set_size(Vector2(102, 64));
+	body_hit_box->set_size(Vector2(84, 56));
+	hurt_box->set_size(Vector2(84, 56));
 
 	hit_box->set_layer_src(CollisionLayer::None);
 	body_hit_box->set_layer_src(CollisionLayer::None);
@@ -170,7 +170,8 @@ MagicBear::~MagicBear()
 
 void MagicBear::on_hurt()
 {
-	// Implementation of on_hurt
+	// Already calls decrease_hp in hurt_box callback, but you can add here too
+    std::cout << "MagicBear hurt! HP: " << hp << std::endl;
 }
 
 void MagicBear::on_input(const ExMessage& msg)
@@ -238,6 +239,8 @@ void MagicBear::on_update(float delta)
 			}),
 		bear_ray_list.end());
 
+
+	//std::cout << "MagicBear Phase: " << phase << ", HP: " << hp << "/" << hp_max << std::endl;
 }
 
 void MagicBear::on_render()
@@ -490,5 +493,6 @@ bool MagicBear::consume_pending_sneer()
 	}
 	return false;
 }
+
 
 

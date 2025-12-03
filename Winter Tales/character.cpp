@@ -22,7 +22,7 @@ Character::Character()
 	(
 		[this]() 
 		{
-			is_invulnerable = true;
+			is_invulnerable = false;  // 
 		}
 	);
 

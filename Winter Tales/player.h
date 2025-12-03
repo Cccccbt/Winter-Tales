@@ -94,6 +94,7 @@ private:
 	bool is_attacking = false;
 	bool is_attack_cd = false;
 
+	int hp_max = 5;
 	bool is_left_key_down = false;
 	bool is_right_key_down = false;
 	bool is_jump_key_down = false;

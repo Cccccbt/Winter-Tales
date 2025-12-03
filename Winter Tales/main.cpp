@@ -66,7 +66,7 @@ int main()
 		putimage(0, 0, ResourceManager::instance()->find_image("background"));
 		
 		CharacterManager::instance()->on_render();
-		//CollisionManager::instance()->on_debug_render();
+		CollisionManager::instance()->on_debug_render();
 
 		FlushBatchDraw();
 
