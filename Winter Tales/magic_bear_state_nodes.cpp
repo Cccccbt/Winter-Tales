@@ -353,8 +353,15 @@ MagicBearAttack4::MagicBearAttack4()
                 MagicBear* bear = CharacterManager::instance()->get_magic_bear();
                 if (ball_cast_count < 3)
                 {
-                        bear->on_ball();
-                        ++ball_cast_count;
+                        if (bear->on_ball())
+                        {
+                                ++ball_cast_count;
+                        }
+                        else
+                        {
+                                timer_ball.pause();
+                                return;
+                        }
                         if (ball_cast_count >= 3)
                         {
                                 timer_ball.pause();
@@ -377,9 +384,16 @@ void MagicBearAttack4::on_enter()
                 enter_facing_left = bear->get_is_facing_left();
         timer_attack.restart();
         ball_cast_count = 0;
-        bear->on_ball();
-        ++ball_cast_count;
-        timer_ball.restart();
+        bool spawned_first_ball = bear->on_ball();
+        if (spawned_first_ball)
+        {
+                ++ball_cast_count;
+                timer_ball.restart();
+        }
+        else
+        {
+                timer_ball.pause();
+        }
         std::cout << "MagicBear entered Attack4 state." << std::endl;
 }
 

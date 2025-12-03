@@ -33,6 +33,11 @@ MagicBear::MagicBear()
                                 return;
                         }
 
+                        if (hp > 0)
+                        {
+                                --hp;
+                        }
+
                         on_hurt();
                 });
 
@@ -273,11 +278,26 @@ void MagicBear::on_render()
 	Character::on_render();
 }
 
-void MagicBear::on_ball()
+bool MagicBear::on_ball()
 {
-	// Implementation of on_ball
-	MagicBearBall* new_ball = new MagicBearBall(is_facing_left, get_logical_center());
-	bear_ball_list.push_back(new_ball);
+        // Implementation of on_ball
+        int active_ball_count = 0;
+        for (auto* ball : bear_ball_list)
+        {
+                if (ball && ball->get_enabled())
+                {
+                        ++active_ball_count;
+                }
+        }
+
+        if (active_ball_count >= 3)
+        {
+                return false;
+        }
+
+        MagicBearBall* new_ball = new MagicBearBall(is_facing_left, get_logical_center());
+        bear_ball_list.push_back(new_ball);
+        return true;
 }
 
 void MagicBear::on_ray(bool flag)

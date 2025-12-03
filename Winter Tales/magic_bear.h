@@ -75,7 +75,7 @@ public:
 	virtual void on_update(float delta) override;
         virtual void on_render() override;
 
-        void on_ball();
+        bool on_ball();
         void on_ray(bool);
         void on_bite();
         void on_run();
