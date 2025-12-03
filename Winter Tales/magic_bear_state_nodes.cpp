@@ -538,12 +538,14 @@ void MagicBearDead::on_enter()
 	bear->set_animation("dead");
 	bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
 	bear->get_hit_box()->set_enabled(false);
+	enter_facing_left = bear->get_is_facing_left();
 	std::cout << "MagicBear entered Dead state." << std::endl;
 }
 
 void MagicBearDead::on_update(float delta)
 {
 	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	bear->set_is_facing_left(enter_facing_left);
 }
 
 void MagicBearDead::on_exit()

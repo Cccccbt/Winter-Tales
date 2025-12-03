@@ -3,9 +3,11 @@
 
 MagicBear::MagicBear()
 {
-        // Constructor implementation (if any)
-        hp_max = static_cast<float>(hp);
-        is_facing_left = true;
+	// Set HP to 15 before calculating hp_max
+	hp = 15;  // ✅ Changed from default (100) to 15
+	hp_max = static_cast<float>(hp);
+	
+	is_facing_left = true;
 	position = Vector2(400.0f, 300.0f);
 	logic_height = 32.0f;
 
@@ -14,7 +16,7 @@ MagicBear::MagicBear()
 	hurt_box = CollisionManager::instance()->create_collision_box();
 
 	hit_box->set_size(Vector2(56, 32));
-	body_hit_box->set_size(Vector2(84, 56));
+	body_hit_box->set_size(Vector2(64, 48));
 	hurt_box->set_size(Vector2(84, 56));
 
 	hit_box->set_layer_src(CollisionLayer::None);
@@ -70,12 +72,12 @@ MagicBear::MagicBear()
 	sneer_left.set_interval(0.2f);
 	sneer_left.set_is_loop(true);
 	sneer_left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
-	sneer_left.add_frame(ResourceManager::instance()->find_image("magic_bear_sneer_left"), 4);
+	sneer_left.add_frame(ResourceManager::instance()->find_image("magic_bear_sneer_left"), 6);
 	Animation& sneer_right = sneer_animation.right;
 	sneer_right.set_interval(0.2f);
 	sneer_right.set_is_loop(true);
 	sneer_right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
-	sneer_right.add_frame(ResourceManager::instance()->find_image("magic_bear_sneer_right"), 4);
+	sneer_right.add_frame(ResourceManager::instance()->find_image("magic_bear_sneer_right"), 6);
 
 	AnimationGroup& hurt_animation = animation_pool["hurt"];
 	Animation& hurt_left = hurt_animation.left;
@@ -295,7 +297,7 @@ bool MagicBear::on_ball()
                 return false;
         }
 
-        MagicBearBall* new_ball = new MagicBearBall(is_facing_left, get_logical_center());
+        MagicBearBall* new_ball = new MagicBearBall(is_facing_left, get_logical_center() + Vector2(0, -72));
         bear_ball_list.push_back(new_ball);
         return true;
 }
@@ -534,6 +536,8 @@ void MagicBear::mark_attack3_used()
 {
         attack3_used = true;
 }
+
+
 
 
 
