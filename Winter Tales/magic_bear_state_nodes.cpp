@@ -67,11 +67,11 @@ void MagicBearIdle::on_update(float delta)
         {
                 bear->switch_state("attack1");
         }
-        else if (bear->get_phase_index() >= 2 && (bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
+        else if (bear->get_phase_index() >= 2 && (bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
         {
                 bear->switch_state("attack3");
         }
-        else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
+        else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
         {
                 bear->switch_state("attack4");
         }
@@ -136,11 +136,11 @@ void MagicBearWalk::on_update(float delta)
         {
                 bear->switch_state("attack1");
         }
-        else if (bear->get_phase_index() >= 2 && (bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
+        else if (bear->get_phase_index() >= 2 && (bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
         {
                 bear->switch_state("attack3");
         }
-        else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
+        else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
         {
                 bear->switch_state("attack4");
         }
