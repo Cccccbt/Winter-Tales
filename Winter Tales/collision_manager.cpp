@@ -42,20 +42,10 @@ void CollisionManager::process_collide()
 			bool is_collide_x = (max(collision_box_src->position.x + collision_box_src->size.x / 2, collision_box_dst->position.x + collision_box_dst->size.x / 2) - min(collision_box_src->position.x - collision_box_src->size.x / 2, collision_box_dst->position.x - collision_box_dst->size.x / 2)) <= (collision_box_src->size.x + collision_box_dst->size.x);
 			bool is_collide_y = (max(collision_box_src->position.y + collision_box_src->size.y / 2, collision_box_dst->position.y + collision_box_dst->size.y / 2) - min(collision_box_src->position.y - collision_box_src->size.y / 2, collision_box_dst->position.y - collision_box_dst->size.y / 2)) <= (collision_box_src->size.y + collision_box_dst->size.y);
 
-                        if (is_collide_x && is_collide_y)
-                        {
-                                if (collision_box_src->on_collide)
-                                {
-                                        collision_box_src->on_collide();
-                                }
-
-                                if (collision_box_dst->on_collide)
-                                {
-                                        collision_box_dst->on_collide();
-                                }
-                        }
-                }
-        }
+			if (is_collide_x && is_collide_y && collision_box_dst->on_collide)
+				collision_box_dst->on_collide();
+		}
+	}
 }
 
 void CollisionManager::on_debug_render()
