@@ -310,12 +310,16 @@ void PlayerIdle::on_enter()
 
 void PlayerIdle::on_update(float delta)
 {
-	Player* player = CharacterManager::instance()->get_player();
+        Player* player = CharacterManager::instance()->get_player();
 
-	if (player->get_hp() <= 0)
-	{
-		player->switch_state("dead");
-	}
+        if (player->get_hp() <= 0)
+        {
+                player->switch_state("dead");
+        }
+        else if (player->can_bullet_time())
+        {
+                player->enter_bullet_time();
+        }
 
         else if (player->can_attack())
         {
@@ -500,12 +504,16 @@ void PlayerRun::on_enter()
 
 void PlayerRun::on_update(float delta)
 {
-	Player* player = CharacterManager::instance()->get_player();
+        Player* player = CharacterManager::instance()->get_player();
 
-	if (player->get_hp() <= 0)
-	{
-		player->switch_state("dead");
-	}
+        if (player->get_hp() <= 0)
+        {
+                player->switch_state("dead");
+        }
+        else if (player->can_bullet_time())
+        {
+                player->enter_bullet_time();
+        }
         else if (player->can_attack())
         {
                 switch (player->get_attack_combo())
@@ -576,19 +584,21 @@ void PlayerHurt::on_exit()
 
 PlayerBulletTime::PlayerBulletTime()
 {
-	timer.set_wait_time(2.0f);
-	timer.set_one_shot(true);
-	// FIXED: Use []
-	timer.set_callback([]()
-	{
-		CharacterManager::instance()->get_player()->enter_bullet_time();
-	});
+        timer.set_wait_time(2.0f);
+        timer.set_one_shot(true);
+        // FIXED: Use []
+        timer.set_callback([]()
+        {
+                CharacterManager::instance()->get_player()->set_in_bullet_time(false);
+                BulletTimeManager::instance()->set_status(BulletTimeManager::Status::Exiting);
+        });
 }
 
 void PlayerBulletTime::on_enter()
 {
         Player* player = CharacterManager::instance()->get_player();
         player->set_animation("bullet_time");
+        timer.restart();
 }
 
 void PlayerBulletTime::on_update(float delta)

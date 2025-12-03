@@ -316,9 +316,10 @@ void Player::on_update(float delta)
 		is_facing_left = get_move_axis() < 0;
 	}
 
-	timer_roll_cd.on_update(delta);
-	timer_attack_cd.on_update(delta);
-	timer_combo_reset.on_update(delta);
+        timer_roll_cd.on_update(delta);
+        timer_attack_cd.on_update(delta);
+        timer_combo_reset.on_update(delta);
+        timer_bullet_time.on_update(delta);
 
 	Character::on_update(delta);
 	hurt_box->set_position(is_facing_left ? get_logical_center() + Vector2(8, 0) : get_logical_center() - Vector2(8, 0));
@@ -397,9 +398,10 @@ void Player::throw_bullet()
 
 void Player::enter_bullet_time()
 {
-	// Placeholder for bullet time logic
-	state_machine.switch_to("bullet_time");
-	BulletTimeManager::instance()->set_status(BulletTimeManager::Status::Entering);
-	is_in_bullet_time = true;
+        // Placeholder for bullet time logic
+        state_machine.switch_to("bullet_time");
+        BulletTimeManager::instance()->set_status(BulletTimeManager::Status::Entering);
+        is_in_bullet_time = true;
+        timer_bullet_time.restart();
 }
 

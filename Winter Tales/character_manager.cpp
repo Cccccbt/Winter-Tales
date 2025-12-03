@@ -69,16 +69,19 @@ void CharacterManager::on_update(float delta)
 
 void CharacterManager::on_render()
 {
-	for (auto i = character_list.begin(); i != character_list.end(); i++)
-	{
-		i->second->on_render();
-	}
+        for (auto i = character_list.begin(); i != character_list.end(); i++)
+        {
+                i->second->on_render();
+        }
 
-	magic_bear->on_render();
+        magic_bear->on_render();
 
-	BulletTimeManager::instance()->post_process();
+        if (BulletTimeManager::instance()->is_active())
+        {
+                BulletTimeManager::instance()->post_process();
+        }
 
-	player->on_render();
+        player->on_render();
 }
 
 CharacterManager::CharacterManager()
