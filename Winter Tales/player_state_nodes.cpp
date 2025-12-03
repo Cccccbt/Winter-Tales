@@ -378,18 +378,25 @@ void PlayerJump::on_update(float delta)
 		return;
 	}
 
-	if (player->can_attack())
-	{
-		player->switch_state(get_next_attack_state(player));
-		std::cout << "Exit Jump to Attack\n";
-		return;
-	}
+        if (player->can_attack())
+        {
+                player->switch_state(get_next_attack_state(player));
+                std::cout << "Exit Jump to Attack\n";
+                return;
+        }
 
-	// Mark as having left ground once we're airborne
-	if (!player->is_on_floor())
-	{
-		has_left_ground = true;
-	}
+        if (player->can_roll())
+        {
+                player->switch_state("roll");
+                std::cout << "Exit Jump to Roll\n";
+                return;
+        }
+
+        // Mark as having left ground once we're airborne
+        if (!player->is_on_floor())
+        {
+                has_left_ground = true;
+        }
 
 	// Only allow landing if:
 	// 1. We've left the ground (prevents immediate exit)
@@ -445,15 +452,19 @@ void PlayerRoll::on_update(float delta)
 {
 	timer.on_update(delta);
 
-	Player* player = CharacterManager::instance()->get_player();
-	if (!player->get_rolling())
-	{
-		if (player->get_move_axis() != 0)
-		{
-			player->switch_state("run");
-		}
-		else if (player->can_jump())
-		{
+        Player* player = CharacterManager::instance()->get_player();
+        if (!player->get_rolling())
+        {
+                if (!player->is_on_floor())
+                {
+                        player->switch_state("jump");
+                }
+                else if (player->get_move_axis() != 0)
+                {
+                        player->switch_state("run");
+                }
+                else if (player->can_jump())
+                {
 			player->switch_state("jump");
 		}
 
