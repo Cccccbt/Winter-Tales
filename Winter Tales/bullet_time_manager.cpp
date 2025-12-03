@@ -14,8 +14,12 @@ BulletTimeManager* BulletTimeManager::instance()
 
 void BulletTimeManager::post_process()
 {
-	DWORD* buffer = GetImageBuffer();
-	int w = getwidth(), h = getheight();
+        DWORD* buffer = GetImageBuffer();
+        int w = getwidth(), h = getheight();
+        if (!buffer || w <= 0 || h <= 0)
+        {
+                return;
+        }
 	for (int y = 0; y < h; ++y)
 	{
 		for (int x = 0; x < w; ++x)
