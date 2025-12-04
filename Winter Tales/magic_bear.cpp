@@ -197,6 +197,13 @@ void MagicBear::clear_hurt_invulnerability()
         is_blink_invisiable = false;
 }
 
+void MagicBear::start_post_hurt_invulnerability()
+{
+        is_invulnerable_status.set_wait_time(POST_HURT_INVULNERABILITY_TIME);
+        make_invulnerable();
+        is_invulnerable_status.resume();
+}
+
 void MagicBear::on_input(const ExMessage& msg)
 {
 	// Implementation of on_input

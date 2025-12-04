@@ -84,6 +84,7 @@ public:
 
         void enter_hurt_invulnerability();
         void clear_hurt_invulnerability();
+        void start_post_hurt_invulnerability();
 
         float get_phase_walk_speed() const;
         float get_phase_run_speed() const;
@@ -118,6 +119,7 @@ private:
         const float CLOSE_RANGE = 50.0f;
         const float FAR_RANGE = 300.0f;
         const float MID_RANGE = 200.0f;
+        const float POST_HURT_INVULNERABILITY_TIME = 1.0f;
 
         float hp_max = 10.0f;
         int phase = 1;
