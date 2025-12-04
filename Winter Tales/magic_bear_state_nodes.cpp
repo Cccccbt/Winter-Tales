@@ -538,6 +538,13 @@ void MagicBearHurt::on_exit()
 
 MagicBearDead::MagicBearDead()
 {
+    dead_timer.set_wait_time(2.0f);
+    dead_timer.set_one_shot(true);
+    dead_timer.set_callback([]()
+        {
+            MessageBox(GetHWnd(), _T("No......"), _T("You Died"), MB_OK);
+            exit(0);
+        });
 }
 
 MagicBearDead::~MagicBearDead()

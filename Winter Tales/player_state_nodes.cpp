@@ -181,7 +181,7 @@ PlayerDead::PlayerDead()
 	timer.set_one_shot(true);
 	timer.set_callback([]()
 	{
-		MessageBox(GetHWnd(), _T("No......"), _T("You Dead"), MB_OK);
+		MessageBox(GetHWnd(), _T("No......"), _T("You Died"), MB_OK);
 		exit(0);
 	});
 }
