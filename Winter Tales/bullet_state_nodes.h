@@ -1,30 +1,30 @@
 #pragma once
+
 #include "state_node.h"
 #include "timer.h"
 
+// Bullet state implementations used by the bullet state machine.
 class Bullet_Moving : public StateNode
 {
 public:
-	Bullet_Moving();
-	~Bullet_Moving();
+        Bullet_Moving();
+        ~Bullet_Moving();
 
-	void on_enter() override;
-	void on_update(float delta) override;
-	void on_exit() override;
+        void on_enter() override;
+        void on_update(float delta) override;
+        void on_exit() override;
 
 private:
-	Timer timer;
+        Timer timer;
 };
 
 class Bullet_Destroyed : public StateNode
 {
 public:
-	Bullet_Destroyed();
-	~Bullet_Destroyed();
-	void on_enter() override;
-	void on_update(float delta) override;
-	void on_exit() override;
+        Bullet_Destroyed();
+        ~Bullet_Destroyed();
 
-private:
-
+        void on_enter() override;
+        void on_update(float delta) override;
+        void on_exit() override;
 };
