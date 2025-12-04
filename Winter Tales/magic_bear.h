@@ -107,6 +107,8 @@ public:
         void start_attack3_cooldown();
         void start_attack4_cooldown();
         void update_attack_cooldowns(float delta);
+        void begin_attack_visuals();
+        void end_attack_visuals();
 
 private:
         const float GLOBAL_ATTACK_CD = 1.0f;
@@ -154,4 +156,6 @@ private:
 
         std::vector<MagicBearBall*> bear_ball_list;
         std::vector<MagicBearRay*> bear_ray_list;
+
+        bool attack_tint_active = false;
 };
