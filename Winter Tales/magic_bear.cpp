@@ -200,7 +200,11 @@ void MagicBear::clear_hurt_invulnerability()
 void MagicBear::start_post_hurt_invulnerability()
 {
         is_invulnerable_status.set_wait_time(POST_HURT_INVULNERABILITY_TIME);
+        // Ensure the bear remains invulnerable and visibly blinking after recovering
+        // from the hurt state.
         make_invulnerable();
+        is_invulnerable_blink.restart();
+        is_invulnerable_blink.resume();
         is_invulnerable_status.resume();
 }
 
