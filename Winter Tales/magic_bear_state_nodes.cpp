@@ -170,12 +170,13 @@ MagicBearAttack1::~MagicBearAttack1()
 
 void MagicBearAttack1::on_enter()
 {
-	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
-	bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
-	bear->get_hit_box()->set_size(Vector2(40.0f, 40.0f));
-	bear->get_hit_box()->set_enabled(true);
-	bear->set_animation("attack1");
-	enter_facing_left = bear->get_is_facing_left();
+        MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+        bear->enter_hurt_invulnerability();
+        bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
+        bear->get_hit_box()->set_size(Vector2(40.0f, 40.0f));
+        bear->get_hit_box()->set_enabled(true);
+        bear->set_animation("attack1");
+        enter_facing_left = bear->get_is_facing_left();
 	bear->on_bite();
 	timer_attack.restart();
 	std::cout << "MagicBear entered Attack1 state." << std::endl;
@@ -202,6 +203,7 @@ void MagicBearAttack1::on_exit()
 {
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
         bear->get_hit_box()->set_enabled(false);
+        bear->clear_hurt_invulnerability();
         bear->start_attack1_cooldown();
         bear->start_global_attack_cooldown();
         std::cout << "MagicBear exited Attack1 state." << std::endl;
@@ -239,10 +241,11 @@ MagicBearAttack2::~MagicBearAttack2()
 void MagicBearAttack2::on_enter()
 {
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+        bear->enter_hurt_invulnerability();
         bear->set_animation("attack2");
         bear->on_run();
         bear->get_hit_box()->set_enabled(false);
-		enter_facing_left = bear->get_is_facing_left();
+                enter_facing_left = bear->get_is_facing_left();
         timer_attack.restart();
         std::cout << "MagicBear entered Attack2 state." << std::endl;
 }
@@ -263,6 +266,7 @@ void MagicBearAttack2::on_exit()
 {
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
         bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
+        bear->clear_hurt_invulnerability();
         bear->start_attack2_cooldown();
         bear->start_global_attack_cooldown();
         std::cout << "MagicBear exited Attack2 state." << std::endl;
@@ -293,6 +297,7 @@ void MagicBearAttack3::on_enter()
 {
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
         bear->mark_attack3_used();
+        bear->enter_hurt_invulnerability();
         bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
         bear->set_animation("attack3");
         //bear->on_ray();
@@ -321,6 +326,7 @@ void MagicBearAttack3::on_exit()
 {
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
         bear->get_hit_box()->set_enabled(false);
+        bear->clear_hurt_invulnerability();
         bear->start_attack3_cooldown();
         bear->start_global_attack_cooldown();
         std::cout << "MagicBear exited Attack3 state." << std::endl;
@@ -380,6 +386,7 @@ MagicBearAttack4::~MagicBearAttack4()
 void MagicBearAttack4::on_enter()
 {
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+        bear->enter_hurt_invulnerability();
         bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
         bear->set_animation("attack4");
         //bear->on_ball();
@@ -417,6 +424,7 @@ void MagicBearAttack4::on_exit()
 {
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
         timer_ball.pause();
+        bear->clear_hurt_invulnerability();
         bear->start_attack4_cooldown();
         bear->start_global_attack_cooldown();
         std::cout << "MagicBear exited Attack4 state." << std::endl;
@@ -453,10 +461,11 @@ MagicBearSneer::~MagicBearSneer()
 void MagicBearSneer::on_enter()
 {
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+        bear->enter_hurt_invulnerability();
         bear->set_animation("sneer");
         bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
         bear->get_hit_box()->set_enabled(false);
-		enter_facing_left = bear->get_is_facing_left();
+                enter_facing_left = bear->get_is_facing_left();
         sneer_timer.restart();
         std::cout << "MagicBear entered Sneer state." << std::endl;
 }
@@ -476,6 +485,7 @@ void MagicBearSneer::on_update(float delta)
 void MagicBearSneer::on_exit()
 {
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+        bear->clear_hurt_invulnerability();
         bear->start_global_attack_cooldown();
         std::cout << "MagicBear exited Sneer state." << std::endl;
 }
