@@ -191,6 +191,7 @@ void PlayerDead::on_enter()
 	Player* player = CharacterManager::instance()->get_player();
 	timer.restart();
 	player->set_animation("dead");
+	std::cout << "Enter Dead" << std::endl;
 }
 
 void PlayerDead::on_update(float delta)
@@ -201,6 +202,7 @@ void PlayerDead::on_update(float delta)
 void PlayerDead::on_exit()
 {
 	// Dead state typically doesn't need exit logic
+	std::cout << "Exit Dead" << std::endl;
 }
 
 PlayerIdle::PlayerIdle()

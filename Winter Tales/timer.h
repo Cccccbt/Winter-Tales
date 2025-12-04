@@ -14,6 +14,7 @@ public:
         {
                 pass_time = 0;
                 shotted = false;
+				paused = false;
         }
 
         void set_wait_time(float time)
@@ -51,7 +52,7 @@ public:
                 pass_time += delta_time;
                 if (pass_time >= wait_time)
                 {
-                        if (callback && (!one_shot || (one_shot && !shotted)))
+                        if (callback && !one_shot || (one_shot && !shotted))
                         {
                                 callback();
                         }

@@ -222,7 +222,7 @@ void Player::on_input(const ExMessage& msg)
 				break;
 
 			case 0x4A: // J key
-				is_attack_key_down = true;
+			 is_attack_key_down = true;
 				break;
 
 			case VK_SPACE: // Space key
