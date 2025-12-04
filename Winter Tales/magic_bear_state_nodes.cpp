@@ -405,7 +405,7 @@ void MagicBearAttack4::on_update(float delta)
         timer_attack.on_update(delta);
         timer_ball.on_update(delta);
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
-                bear->set_is_facing_left(enter_facing_left);
+        bear->set_is_facing_left(enter_facing_left);
         if (bear->get_hp() <= 0)
         {
                 bear->switch_state("dead");
@@ -456,6 +456,7 @@ void MagicBearSneer::on_enter()
         bear->set_animation("sneer");
         bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
         bear->get_hit_box()->set_enabled(false);
+		enter_facing_left = bear->get_is_facing_left();
         sneer_timer.restart();
         std::cout << "MagicBear entered Sneer state." << std::endl;
 }
@@ -469,6 +470,7 @@ void MagicBearSneer::on_update(float delta)
                 bear->switch_state("dead");
                 return;
         }
+		bear->set_is_facing_left(enter_facing_left);
 }
 
 void MagicBearSneer::on_exit()

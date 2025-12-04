@@ -337,6 +337,7 @@ void Player::on_roll()
 	timer_roll_cd.restart();
 	is_roll_cd = true;
 	velocity.x = (is_facing_left ? -1 : 1) * SPEED_ROLL;
+	velocity.y = 0;
 }
 
 void Player::on_attack()

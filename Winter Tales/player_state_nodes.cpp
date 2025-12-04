@@ -358,13 +358,11 @@ void PlayerRoll::on_update(float delta)
 	timer.on_update(delta);
 
 	Player* player = CharacterManager::instance()->get_player();
+	player->set_velocity(Vector2(player->get_velocity().x, 0));  // Maintain horizontal roll velocity, nullify vertical
 	if (!player->get_rolling())
 	{
-		if (!player->is_on_floor())
-		{
-			player->switch_state("jump");
-		}
-		else if (player->get_move_axis() != 0)
+
+		if (player->get_move_axis() != 0)
 		{
 			player->switch_state("run");
 		}
