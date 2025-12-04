@@ -64,8 +64,6 @@ float BulletTimeManager::on_update(float delta)
 		progress = 1.0f;
 	}
 
-	std::cout << "Bullet Time Progress: " << progress << std::endl;
-
 	return delta * lerp(1.0f, DST_DELTA_FACTOR, progress);
 }
 

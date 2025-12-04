@@ -189,6 +189,7 @@ PlayerDead::PlayerDead()
 void PlayerDead::on_enter()
 {
 	Player* player = CharacterManager::instance()->get_player();
+	timer.restart();
 	player->set_animation("dead");
 }
 
@@ -273,10 +274,6 @@ void PlayerJump::on_enter()
 void PlayerJump::on_update(float delta)
 {
 	Player* player = CharacterManager::instance()->get_player();
-	
-	std::cout << "Jump Update - OnFloor: " << player->is_on_floor() 
-	          << " HasLeftGround: " << has_left_ground 
-	          << " VelY: " << player->get_velocity().y << std::endl;
 	
 	if (player->get_hp() <= 0)
 	{
