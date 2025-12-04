@@ -64,10 +64,7 @@ void MagicBearIdle::on_update(float delta)
     {
         bear->switch_state("attack1");  // Attack 1: Bite (close range)
     }
-    else if (bear->is_player_in_close_range() && bear->can_attack_run())
-    {
-        bear->switch_state("attack2");  // Attack 2: Run (close range)
-    }
+
     else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
     {
         bear->switch_state("attack3");  // Attack 3: Ray (mid/far range)
@@ -75,6 +72,11 @@ void MagicBearIdle::on_update(float delta)
     else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
     {
         bear->switch_state("attack4");  // Attack 4: Ball (mid/far range)
+    }
+
+    else if (bear->is_player_in_far_range() && bear->can_attack_run())
+    {
+        bear->switch_state("attack2");  // Attack 2: Run (far range)
     }
 
 }
@@ -492,12 +494,12 @@ void MagicBearSneer::on_exit()
 
 MagicBearHurt::MagicBearHurt()
 {
-        hurt_timer.set_wait_time(0.6f);
-        hurt_timer.set_one_shot(true);
-        hurt_timer.set_callback([]()
-        {
-                CharacterManager::instance()->get_magic_bear()->switch_state("idle");
-        });
+	hurt_timer.set_wait_time(0.6f);
+	hurt_timer.set_one_shot(true);
+	hurt_timer.set_callback([]()
+	{
+		CharacterManager::instance()->get_magic_bear()->switch_state("idle");
+	});
 }
 
 MagicBearHurt::~MagicBearHurt()
@@ -506,34 +508,58 @@ MagicBearHurt::~MagicBearHurt()
 
 void MagicBearHurt::on_enter()
 {
-        MagicBear* bear = CharacterManager::instance()->get_magic_bear();
-        bear->set_animation("hurt");
-        bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
-        bear->get_hit_box()->set_enabled(false);
-        enter_facing_left = bear->get_is_facing_left();
-        bear->enter_hurt_invulnerability();
-        hurt_timer.restart();
-        std::cout << "MagicBear entered Hurt state." << std::endl;
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	bear->set_animation("hurt");
+	bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
+	bear->get_hit_box()->set_enabled(false);
+	enter_facing_left = bear->get_is_facing_left();
+	// ✅ REMOVED: bear->enter_hurt_invulnerability();
+	// Bear is now vulnerable while in hurt state and can be attacked
+	hurt_timer.restart();
+	std::cout << "MagicBear entered Hurt state." << std::endl;
 }
 
 void MagicBearHurt::on_update(float delta)
 {
-        hurt_timer.on_update(delta);
-        MagicBear* bear = CharacterManager::instance()->get_magic_bear();
-        bear->set_is_facing_left(enter_facing_left);
-        if (bear->get_hp() <= 0)
-        {
-                bear->switch_state("dead");
-                return;
-        }
+	hurt_timer.on_update(delta);
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	bear->set_is_facing_left(enter_facing_left);
+	
+	if (bear->get_hp() <= 0)
+	{
+		bear->switch_state("dead");
+		return;
+	}
+
+	// ✅ NEW: Allow attacking during hurt state
+	if (bear->is_player_in_close_range() && bear->can_attack_bite())
+	{
+		bear->switch_state("attack1");
+		return;
+	}
+	else if (bear->is_player_in_close_range() && bear->can_attack_run())
+	{
+		bear->switch_state("attack2");
+		return;
+	}
+	else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
+	{
+		bear->switch_state("attack3");
+		return;
+	}
+	else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
+	{
+		bear->switch_state("attack4");
+		return;
+	}
 }
 
 void MagicBearHurt::on_exit()
 {
-        MagicBear* bear = CharacterManager::instance()->get_magic_bear();
-        bear->get_hit_box()->set_enabled(false);
-        bear->start_post_hurt_invulnerability();
-        std::cout << "MagicBear exited Hurt state." << std::endl;
+	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+	bear->get_hit_box()->set_enabled(false);
+	bear->start_post_hurt_invulnerability();
+	std::cout << "MagicBear exited Hurt state." << std::endl;
 }
 
 MagicBearDead::MagicBearDead()
@@ -542,7 +568,7 @@ MagicBearDead::MagicBearDead()
     dead_timer.set_one_shot(true);
     dead_timer.set_callback([]()
         {
-            MessageBox(GetHWnd(), _T("No......"), _T("You Died"), MB_OK);
+            MessageBox(GetHWnd(), _T("Good job!"), _T("You Win"), MB_OK);
             exit(0);
         });
 }
@@ -565,6 +591,7 @@ void MagicBearDead::on_update(float delta)
 {
 	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
 	bear->set_is_facing_left(enter_facing_left);
+	dead_timer.on_update(delta);
 }
 
 void MagicBearDead::on_exit()
@@ -572,6 +599,22 @@ void MagicBearDead::on_exit()
 	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
 	std::cout << "MagicBear exited Dead state." << std::endl;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
