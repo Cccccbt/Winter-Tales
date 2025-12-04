@@ -522,7 +522,7 @@ void MagicBearHurt::on_exit()
 {
         MagicBear* bear = CharacterManager::instance()->get_magic_bear();
         bear->get_hit_box()->set_enabled(false);
-        bear->clear_hurt_invulnerability();
+        bear->start_post_hurt_invulnerability();
         std::cout << "MagicBear exited Hurt state." << std::endl;
 }
 
