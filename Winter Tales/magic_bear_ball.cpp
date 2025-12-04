@@ -26,7 +26,7 @@ MagicBearBall::MagicBearBall(bool is_facing_left, const Vector2& position)
 			if (stage == Aiming) 
 			{
 				stage = Dashing;
-				const Vector2& pos_player = CharacterManager::instance()->get_player()->get_position();
+				const Vector2& pos_player = CharacterManager::instance()->get_player()->get_position() + Vector2(0, -32);
 				Vector2 direction = pos_player - this->position;
 				float length = direction.length();
 				if (length != 0)

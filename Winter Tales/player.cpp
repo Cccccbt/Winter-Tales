@@ -127,11 +127,11 @@ Player::Player()
 	animation_pool["dead"].left.set_interval(0.1f);
 	animation_pool["dead"].left.set_is_loop(false);
 	animation_pool["dead"].left.set_AnchorMode(Animation::AnchorMode::BottomCentered);
-	animation_pool["dead"].left.add_frame(ResourceManager::instance()->find_image("player_dead_left"), 6);
+	animation_pool["dead"].left.add_frame(ResourceManager::instance()->find_image("player_dead_left"), 4);
 	animation_pool["dead"].right.set_interval(0.1f);
 	animation_pool["dead"].right.set_is_loop(false);
 	animation_pool["dead"].right.set_AnchorMode(Animation::AnchorMode::BottomCentered);
-	animation_pool["dead"].right.add_frame(ResourceManager::instance()->find_image("player_dead_right"), 6);
+	animation_pool["dead"].right.add_frame(ResourceManager::instance()->find_image("player_dead_right"), 4);
 
 	// Jump Animation
 	animation_pool["jump"].left.set_interval(0.1f);

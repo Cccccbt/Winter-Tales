@@ -56,7 +56,6 @@ void Character::decrease_hp(int h)
 		make_invulnerable();
 	}
 
-	on_hurt();
 }
 
 void Character::on_input(const ExMessage& msg)
