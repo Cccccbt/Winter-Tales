@@ -1,6 +1,7 @@
 #include "magic_bear_ball.h"
 #include "resource_manager.h"
 #include "character_manager.h"
+#include "camera.h"
 #include <cstdlib>
 #include <iostream>
 
@@ -84,13 +85,14 @@ void MagicBearBall::on_update(float delta)
 void MagicBearBall::on_render()
 {
 	if (!is_enabled) return;
-	if (ball_image) 
-	{
-		int draw_x = (int)(position.x - ball_image->getwidth() / 2);
-		int draw_y = (int)(position.y - ball_image->getheight() / 2);
-		putimage_alpha(draw_x, draw_y, ball_image);
-	}
-} 
+        if (ball_image)
+        {
+                Vector2 screen_pos = Camera::instance()->world_to_screen(position);
+                int draw_x = (int)(screen_pos.x - ball_image->getwidth() / 2);
+                int draw_y = (int)(screen_pos.y - ball_image->getheight() / 2);
+                putimage_alpha(draw_x, draw_y, ball_image);
+        }
+}
 
 void MagicBearBall::on_destroy()
 {

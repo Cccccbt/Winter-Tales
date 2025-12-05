@@ -33,6 +33,11 @@ public:
                 return position;
         }
 
+        const Vector2* get_position_ptr() const
+        {
+                return &position;
+        }
+
         void set_velocity(const Vector2& velocity)
         {
                 this->velocity = velocity;

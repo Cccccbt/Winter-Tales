@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="bullet_time_manager.cpp" />
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="character_manager.cpp" />
     <ClCompile Include="collision_layer.h" />
@@ -138,6 +139,7 @@
     <ClCompile Include="player_state_nodes.cpp" />
     <ClCompile Include="resource_manager.cpp" />
     <ClCompile Include="state_machine.cpp" />
+    <ClCompile Include="camera.h" />
     <ClCompile Include="vector2.h" />
   </ItemGroup>
   <ItemGroup>
