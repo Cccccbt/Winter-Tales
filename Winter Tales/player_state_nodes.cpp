@@ -13,6 +13,18 @@ static const char* get_next_attack_state(const Player* player)
 	}
 }
 
+// Returns the correct attack state name based on the current combo step.
+static const char* get_next_attack_state(const Player* player)
+{
+	switch (player->get_attack_combo())
+	{
+	case 1:
+		return "attack_2";
+	default:
+		return "attack_1";
+	}
+}
+
 PlayerAttack1::PlayerAttack1()
 {
 	timer.set_wait_time(0.5f);
@@ -36,7 +48,7 @@ void PlayerAttack1::on_enter()
 	update_hit_box_position();
 
 	timer.restart();
-        std::cout << "Enter PlayerAttack1" << std::endl;
+	std::cout << "Enter PlayerAttack1, attack_combo " << player->get_attack_combo() << std::endl;
 }
 
 void PlayerAttack1::on_update(float delta)
@@ -55,21 +67,23 @@ void PlayerAttack1::on_update(float delta)
 		return;
 	}
 
-        // Only transition out when attack is finished
-        if (!player->get_attacking())
-        {
-                if (player->can_attack2())
-                {
-                        player->switch_state("attack_2");
-                }
-                else if (player->can_attack1())
-                {
-                        player->switch_state("attack_1");
-                }
-                else if (player->get_move_axis() == 0)
-                {
-                        player->switch_state("idle");
-                }
+	// Check for combo transitions while attacking
+	if (player->can_attack() && !player->get_attacking())
+	{
+		if (player->get_attack_combo() == 1)
+		{
+			player->switch_state("attack_2");
+			return;
+		}
+	}
+
+	// Only transition out when attack is finished
+	if (!player->get_attacking())
+	{
+		if (player->get_move_axis() == 0)
+		{
+			player->switch_state("idle");
+		}
 		else
 		{
 			player->switch_state("run");
@@ -82,7 +96,7 @@ void PlayerAttack1::on_exit()
 	CollisionBox* hit_box = CharacterManager::instance()->get_player()->get_hit_box();
 	hit_box->set_enabled(false);
 	CharacterManager::instance()->get_player()->set_attacking(false);
-        std::cout << "Exit PlayerAttack1" << std::endl;
+	std::cout << "Exit PlayerAttack1, attack_combo " << CharacterManager::instance()->get_player()->get_attack_combo() << std::endl;
 }
 
 void PlayerAttack1::update_hit_box_position()
@@ -128,7 +142,7 @@ void PlayerAttack2::on_enter()
 	hit_box->set_enabled(true);
 
 	timer.restart();
-        std::cout << "Enter PlayerAttack2" << std::endl;
+	std::cout << "Enter PlayerAttack2, attack_combo " << player->get_attack_combo() << std::endl;
 }
 
 void PlayerAttack2::on_update(float delta)
@@ -143,20 +157,12 @@ void PlayerAttack2::on_update(float delta)
 	{
 		player->switch_state("dead");
 	}
-        else if (!player->get_attacking())
-        {
-                if (player->can_attack2())
-                {
-                        player->switch_state("attack_2");
-                }
-                else if (player->can_attack1())
-                {
-                        player->switch_state("attack_1");
-                }
-                else if (player->get_move_axis() == 0)
-                {
-                        player->switch_state("idle");
-                }
+	else if (!player->get_attacking())
+	{
+		if (player->get_move_axis() == 0)
+		{
+			player->switch_state("idle");
+		}
 		else if (player->is_on_floor())
 		{
 			player->switch_state("run");
@@ -169,7 +175,7 @@ void PlayerAttack2::on_exit()
 	CollisionBox* hit_box = CharacterManager::instance()->get_player()->get_hit_box();
 	hit_box->set_enabled(false);
 	CharacterManager::instance()->get_player()->set_attacking(false);
-        std::cout << "Exit PlayerAttack2" << std::endl;
+	std::cout << "Exit PlayerAttack2, attack_combo " << CharacterManager::instance()->get_player()->get_attack_combo() << std::endl;
 }
 
 void PlayerAttack2::update_hit_box_position()
@@ -187,7 +193,7 @@ PlayerDead::PlayerDead()
 	timer.set_one_shot(true);
 	timer.set_callback([]()
 	{
-		MessageBox(GetHWnd(), _T("No......"), _T("You Die"), MB_OK);
+		MessageBox(GetHWnd(), _T("No......"), _T("You Died"), MB_OK);
 		exit(0);
 	});
 }
@@ -234,14 +240,18 @@ void PlayerIdle::on_update(float delta)
 		player->switch_state("bullet_time");
 		std::cout << "Exit Idle to BulletTime\n";
 	}
-        else if (player->can_attack2())
-        {
-                player->switch_state("attack_2");
-        }
-        else if (player->can_attack1())
-        {
-                player->switch_state("attack_1");
-        }
+	else if (player->can_attack())
+	{
+		switch (player->get_attack_combo())
+		{
+		case 0:
+			player->switch_state("attack_1");
+			break;
+		case 1:
+			player->switch_state("attack_2");
+			break;
+		}
+	}
 	else if (player->get_move_axis() != 0)
 	{
 		player->switch_state("run");
@@ -286,19 +296,12 @@ void PlayerJump::on_update(float delta)
 		return;
 	}
 
-        if (player->can_attack2())
-        {
-                player->switch_state("attack_2");
-                std::cout << "Exit Jump to Attack\n";
-                return;
-        }
-
-        if (player->can_attack1())
-        {
-                player->switch_state("attack_1");
-                std::cout << "Exit Jump to Attack\n";
-                return;
-        }
+	if (player->can_attack())
+	{
+		player->switch_state(get_next_attack_state(player));
+		std::cout << "Exit Jump to Attack\n";
+		return;
+	}
 
 	if (player->can_roll())
 	{
@@ -415,14 +418,18 @@ void PlayerRun::on_update(float delta)
 		player->switch_state("bullet_time");
 		std::cout << "Exit Run to BulletTime\n";
 	}
-        else if (player->can_attack2())
-        {
-                player->switch_state("attack_2");
-        }
-        else if (player->can_attack1())
-        {
-                player->switch_state("attack_1");
-        }
+	else if (player->can_attack())
+	{
+		switch (player->get_attack_combo())
+		{
+		case 0:
+			player->switch_state("attack_1");
+			break;
+		case 1:
+			player->switch_state("attack_2");
+			break;
+		}
+	}
 	else if (player->get_move_axis() == 0)
 	{
 		player->switch_state("idle");
