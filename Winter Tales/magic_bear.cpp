@@ -1,5 +1,6 @@
 ﻿#include "magic_bear.h"
 #include <algorithm>
+#include <graphics.h>
 
 MagicBear::MagicBear()
 {
@@ -197,6 +198,20 @@ void MagicBear::clear_hurt_invulnerability()
         is_blink_invisiable = false;
 }
 
+void MagicBear::begin_attack_visuals()
+{
+        is_invulnerable_blink.pause();
+        is_blink_invisiable = false;
+        attack_tint_active = true;
+}
+
+void MagicBear::end_attack_visuals()
+{
+        attack_tint_active = false;
+        is_invulnerable_blink.pause();
+        is_blink_invisiable = false;
+}
+
 void MagicBear::start_post_hurt_invulnerability()
 {
         is_invulnerable_status.set_wait_time(POST_HURT_INVULNERABILITY_TIME);
@@ -286,11 +301,51 @@ void MagicBear::on_render()
 	{
 		ball->on_render();
 	}
-	for (auto& ray : bear_ray_list)
-	{
-		ray->on_render();
-	}
-	Character::on_render();
+        for (auto& ray : bear_ray_list)
+        {
+                ray->on_render();
+        }
+        Character::on_render();
+
+        if (attack_tint_active && current_animation)
+        {
+                Animation& animation = (is_facing_left ? current_animation->left : current_animation->right);
+                Rect frame_rect = animation.get_current_frame_rect();
+
+                Rect rect_dst;
+                rect_dst.x = static_cast<int>(position.x - frame_rect.w / 2);
+                rect_dst.y = (Animation::AnchorMode::Centered == animation.get_AnchorMode())
+                                     ? static_cast<int>(position.y - frame_rect.h / 2)
+                                     : static_cast<int>(position.y - frame_rect.h);
+                rect_dst.w = frame_rect.w;
+                rect_dst.h = frame_rect.h;
+
+                static IMAGE red_pixel(1, 1);
+                static bool red_initialized = false;
+                if (!red_initialized)
+                {
+                        IMAGE* previous_working_image = GetWorkingImage();
+                        SetWorkingImage(&red_pixel);
+                        setfillcolor(RGB(255, 80, 80));
+                        solidrectangle(0, 0, 1, 1);
+                        SetWorkingImage(previous_working_image);
+                        red_initialized = true;
+                }
+
+                BLENDFUNCTION tint_blend = { AC_SRC_OVER, 0, 80, 0 };
+                AlphaBlend(
+                        GetImageHDC(GetWorkingImage()),
+                        rect_dst.x,
+                        rect_dst.y,
+                        rect_dst.w,
+                        rect_dst.h,
+                        GetImageHDC(&red_pixel),
+                        0,
+                        0,
+                        1,
+                        1,
+                        tint_blend);
+        }
 }
 
 bool MagicBear::on_ball()
