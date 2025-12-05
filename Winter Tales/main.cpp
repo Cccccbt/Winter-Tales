@@ -8,6 +8,7 @@
 #include "resource_manager.h"
 #include "bullet_time_manager.h"
 #include "character_manager.h"
+#include "camera.h"
 #include "collision_manager.h"
 #include "magic_bear_ball.h"
 #include "magic_bear_ray.h"
@@ -23,8 +24,11 @@ int main()
 {
         using namespace std::chrono;
 
+        Camera* camera = Camera::instance();
+
         HWND hwnd = initgraph(576, 324);
         SetWindowText(hwnd, _T("Winter Tale"));
+        camera->set_viewport_size(static_cast<float>(getwidth()), static_cast<float>(getheight()));
 
         // Load all images, atlases, and audio before starting the game loop.
         try
@@ -38,6 +42,11 @@ int main()
                 MessageBox(hwnd, err_message, _T("Fail to Load File"), MB_OK | MB_ICONERROR);
                 return -1;
         }
+
+        CharacterManager* character_manager = CharacterManager::instance();
+        IMAGE* background_image = ResourceManager::instance()->find_image("background");
+        camera->set_world_size(static_cast<float>(background_image->getwidth()), static_cast<float>(background_image->getheight()));
+        camera->set_target(character_manager->get_player()->get_position_ptr());
 
 	const nanoseconds frame_duration(1000000000 / 60);
 	steady_clock::time_point last_tick = steady_clock::now();
@@ -56,17 +65,30 @@ int main()
                         CharacterManager::instance()->on_input(msg);
                 }
 
-		steady_clock::time_point frame_start = steady_clock::now();
-		duration<float> delta = duration<float>(frame_start - last_tick);
-		float scaled_delta = BulletTimeManager::instance()->on_update(delta.count());
-		//Process update
-		CharacterManager::instance()->on_update(scaled_delta);
-		CollisionManager::instance()->process_collide();
+                steady_clock::time_point frame_start = steady_clock::now();
+                duration<float> delta = duration<float>(frame_start - last_tick);
+                float scaled_delta = BulletTimeManager::instance()->on_update(delta.count());
+                //Process update
+                CharacterManager::instance()->on_update(scaled_delta);
+                CollisionManager::instance()->process_collide();
+                camera->update();
 
                 setbkcolor(RGB(0, 0, 0));
                 cleardevice();
 
-                putimage(0, 0, ResourceManager::instance()->find_image("background"));
+                Rect rect_src;
+                rect_src.x = static_cast<int>(camera->get_position().x);
+                rect_src.y = static_cast<int>(camera->get_position().y);
+                rect_src.w = static_cast<int>(camera->get_viewport_size().x);
+                rect_src.h = static_cast<int>(camera->get_viewport_size().y);
+
+                Rect rect_dst;
+                rect_dst.x = 0;
+                rect_dst.y = 0;
+                rect_dst.w = rect_src.w;
+                rect_dst.h = rect_src.h;
+
+                putimage_ex(background_image, &rect_dst, &rect_src);
 
                 CharacterManager::instance()->on_render();
                 // CollisionManager::instance()->on_debug_render();

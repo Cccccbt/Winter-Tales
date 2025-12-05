@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "atlas.h"
+#include "camera.h"
 #include "timer.h"
 #include "util.h"
 #include "vector2.h"
@@ -144,10 +145,11 @@ public:
         void on_render()
         {
                 Rect rect_dst;
-                rect_dst.x = static_cast<int>(position.x - frame_list[idx_frame].rect_src.w / 2);
+                Vector2 screen_pos = Camera::instance()->world_to_screen(position);
+                rect_dst.x = static_cast<int>(screen_pos.x - frame_list[idx_frame].rect_src.w / 2);
                 rect_dst.y = (AnchorMode::Centered == anchor_mode)
-                                     ? static_cast<int>(position.y - frame_list[idx_frame].rect_src.h / 2)
-                                     : static_cast<int>(position.y - frame_list[idx_frame].rect_src.h);
+                                     ? static_cast<int>(screen_pos.y - frame_list[idx_frame].rect_src.h / 2)
+                                     : static_cast<int>(screen_pos.y - frame_list[idx_frame].rect_src.h);
                 rect_dst.w = frame_list[idx_frame].rect_src.w;
                 rect_dst.h = frame_list[idx_frame].rect_src.h;
 

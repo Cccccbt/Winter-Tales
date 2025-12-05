@@ -1,5 +1,6 @@
 #include "character.h"
 #include "collision_manager.h"
+#include "camera.h"
 
 Character::Character()
 	: position(0.0f, 0.0f),  // Initialize position
@@ -85,16 +86,18 @@ void Character::on_update(float delta)
                 is_invulnerable_blink.on_update(delta);
         }
 
-	// Screen boundaries (X axis)
-	if (position.x <= 0)
-	{
-		position.x = 0;
-	}
+        // Screen boundaries (X axis)
+        const float world_width = Camera::instance()->get_world_size().x;
+        const float boundary_width = world_width > 0 ? world_width : static_cast<float>(getwidth());
+        if (position.x <= 0)
+        {
+                position.x = 0;
+        }
 
-	if (position.x >= static_cast<float>(getwidth()))  // FIXED: Cast to float
-	{
-		position.x = static_cast<float>(getwidth());   // FIXED: Cast to float
-	}
+        if (position.x >= boundary_width)
+        {
+                position.x = boundary_width;
+        }
 
 	// Ceiling
 	if (position.y <= 0)
