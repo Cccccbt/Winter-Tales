@@ -109,7 +109,7 @@ public:
         void update_attack_cooldowns(float delta);
 
 private:
-        const float GLOBAL_ATTACK_CD = 1.0f;
+        const float GLOBAL_ATTACK_CD = 3.0f;
         const float BALL_ATTACK_CD = 5.0f;
         const float RAY_ATTACK_CD = 5.0f;
         const float BITE_ATTACK_CD = 2.0f;
@@ -117,8 +117,8 @@ private:
         const float WALK_SPEED = 150.0f;
         const float RUN_SPEED = 250.0f;
         const float CLOSE_RANGE = 50.0f;
-        const float FAR_RANGE = 300.0f;
-        const float MID_RANGE = 200.0f;
+        const float FAR_RANGE = 200.0f;
+        const float MID_RANGE = 100.0f;
         const float POST_HURT_INVULNERABILITY_TIME = 1.0f;
 
         float hp_max = 10.0f;
