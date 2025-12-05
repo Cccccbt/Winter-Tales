@@ -2,7 +2,7 @@
 #include <graphics.h>
 #include <iostream>
 #include <thread>
-
+#include "camera.h"
 #include "animation.h"
 #include "atlas.h"
 #include "resource_manager.h"
@@ -56,12 +56,14 @@ int main()
                         CharacterManager::instance()->on_input(msg);
                 }
 
-		steady_clock::time_point frame_start = steady_clock::now();
-		duration<float> delta = duration<float>(frame_start - last_tick);
-		float scaled_delta = BulletTimeManager::instance()->on_update(delta.count());
-		//Process update
-		CharacterManager::instance()->on_update(scaled_delta);
-		CollisionManager::instance()->process_collide();
+		        steady_clock::time_point frame_start = steady_clock::now();
+		        duration<float> delta = duration<float>(frame_start - last_tick);
+		        float scaled_delta = BulletTimeManager::instance()->on_update(delta.count());
+		        //Process update
+
+		        Camera::instance()->on_update(scaled_delta);
+		        CharacterManager::instance()->on_update(scaled_delta);
+		        CollisionManager::instance()->process_collide();
 
                 setbkcolor(RGB(0, 0, 0));
                 cleardevice();
