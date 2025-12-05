@@ -144,5 +144,5 @@ public:
 
 private:
 	Timer timer;
-
+	bool enter_facing_left;
 };

@@ -2,7 +2,6 @@
 
 #include <graphics.h>
 #include "camera.h"
-#include "camera.h"
 #pragma comment(lib, "WINMM.lib")
 #pragma comment(lib, "MSIMG32.lib")
 

@@ -1,6 +1,6 @@
 #include "player_state_nodes.h"
 #include "character_manager.h"
-
+#include "camera.h"
 // Returns the correct attack state name based on the current combo step.
 static const char* get_next_attack_state(const Player* player)
 {
@@ -451,6 +451,7 @@ void PlayerHurt::on_enter()
 {
 	Player* player = CharacterManager::instance()->get_player();
 	player->set_animation("hurt");
+	Camera::instance()->shake(0.3f, 5.0f);
 	timer.restart();
 }
 
@@ -487,7 +488,7 @@ void PlayerBulletTime::on_enter()
 	player->set_animation("idle_2");
 	BulletTimeManager::instance()->set_status(BulletTimeManager::Status::Entering);
 	BulletTimeManager::instance()->set_speed_progress(0.5f);
-	
+	enter_facing_left = player->get_is_facing_left();
 	// Make player invulnerable during bullet time (no blinking)
 	player->make_bullet_time_invulnerable();
 	
@@ -500,7 +501,7 @@ void PlayerBulletTime::on_update(float delta)
 {
 	Player* player = CharacterManager::instance()->get_player();
 	player->set_velocity(Vector2(0, player->get_velocity().y));
-	
+	player->set_is_facing_left(enter_facing_left);
 	// Update bullet time effect
 	BulletTimeManager::instance()->on_update(delta);
 	

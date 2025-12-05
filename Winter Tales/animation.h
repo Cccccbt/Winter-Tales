@@ -151,7 +151,7 @@ public:
                 rect_dst.w = frame_list[idx_frame].rect_src.w;
                 rect_dst.h = frame_list[idx_frame].rect_src.h;
 
-                putimage_ex(frame_list[idx_frame].image, &rect_dst, &frame_list[idx_frame].rect_src);
+                putimage_ex_camera(frame_list[idx_frame].image, &rect_dst, &frame_list[idx_frame].rect_src);
         }
 
 private:

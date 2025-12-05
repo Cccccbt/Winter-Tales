@@ -1,4 +1,5 @@
 #include "camera.h"
+#include "util.h"
 
 Camera* Camera::camera = nullptr;
 

@@ -1,5 +1,4 @@
 #pragma once
-#include "util.h"
 #include "vector2.h"
 #include "timer.h"
 
