@@ -25,14 +25,15 @@ PlayerAttack1::PlayerAttack1()
 
 void PlayerAttack1::on_enter()
 {
-	Player* player = CharacterManager::instance()->get_player();
-	player->set_animation("attack_1");
-	player->set_attacking(true);
-	player->on_attack();
-	player->throw_bullet();
+        Player* player = CharacterManager::instance()->get_player();
+        player->set_animation("attack_1");
+        player->set_attacking(true);
+        player->set_attack_combo(1);
+        player->on_attack();
+        player->throw_bullet();
 
-	CollisionBox* hit_box = player->get_hit_box();
-	hit_box->set_enabled(false);
+        CollisionBox* hit_box = player->get_hit_box();
+        hit_box->set_enabled(false);
 	update_hit_box_position();
 
 	timer.restart();
@@ -117,10 +118,11 @@ PlayerAttack2::PlayerAttack2()
 
 void PlayerAttack2::on_enter()
 {
-	Player* player = CharacterManager::instance()->get_player();
-	player->set_animation("attack_2");
-	player->set_attacking(true);
-	player->on_attack();
+        Player* player = CharacterManager::instance()->get_player();
+        player->set_animation("attack_2");
+        player->set_attacking(true);
+        player->set_attack_combo(2);
+        player->on_attack();
 
 	CollisionBox* hit_box = player->get_hit_box();
 	hit_box->set_size(Vector2(64, 16));

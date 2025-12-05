@@ -46,15 +46,25 @@ public:
 		return is_attacking;
 	};
 
-	bool get_in_bullet_time() const
-	{
-		return is_in_bullet_time;
-	}
+        bool get_in_bullet_time() const
+        {
+                return is_in_bullet_time;
+        }
 
-	void set_in_bullet_time(bool flag)
-	{
-		is_in_bullet_time = flag;
-	}
+        int get_attack_combo() const
+        {
+                return attack_combo;
+        }
+
+        void set_attack_combo(int combo)
+        {
+                attack_combo = combo;
+        }
+
+        void set_in_bullet_time(bool flag)
+        {
+                is_in_bullet_time = flag;
+        }
 
         bool can_attack1() const
         {
@@ -132,8 +142,9 @@ private:
         Timer timer_attack_cd;
         bool is_attacking = false;
         bool is_attack_cd = false;
+        int attack_combo = 1;
 
-	Timer timer_bullet_time;
+        Timer timer_bullet_time;
 
 	int hp_max = 5;
 	int mp_max = 3;

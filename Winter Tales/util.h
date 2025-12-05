@@ -18,12 +18,13 @@ inline void putimage_alpha(int dst_x, int dst_y, IMAGE* img)
         int w = img->getwidth();
         int h = img->getheight();
 
+        static BLENDFUNCTION blend_func = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
         AlphaBlend(
                 GetImageHDC(NULL),
-                dst_x, dst_y, w, h,
+                dst_x, dst_y,
                 GetImageHDC(img),
                 0, 0, w, h,
-                { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA });
+                blend_func);
 }
 
 // Draw an IMAGE with optional source/destination rectangles and alpha blending.
@@ -31,17 +32,17 @@ inline void putimage_ex(IMAGE* img, const Rect* rect_dst, const Rect* rect_src =
 {
     static BLENDFUNCTION blend_func = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
     AlphaBlend(
-            GetImageHDC(GetWorkingImage()), rect_dst->x, rect_dst->y, rect_dst->w, rect_dst->h,
+            GetImageHDC(GetWorkingImage()), rect_dst->x, rect_dst->y,
             GetImageHDC(img), rect_src ? rect_src->x : 0, rect_src ? rect_src->y : 0, rect_src ? rect_src->w : img->getwidth(), rect_src ? rect_src->h : img->getheight(),
             blend_func);
 }
 
 inline void putimage_ex_camera(IMAGE* img, const Rect* rect_dst, const Rect* rect_src = nullptr)
 {
-	Camera* camera = Camera::instance();
+        Camera* camera = Camera::instance();
     static BLENDFUNCTION blend_func = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
     AlphaBlend(
-        GetImageHDC(GetWorkingImage()), rect_dst->x - camera->get_position().x, rect_dst->y - camera->get_position().y, rect_dst->w, rect_dst->h,
+        GetImageHDC(GetWorkingImage()), rect_dst->x - camera->get_position().x, rect_dst->y - camera->get_position().y,
         GetImageHDC(img), rect_src ? rect_src->x : 0, rect_src ? rect_src->y : 0, rect_src ? rect_src->w : img->getwidth(), rect_src ? rect_src->h : img->getheight(),
         blend_func);
 }
