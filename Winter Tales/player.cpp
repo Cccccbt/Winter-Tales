@@ -29,15 +29,8 @@ Player::Player()
 			this->on_hurt();
 		});
 
-	timer_combo_reset.set_wait_time(CD_COMBO_RESET);
-	timer_combo_reset.set_one_shot(true);
-	timer_combo_reset.set_callback([this]()
-		{
-			attack_combo = 0;
-		});
-
-	timer_attack_cd.set_wait_time(CD_ATTACK);
-	timer_roll_cd.set_wait_time(CD_ROLL);
+        timer_attack_cd.set_wait_time(CD_ATTACK);
+        timer_roll_cd.set_wait_time(CD_ROLL);
 
 	timer_attack_cd.set_one_shot(true);
 	timer_roll_cd.set_one_shot(true);
@@ -221,9 +214,13 @@ void Player::on_input(const ExMessage& msg)
 				is_roll_key_down = true;
 				break;
 
-			case 0x4A: // J key
-			 is_attack_key_down = true;
-				break;
+                        case 0x4A: // J key
+                                is_attack2_key_down = true;
+                                break;
+
+                        case 0x4B: // K key
+                                is_attack1_key_down = true;
+                                break;
 
 			case VK_SPACE: // Space key
 				is_bullet_time_key_down = true;
@@ -251,9 +248,13 @@ void Player::on_input(const ExMessage& msg)
 				is_roll_key_down = false;
 				break;
 
-			case 0x4A: // J key
-				is_attack_key_down = false;
-				break;
+                        case 0x4A: // J key
+                                is_attack2_key_down = false;
+                                break;
+
+                        case 0x4B: // K key
+                                is_attack1_key_down = false;
+                                break;
 
 			case VK_SPACE: // Space key
 				is_bullet_time_key_down = false;
@@ -275,9 +276,8 @@ void Player::on_update(float delta)
 		is_facing_left = get_move_axis() < 0;
 	}
 
-	timer_roll_cd.on_update(delta);
-	timer_attack_cd.on_update(delta);
-	timer_combo_reset.on_update(delta);
+        timer_roll_cd.on_update(delta);
+        timer_attack_cd.on_update(delta);
 
 	Character::on_update(delta);
 	hurt_box->set_position(is_facing_left ? get_logical_center() + Vector2(8, 0) : get_logical_center() - Vector2(8, 0));
@@ -342,10 +342,8 @@ void Player::on_roll()
 
 void Player::on_attack()
 {
-	timer_attack_cd.restart();
-	is_attack_cd = true;
-	timer_combo_reset.restart();
-	attack_combo_up();
+        timer_attack_cd.restart();
+        is_attack_cd = true;
 }
 
 void Player::throw_bullet()

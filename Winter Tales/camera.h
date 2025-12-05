@@ -1,5 +1,6 @@
 #pragma once
 #include "vector2.h"
+#include "util.h"
 #include "timer.h"
 
 class Camera
