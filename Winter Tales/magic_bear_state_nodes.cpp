@@ -17,11 +17,15 @@ MagicBearIdle::~MagicBearIdle()
 
 void MagicBearIdle::on_enter()
 {
-	MagicBear* bear = CharacterManager::instance()->get_magic_bear();
-	bear->set_animation("idle");
-	bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
-	timer_idle.restart();
-	std::cout << "MagicBear entered Idle state." << std::endl;
+        MagicBear* bear = CharacterManager::instance()->get_magic_bear();
+        bear->set_animation("idle");
+        bear->set_velocity(Vector2(0.0f, bear->get_velocity().y));
+        timer_idle.restart();
+        if (bear->is_post_attack_idle_active())
+        {
+                timer_idle.pause();
+        }
+        std::cout << "MagicBear entered Idle state." << std::endl;
 }
 
 
@@ -30,13 +34,20 @@ void MagicBearIdle::on_update(float delta)
 {
     MagicBear* bear = CharacterManager::instance()->get_magic_bear();
 
-    timer_idle.on_update(delta);
-
     if (bear->get_hp() <= 0)
     {
         bear->switch_state("dead");
         return;
     }
+
+    if (bear->is_post_attack_idle_active())
+    {
+        timer_idle.pause();
+        return;
+    }
+
+    timer_idle.resume();
+    timer_idle.on_update(delta);
 
     if (bear->consume_pending_sneer())
     {
@@ -210,6 +221,7 @@ void MagicBearAttack1::on_exit()
         bear->clear_hurt_invulnerability();
         bear->start_attack1_cooldown();
         bear->start_global_attack_cooldown();
+        bear->start_post_attack_idle();
         std::cout << "MagicBear exited Attack1 state." << std::endl;
 }
 
@@ -273,6 +285,7 @@ void MagicBearAttack2::on_exit()
         bear->clear_hurt_invulnerability();
         bear->start_attack2_cooldown();
         bear->start_global_attack_cooldown();
+        bear->start_post_attack_idle();
         std::cout << "MagicBear exited Attack2 state." << std::endl;
 }
 
@@ -333,6 +346,7 @@ void MagicBearAttack3::on_exit()
         bear->clear_hurt_invulnerability();
         bear->start_attack3_cooldown();
         bear->start_global_attack_cooldown();
+        bear->start_post_attack_idle();
         std::cout << "MagicBear exited Attack3 state." << std::endl;
 }
 
@@ -431,6 +445,7 @@ void MagicBearAttack4::on_exit()
         bear->clear_hurt_invulnerability();
         bear->start_attack4_cooldown();
         bear->start_global_attack_cooldown();
+        bear->start_post_attack_idle();
         std::cout << "MagicBear exited Attack4 state." << std::endl;
 }
 
