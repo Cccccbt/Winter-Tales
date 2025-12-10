@@ -120,7 +120,8 @@ public:
         }
 
 private:
-        const float GLOBAL_ATTACK_CD = 3.0f;
+
+        const float GLOBAL_ATTACK_CD = 2.0f;
         const float BALL_ATTACK_CD = 5.0f;
         const float RAY_ATTACK_CD = 5.0f;
         const float BITE_ATTACK_CD = 2.0f;
