@@ -102,7 +102,7 @@ namespace
                         setfillcolor(WHITE);
                         const double start_angle = -PI / 2;
                         const double end_angle = start_angle + ratio * 2 * PI;
-                        const int fill_steps = std::max(1, static_cast<int>(std::ceil(96 * ratio)));
+                        const int fill_steps = static_cast<int>(std::ceil(96 * ratio));
                         const double step = (end_angle - start_angle) / fill_steps;
 
                         for (int i = 0; i < fill_steps; ++i)
@@ -118,7 +118,7 @@ namespace
                                 triangle[2].x = center_x + static_cast<int>(std::cos(angle_end) * inner_radius);
                                 triangle[2].y = center_y + static_cast<int>(std::sin(angle_end) * inner_radius);
 
-                                fillpoly(3, triangle);
+                                fillpoly(3, reinterpret_cast<const int*>(triangle));
                         }
                 }
 
