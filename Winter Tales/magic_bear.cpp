@@ -164,7 +164,11 @@ MagicBear::MagicBear()
         state_machine.register_state("dead", new MagicBearDead());
         state_machine.set_entry("idle");
 
-	setup_cooldown_timers();
+        setup_cooldown_timers();
+
+        post_attack_idle_timer.set_one_shot(true);
+        post_attack_idle_timer.set_callback([this]()
+                                            { is_forced_idle_locked = false; });
 
 }
 
@@ -220,8 +224,9 @@ void MagicBear::on_update(float delta)
 	// Implementation of on_update
 	Player* player = CharacterManager::instance()->get_player();
 
-	update_phase();
-	update_attack_cooldowns(delta);
+        update_phase();
+        update_attack_cooldowns(delta);
+        update_post_attack_idle(delta);
 
 	// Update facing direction to always face the player
 	Vector2 direction_to_player = player->get_position() - get_position();
@@ -469,18 +474,30 @@ void MagicBear::setup_cooldown_timers()
 
 void MagicBear::update_attack_cooldowns(float delta)
 {
-	global_cd_timer.on_update(delta);
-	ball_cd_timer.on_update(delta);
-	ray_cd_timer.on_update(delta);
-	bite_cd_timer.on_update(delta);
-	run_cd_timer.on_update(delta);
+        global_cd_timer.on_update(delta);
+        ball_cd_timer.on_update(delta);
+        ray_cd_timer.on_update(delta);
+        bite_cd_timer.on_update(delta);
+        run_cd_timer.on_update(delta);
+}
+
+void MagicBear::update_post_attack_idle(float delta)
+{
+        post_attack_idle_timer.on_update(delta);
 }
 
 void MagicBear::start_global_attack_cooldown()
 {
-	is_global_attack_on_cd = true;
-	global_cd_timer.set_wait_time(get_phase_based_global_cd());
-	global_cd_timer.restart();
+        is_global_attack_on_cd = true;
+        global_cd_timer.set_wait_time(get_phase_based_global_cd());
+        global_cd_timer.restart();
+}
+
+void MagicBear::start_post_attack_idle()
+{
+        is_forced_idle_locked = true;
+        post_attack_idle_timer.set_wait_time(get_phase_based_global_cd());
+        post_attack_idle_timer.restart();
 }
 
 void MagicBear::start_attack1_cooldown()
