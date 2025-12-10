@@ -93,6 +93,35 @@ namespace
                         line(x1, y1, x2, y2);
                 }
 
+                const int inner_radius = radius - 8;
+                setfillcolor(RGB(15, 18, 28));
+                solidcircle(center_x, center_y, inner_radius);
+
+                if (ratio > 0.0f)
+                {
+                        setfillcolor(WHITE);
+                        const double start_angle = -PI / 2;
+                        const double end_angle = start_angle + ratio * 2 * PI;
+                        const int fill_steps = static_cast<int>(std::ceil(96 * ratio));
+                        const double step = (end_angle - start_angle) / fill_steps;
+
+                        for (int i = 0; i < fill_steps; ++i)
+                        {
+                                double angle_start = start_angle + i * step;
+                                double angle_end = start_angle + (i + 1) * step;
+
+                                POINT triangle[3];
+                                triangle[0].x = center_x;
+                                triangle[0].y = center_y;
+                                triangle[1].x = center_x + static_cast<int>(std::cos(angle_start) * inner_radius);
+                                triangle[1].y = center_y + static_cast<int>(std::sin(angle_start) * inner_radius);
+                                triangle[2].x = center_x + static_cast<int>(std::cos(angle_end) * inner_radius);
+                                triangle[2].y = center_y + static_cast<int>(std::sin(angle_end) * inner_radius);
+
+                                fillpoly(3, reinterpret_cast<const int*>(triangle));
+                        }
+                }
+
                 double hand_angle = -PI / 2 + ratio * 2 * PI;
                 int hand_length = radius - 7;
                 int hand_x = center_x + static_cast<int>(std::cos(hand_angle) * hand_length);
