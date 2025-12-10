@@ -1,7 +1,13 @@
 #pragma once
 
 #include <graphics.h>
+#include <iterator>
+#include <mmsystem.h>
+#include <tchar.h>
+#include <windows.h>
+
 #include "camera.h"
+
 #pragma comment(lib, "WINMM.lib")
 #pragma comment(lib, "MSIMG32.lib")
 
@@ -54,25 +60,51 @@ inline void putimage_ex_camera(IMAGE* img, const Rect* rect_dst, const Rect* rec
 }
 
 // Lightweight audio helpers around the Windows MCI API.
+inline bool send_mci_command(LPCTSTR command, HWND notify_hwnd = NULL)
+{
+	MCIERROR error_code = mciSendString(command, NULL, 0, notify_hwnd);
+	if (error_code != 0)
+	{
+		TCHAR error_buffer[256] = { 0 };
+		if (mciGetErrorString(error_code, error_buffer, static_cast<UINT>(std::size(error_buffer))))
+		{
+			OutputDebugString(error_buffer);
+			OutputDebugString(_T("\n"));
+		}
+		return false;
+	}
+	return true;
+}
+
 inline void load_audio(LPCTSTR path, LPCTSTR id)
 {
-        static TCHAR str_cmd[512];
-        _stprintf_s(str_cmd, _T("open %s alias %s"), path, id);
-        mciSendString(str_cmd, NULL, 0, NULL);
+	static TCHAR str_cmd[512];
+	_stprintf_s(str_cmd, _T("close %s"), id);
+	send_mci_command(str_cmd);  // Ensure old alias is released before reopening.
+
+	_stprintf_s(str_cmd, _T("open %s alias %s"), path, id);
+	send_mci_command(str_cmd);
 }
 
 inline void play_audio(LPCTSTR id, bool is_loop = false)
 {
-        static TCHAR str_cmd[512];
-        _stprintf_s(str_cmd, _T("play %s %s from 0 notify"), id, is_loop ? _T("repeat") : _T(""));
-        mciSendString(str_cmd, NULL, 0, GetHWnd());  // Use async notification
+	static TCHAR str_cmd[512];
+	_stprintf_s(str_cmd, _T("play %s %s from 0 notify"), id, is_loop ? _T("repeat") : _T(""));
+	send_mci_command(str_cmd, GetHWnd());  // Use async notification to avoid blocking the UI thread.
 }
 
 inline void stop_audio(LPCTSTR id)
 {
 	static TCHAR str_cmd[512];
 	_stprintf_s(str_cmd, _T("stop %s"), id);
-	mciSendString(str_cmd, NULL, 0, NULL);
+	send_mci_command(str_cmd);
+}
+
+inline void close_audio(LPCTSTR id)
+{
+	static TCHAR str_cmd[512];
+	_stprintf_s(str_cmd, _T("close %s"), id);
+	send_mci_command(str_cmd);
 }
 
 // Return a random integer within the inclusive [min_num, max_num] range.
