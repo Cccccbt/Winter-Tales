@@ -36,7 +36,7 @@ namespace
                 }
 
                 constexpr double PI = 3.14159265358979323846;
-                const int max_mp = std::max(player->get_max_mp(), 1);
+                const int max_mp = player->get_max_mp();
                 const float ratio = clamp01(static_cast<float>(player->get_current_mp()) / max_mp);
 
                 setfillcolor(RGB(20, 24, 36));
