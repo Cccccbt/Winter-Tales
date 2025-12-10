@@ -184,9 +184,9 @@ void MagicBear::on_hurt()
 void MagicBear::enter_hurt_invulnerability()
 {
         is_invulnerable_status.pause();
-        is_invulnerable_blink.pause();
-        is_blink_invisiable = false;
         is_invulnerable = true;
+
+        is_blink_invisiable = false;
 }
 
 void MagicBear::clear_hurt_invulnerability()
@@ -281,16 +281,32 @@ void MagicBear::on_update(float delta)
 
 void MagicBear::on_render()
 {
-	// Implementation of on_render
-	for (auto& ball : bear_ball_list)
-	{
-		ball->on_render();
-	}
-	for (auto& ray : bear_ray_list)
-	{
-		ray->on_render();
-	}
-	Character::on_render();
+        // Implementation of on_render
+        for (auto& ball : bear_ball_list)
+        {
+                ball->on_render();
+        }
+        for (auto& ray : bear_ray_list)
+        {
+                ray->on_render();
+        }
+
+        if (!current_animation || (is_invulnerable && is_blink_invisiable))
+        {
+                return;
+        }
+
+        Animation& animation = (is_facing_left ? current_animation->left : current_animation->right);
+        animation.set_position(position);
+
+        if (is_attacking())
+        {
+                animation.on_render_with_overlay(RGB(255, 64, 64), 96);
+        }
+        else
+        {
+                animation.on_render();
+        }
 }
 
 bool MagicBear::on_ball()
