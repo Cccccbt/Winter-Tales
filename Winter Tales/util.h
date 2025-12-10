@@ -1,9 +1,19 @@
 #pragma once
 
 #include <graphics.h>
+#include <map>
+#include <string>
+#include <combaseapi.h>
+#include <comdef.h>
+
 #include "camera.h"
+
 #pragma comment(lib, "WINMM.lib")
 #pragma comment(lib, "MSIMG32.lib")
+
+// Use the Windows Media Player COM interfaces instead of MCI to avoid
+// occasional hangs reported with mciSendString.
+#import <wmp.dll> rename_namespace("WMPLib") named_guids
 
 // Basic rectangle helper used by rendering and collision utilities.
 struct Rect
@@ -53,26 +63,101 @@ inline void putimage_ex_camera(IMAGE* img, const Rect* rect_dst, const Rect* rec
 		blend_func);
 }
 
-// Lightweight audio helpers around the Windows MCI API.
+// Lightweight audio helpers around the Windows Media Player COM API.
+namespace audio
+{
+        // Lightweight wrapper around Windows Media Player COM APIs so we can play
+        // MP3s without relying on MCI, which can occasionally block the UI.
+        class Player
+        {
+        public:
+                static Player& instance()
+                {
+                        static Player self;
+                        return self;
+                }
+
+                void load(LPCTSTR path, LPCTSTR id)
+                {
+                        if (!player_)
+                        {
+                                return;
+                        }
+
+                        WMPLib::IWMPMediaPtr media = player_->newMedia(path);
+                        if (media != nullptr)
+                        {
+                                media_map_[id] = media;
+                        }
+                }
+
+                void play(LPCTSTR id, bool is_loop)
+                {
+                        if (!player_)
+                        {
+                                return;
+                        }
+
+                        auto iter = media_map_.find(id);
+                        if (iter == media_map_.end())
+                        {
+                                return;
+                        }
+
+                        player_->put_currentMedia(iter->second);
+                        player_->GetSettings()->put_mode(_bstr_t(L"loop"), is_loop ? VARIANT_TRUE : VARIANT_FALSE);
+                        player_->GetControls()->play();
+                }
+
+                void stop(LPCTSTR /*id*/)
+                {
+                        if (player_)
+                        {
+                                player_->GetControls()->stop();
+                        }
+                }
+
+        private:
+                Player()
+                {
+                        HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+                        com_initialized_ = hr == S_OK || hr == S_FALSE;
+                        if (com_initialized_)
+                        {
+                                player_.CreateInstance(__uuidof(WMPLib::WindowsMediaPlayer));
+                        }
+                }
+
+                ~Player()
+                {
+                        media_map_.clear();
+                        player_ = nullptr;
+
+                        if (com_initialized_)
+                        {
+                                CoUninitialize();
+                        }
+                }
+
+                bool com_initialized_{ false };
+                WMPLib::IWMPPlayer4Ptr player_;
+                std::map<std::basic_string<TCHAR>, WMPLib::IWMPMediaPtr, std::less<>> media_map_{};
+        };
+} // namespace audio
+
 inline void load_audio(LPCTSTR path, LPCTSTR id)
 {
-        static TCHAR str_cmd[512];
-        _stprintf_s(str_cmd, _T("open %s alias %s"), path, id);
-        mciSendString(str_cmd, NULL, 0, NULL);
+        audio::Player::instance().load(path, id);
 }
 
 inline void play_audio(LPCTSTR id, bool is_loop = false)
 {
-        static TCHAR str_cmd[512];
-        _stprintf_s(str_cmd, _T("play %s %s from 0 notify"), id, is_loop ? _T("repeat") : _T(""));
-        mciSendString(str_cmd, NULL, 0, GetHWnd());  // Use async notification
+        audio::Player::instance().play(id, is_loop);
 }
 
 inline void stop_audio(LPCTSTR id)
 {
-	static TCHAR str_cmd[512];
-	_stprintf_s(str_cmd, _T("stop %s"), id);
-	mciSendString(str_cmd, NULL, 0, NULL);
+        audio::Player::instance().stop(id);
 }
 
 // Return a random integer within the inclusive [min_num, max_num] range.
