@@ -1,6 +1,5 @@
 #pragma once
 #include "vector2.h"
-#include "util.h"
 #include "timer.h"
 
 class Camera
@@ -23,10 +22,18 @@ public:
 		timer_shake.set_wait_time(duration);
 		timer_shake.restart();
 	};
+
+	void reset_position()
+	{
+		position = original_position;
+	};
+
 	void on_update(float delta_time);
+
 
 private:
 	static Camera* camera;
+	Vector2 original_position;
 	Vector2 position;
 	Timer timer_shake;
 	float shake_strength = 0.0f;

@@ -21,6 +21,8 @@ PlayerAttack1::PlayerAttack1()
 	{
 		CharacterManager::instance()->get_player()->set_attacking(false);
 	});
+
+	
 }
 
 void PlayerAttack1::on_enter()
@@ -34,7 +36,7 @@ void PlayerAttack1::on_enter()
 	CollisionBox* hit_box = player->get_hit_box();
 	hit_box->set_enabled(false);
 	update_hit_box_position();
-
+	enter_facing_left = player->get_is_facing_left();
 	timer.restart();
         std::cout << "Enter PlayerAttack1" << std::endl;
 }
@@ -46,6 +48,8 @@ void PlayerAttack1::on_update(float delta)
 	update_hit_box_position();
 
 	Player* player = CharacterManager::instance()->get_player();
+
+	player->set_is_facing_left(enter_facing_left);
 
 	player->set_velocity(Vector2(0, player->get_velocity().y));
 
@@ -122,6 +126,8 @@ void PlayerAttack2::on_enter()
 	player->set_attacking(true);
 	player->on_attack();
 
+	enter_facing_left = player->get_is_facing_left();
+
 	CollisionBox* hit_box = player->get_hit_box();
 	hit_box->set_size(Vector2(64, 16));
 	update_hit_box_position();
@@ -138,6 +144,7 @@ void PlayerAttack2::on_update(float delta)
 
 	Player* player = CharacterManager::instance()->get_player();
 	player->set_velocity(Vector2(0, player->get_velocity().y));
+	player->set_is_facing_left(enter_facing_left);
 
 	if (player->get_hp() <= 0)
 	{

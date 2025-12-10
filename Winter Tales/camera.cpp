@@ -15,8 +15,14 @@ Camera* Camera::instance()
 }
 
 Camera::Camera()
-	: position(0.0f, 0.0f)
+	: position(0.0f, 0.0f), original_position(Vector2(0.0f, 0.0f))
 {
+	// Set callback to stop shaking when timer expires
+	timer_shake.set_callback([this]()
+	{
+		is_shaking = false;
+		reset_position();
+	});
 }
 
 void Camera::on_update(float delta_time)

@@ -16,6 +16,7 @@ public:
 
 private:
         Timer timer;
+        bool enter_facing_left;
         void update_hit_box_position();
 };
 
@@ -31,6 +32,7 @@ public:
 
 private:
         Timer timer;
+        bool enter_facing_left;
         void update_hit_box_position();
 };
 

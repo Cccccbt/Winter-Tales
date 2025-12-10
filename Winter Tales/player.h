@@ -106,7 +106,17 @@ public:
 		return is_right_key_down - is_left_key_down;
 	}
 
-        void throw_bullet();
+	int get_attack_combo() const
+	{
+		return attack_combo;
+	}
+
+	void set_attack_combo(int combo)
+	{
+		attack_combo = combo;
+	}
+
+	void throw_bullet();
 
 	void enter_bullet_time();
 
@@ -121,17 +131,17 @@ public:
 private:
 	const float CD_ROLL = 0.75f;
 	const float CD_ATTACK = 0.5f;
-        const float SPEED_RUN = 300.0f;
-        const float SPEED_ROLL = 600.0f;
-        const float SPEED_JUMP = 780.0f;
+	const float SPEED_RUN = 300.0f;
+	const float SPEED_ROLL = 600.0f;
+	const float SPEED_JUMP = 780.0f;
 
-        Timer timer_roll_cd;
-        bool is_rolling = false;
-        bool is_roll_cd = false;
+	Timer timer_roll_cd;
+	bool is_rolling = false;
+	bool is_roll_cd = false;
 
-        Timer timer_attack_cd;
-        bool is_attacking = false;
-        bool is_attack_cd = false;
+	Timer timer_attack_cd;
+	bool is_attacking = false;
+	bool is_attack_cd = false;
 
 	Timer timer_bullet_time;
 
@@ -140,18 +150,20 @@ private:
 	int current_hp = 5;
 	int current_mp = 3;
 
+	int attack_combo = 0;
+
 	bool is_in_bullet_time = false;
 
 	bool is_left_key_down = false;
 	bool is_right_key_down = false;
 	bool is_jump_key_down = false;
-        bool is_roll_key_down = false;
-        bool is_attack1_key_down = false;
-        bool is_attack2_key_down = false;
-        bool is_bullet_time_key_down = false;
+	bool is_roll_key_down = false;
+	bool is_attack1_key_down = false;
+	bool is_attack2_key_down = false;
+	bool is_bullet_time_key_down = false;
 
-        Animation* charge_effect_animation;
-        std::vector<Bullet*> bullet_pool;
+	Animation* charge_effect_animation;
+	std::vector<Bullet*> bullet_pool;
 
 	Timer is_invulnerable_status;
 	Timer is_invulnerable_blink;
