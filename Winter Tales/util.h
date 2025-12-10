@@ -3,17 +3,12 @@
 #include <graphics.h>
 #include <map>
 #include <string>
-#include <combaseapi.h>
-#include <comdef.h>
+#include <mmsystem.h>
 
 #include "camera.h"
 
 #pragma comment(lib, "WINMM.lib")
 #pragma comment(lib, "MSIMG32.lib")
-
-// Use the Windows Media Player COM interfaces instead of MCI to avoid
-// occasional hangs reported with mciSendString.
-#import <wmp.dll> rename_namespace("WMPLib") named_guids
 
 // Basic rectangle helper used by rendering and collision utilities.
 struct Rect
@@ -63,11 +58,11 @@ inline void putimage_ex_camera(IMAGE* img, const Rect* rect_dst, const Rect* rec
 		blend_func);
 }
 
-// Lightweight audio helpers around the Windows Media Player COM API.
+// Lightweight audio helpers around the WinMM PlaySound API to avoid MCI
+// hangs without introducing COM dependencies that may be missing on some
+// systems.
 namespace audio
 {
-        // Lightweight wrapper around Windows Media Player COM APIs so we can play
-        // MP3s without relying on MCI, which can occasionally block the UI.
         class Player
         {
         public:
@@ -79,69 +74,35 @@ namespace audio
 
                 void load(LPCTSTR path, LPCTSTR id)
                 {
-                        if (!player_)
-                        {
-                                return;
-                        }
-
-                        WMPLib::IWMPMediaPtr media = player_->newMedia(path);
-                        if (media != nullptr)
-                        {
-                                media_map_[id] = media;
-                        }
+                        media_map_[id] = path;
                 }
 
                 void play(LPCTSTR id, bool is_loop)
                 {
-                        if (!player_)
-                        {
-                                return;
-                        }
-
                         auto iter = media_map_.find(id);
                         if (iter == media_map_.end())
                         {
                                 return;
                         }
 
-                        player_->put_currentMedia(iter->second);
-                        player_->GetSettings()->put_mode(_bstr_t(L"loop"), is_loop ? VARIANT_TRUE : VARIANT_FALSE);
-                        player_->GetControls()->play();
+                        current_path_ = iter->second;
+                        UINT flags = SND_FILENAME | SND_ASYNC;
+                        if (is_loop)
+                        {
+                                flags |= SND_LOOP;
+                        }
+
+                        PlaySound(current_path_.c_str(), nullptr, flags);
                 }
 
                 void stop(LPCTSTR /*id*/)
                 {
-                        if (player_)
-                        {
-                                player_->GetControls()->stop();
-                        }
+                        PlaySound(nullptr, nullptr, 0);
                 }
 
         private:
-                Player()
-                {
-                        HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
-                        com_initialized_ = hr == S_OK || hr == S_FALSE;
-                        if (com_initialized_)
-                        {
-                                player_.CreateInstance(__uuidof(WMPLib::WindowsMediaPlayer));
-                        }
-                }
-
-                ~Player()
-                {
-                        media_map_.clear();
-                        player_ = nullptr;
-
-                        if (com_initialized_)
-                        {
-                                CoUninitialize();
-                        }
-                }
-
-                bool com_initialized_{ false };
-                WMPLib::IWMPPlayer4Ptr player_;
-                std::map<std::basic_string<TCHAR>, WMPLib::IWMPMediaPtr, std::less<>> media_map_{};
+                std::map<std::basic_string<TCHAR>, std::basic_string<TCHAR>, std::less<>> media_map_{};
+                std::basic_string<TCHAR> current_path_{};
         };
 } // namespace audio
 
