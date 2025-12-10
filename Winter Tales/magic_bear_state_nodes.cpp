@@ -515,7 +515,7 @@ void MagicBearHurt::on_enter()
 	enter_facing_left = bear->get_is_facing_left();
 	// ✅ REMOVED: bear->enter_hurt_invulnerability();
 	// Bear is now vulnerable while in hurt state and can be attacked
-	Camera::instance()->shake(1.0f, 0.3f);
+	Camera::instance()->shake(1.0f, 0.1f);
 	hurt_timer.restart();
 	std::cout << "MagicBear entered Hurt state." << std::endl;
 }
