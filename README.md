@@ -1,7 +1,3 @@
-# Winter Tales
-
-Winter Tales is a small collection of game and event assets created for a 2025 winter hackathon theme. The repository contains a Windows C++ action prototype alongside a static landing page for the event.
-
 ## Repository layout
 
 - `Winter Tales/` — primary C++ source for the 2D action prototype, including a Visual Studio solution (`Winter Tales.sln`).
