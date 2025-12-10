@@ -30,6 +30,8 @@ private:
         Player* player;
         MagicBear* magic_bear;
 
+        void render_ui();
+
         CharacterManager();
         ~CharacterManager();
 };

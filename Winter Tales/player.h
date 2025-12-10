@@ -96,10 +96,15 @@ public:
 		return current_mp;
 	}
 
-	int get_max_mp() const
-	{
-		return mp_max;
-	}
+        int get_max_mp() const
+        {
+                return mp_max;
+        }
+
+        int get_max_hp() const
+        {
+                return hp_max;
+        }
 
 	int get_move_axis() const
 	{
