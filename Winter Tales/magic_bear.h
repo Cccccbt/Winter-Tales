@@ -63,6 +63,11 @@ public:
                 return RUN_SPEED;
         };
 
+        float get_max_hp() const
+        {
+                return hp_max;
+        }
+
         CollisionBox* get_body_hit_box() const
         {
                 return body_hit_box;
