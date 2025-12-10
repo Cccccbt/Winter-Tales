@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <mmsystem.h>
+#include <tchar.h>
 
 #include "camera.h"
 
@@ -58,9 +59,9 @@ inline void putimage_ex_camera(IMAGE* img, const Rect* rect_dst, const Rect* rec
 		blend_func);
 }
 
-// Lightweight audio helpers around the WinMM PlaySound API to avoid MCI
-// hangs without introducing COM dependencies that may be missing on some
-// systems.
+// Lightweight audio helpers around the WinMM MCI API to keep MP3 playback
+// working without COM dependencies while avoiding the blocking "wait"
+// commands that previously caused hangs.
 namespace audio
 {
         class Player
@@ -72,9 +73,20 @@ namespace audio
                         return self;
                 }
 
+                ~Player()
+                {
+                        for (auto& entry : media_map_)
+                        {
+                                close_media(entry.second, entry.first);
+                        }
+                }
+
                 void load(LPCTSTR path, LPCTSTR id)
                 {
-                        media_map_[id] = path;
+                        auto& media = media_map_[id];
+                        std::basic_string<TCHAR> alias = id;
+                        close_media(media, alias);
+                        media.path = path;
                 }
 
                 void play(LPCTSTR id, bool is_loop)
@@ -85,24 +97,92 @@ namespace audio
                                 return;
                         }
 
-                        current_path_ = iter->second;
-                        UINT flags = SND_FILENAME | SND_ASYNC;
-                        if (is_loop)
+                        Media& media = iter->second;
+                        if (!ensure_media_open(iter->first, media))
                         {
-                                flags |= SND_LOOP;
+                                return;
                         }
 
-                        PlaySound(current_path_.c_str(), nullptr, flags);
+                        std::basic_string<TCHAR> seek_command = TEXT("seek ");
+                        seek_command += iter->first;
+                        seek_command += TEXT(" to start");
+                        mciSendString(seek_command.c_str(), nullptr, 0, nullptr);
+
+                        std::basic_string<TCHAR> command = TEXT("play ");
+                        command += iter->first;
+                        if (is_loop)
+                        {
+                                command += TEXT(" repeat");
+                        }
+
+                        mciSendString(command.c_str(), nullptr, 0, nullptr);
                 }
 
-                void stop(LPCTSTR /*id*/)
+                void stop(LPCTSTR id)
                 {
-                        PlaySound(nullptr, nullptr, 0);
+                        auto iter = media_map_.find(id);
+                        if (iter == media_map_.end() || !iter->second.is_open)
+                        {
+                                return;
+                        }
+
+                        std::basic_string<TCHAR> stop_command = TEXT("stop ");
+                        stop_command += iter->first;
+                        mciSendString(stop_command.c_str(), nullptr, 0, nullptr);
+
+                        std::basic_string<TCHAR> seek_command = TEXT("seek ");
+                        seek_command += iter->first;
+                        seek_command += TEXT(" to start");
+                        mciSendString(seek_command.c_str(), nullptr, 0, nullptr);
                 }
 
         private:
-                std::map<std::basic_string<TCHAR>, std::basic_string<TCHAR>, std::less<>> media_map_{};
-                std::basic_string<TCHAR> current_path_{};
+                struct Media
+                {
+                        std::basic_string<TCHAR> path{};
+                        bool is_open{ false };
+                };
+
+                bool ensure_media_open(const std::basic_string<TCHAR>& alias, Media& media)
+                {
+                        if (media.is_open)
+                        {
+                                return true;
+                        }
+
+                        if (media.path.empty())
+                        {
+                                return false;
+                        }
+
+                        std::basic_string<TCHAR> command = TEXT("open \"");
+                        command += media.path;
+                        command += TEXT("\" type mpegvideo alias ");
+                        command += alias;
+
+                        if (mciSendString(command.c_str(), nullptr, 0, nullptr) == 0)
+                        {
+                                media.is_open = true;
+                                return true;
+                        }
+
+                        return false;
+                }
+
+                void close_media(Media& media, const std::basic_string<TCHAR>& alias)
+                {
+                        if (!media.is_open)
+                        {
+                                return;
+                        }
+
+                        std::basic_string<TCHAR> command = TEXT("close ");
+                        command += alias;
+                        mciSendString(command.c_str(), nullptr, 0, nullptr);
+                        media.is_open = false;
+                }
+
+                std::map<std::basic_string<TCHAR>, Media, std::less<>> media_map_{};
         };
 } // namespace audio
 
