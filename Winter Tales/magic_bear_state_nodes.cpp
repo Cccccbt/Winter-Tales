@@ -2,7 +2,7 @@
 #include <iostream>
 MagicBearIdle::MagicBearIdle()
 {
-	timer_idle.set_wait_time(2.0f);
+	timer_idle.set_wait_time(1.0f);
 	timer_idle.set_one_shot(true);
 	timer_idle.set_callback([]()
 	{
@@ -37,48 +37,6 @@ void MagicBearIdle::on_update(float delta)
         bear->switch_state("dead");
         return;
     }
-
-    if (bear->consume_pending_sneer())
-    {
-        bear->switch_state("sneer");
-        return;
-    }
-
-    if (bear->is_global_attack_cooling())
-    {
-        if (!bear->is_player_in_close_range())
-        {
-            bear->switch_state("walk");
-        }
-        return;
-    }
-
-    if (!bear->is_player_in_close_range())
-    {
-        bear->switch_state("walk");
-        return;
-    }
-
-    // ✅ FIXED: Check attacks in order 1 → 2 → 3 → 4
-    if (bear->is_player_in_close_range() && bear->can_attack_bite())
-    {
-        bear->switch_state("attack1");  // Attack 1: Bite (close range)
-    }
-
-    else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
-    {
-        bear->switch_state("attack3");  // Attack 3: Ray (mid/far range)
-    }
-    else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ball())
-    {
-        bear->switch_state("attack4");  // Attack 4: Ball (mid/far range)
-    }
-
-    else if (bear->is_player_in_far_range() && bear->can_attack_run())
-    {
-        bear->switch_state("attack2");  // Attack 2: Run (far range)
-    }
-
 }
 void MagicBearIdle::on_exit()
 {
@@ -500,7 +458,7 @@ MagicBearHurt::MagicBearHurt()
 	hurt_timer.set_one_shot(true);
 	hurt_timer.set_callback([]()
 	{
-		CharacterManager::instance()->get_magic_bear()->switch_state("idle");
+		CharacterManager::instance()->get_magic_bear()->switch_state("walk");
 	});
 }
 
