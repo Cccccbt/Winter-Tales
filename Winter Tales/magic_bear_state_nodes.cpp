@@ -131,15 +131,11 @@ void MagicBearWalk::on_update(float delta)
         return;
     }
 
-    // ✅ FIXED: Check attacks in order 1 → 2 → 3 → 4
     if (bear->is_player_in_close_range() && bear->can_attack_bite())
     {
         bear->switch_state("attack1");  // Attack 1: Bite (close range)
     }
-    else if (bear->is_player_in_close_range() && bear->can_attack_run())
-    {
-        bear->switch_state("attack2");  // Attack 2: Run (close range)
-    }
+
     else if ((bear->is_player_in_mid_range() || bear->is_player_in_far_range()) && bear->can_attack_ray())
     {
         bear->switch_state("attack3");  // Attack 3: Ray (mid/far range)
@@ -148,6 +144,12 @@ void MagicBearWalk::on_update(float delta)
     {
         bear->switch_state("attack4");  // Attack 4: Ball (mid/far range)
     }
+
+    else if (bear->is_player_in_far_range() && bear->can_attack_run())
+    {
+        bear->switch_state("attack2");  // Attack 2: Run (far range)
+    }
+
 }
 void MagicBearWalk::on_exit()
 {
