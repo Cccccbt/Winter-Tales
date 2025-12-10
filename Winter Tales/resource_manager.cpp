@@ -35,9 +35,9 @@ static const std::vector<ImageResInfo> image_info_list =
 
 	{"player_attack_1_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Attack_1.png")},
 	{"player_attack_2_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Attack_2.png")},
-        {"player_idle_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Idle.png")},
-        {"player_idle_2_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Idle_2.png")},
-        {"player_run_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Run.png")},
+    {"player_idle_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Idle.png")},
+    {"player_idle_2_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Idle_2.png")},
+    {"player_run_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Run.png")},
 	{"player_hurt_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Hurt.png")},
 	{"player_dead_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Dead.png")},
 	{"player_jump_right",_T("resources\\new\\pyromancer-character-sprite-sheets-pixel-art\\Pyromancer_1\\Jump.png")},
@@ -130,10 +130,10 @@ void ResourceManager::load()
 	flip_image("little_match_girl_roll_right", "little_match_girl_roll_left");
 
         // Player sprite flips
-        flip_image("player_attack_1_right", "player_attack_1_left", 9);
-        flip_image("player_attack_2_right", "player_attack_2_left", 14);
-        flip_image("player_idle_right", "player_idle_left", 6);
-        flip_image("player_idle_2_right", "player_idle_2_left", 18);
+    flip_image("player_attack_1_right", "player_attack_1_left", 9);
+    flip_image("player_attack_2_right", "player_attack_2_left", 14);
+    flip_image("player_idle_right", "player_idle_left", 6);
+    flip_image("player_idle_2_right", "player_idle_2_left", 18);
 	flip_image("player_run_right", "player_run_left", 10);
 	flip_image("player_hurt_right", "player_hurt_left", 4);
 	flip_image("player_dead_right", "player_dead_left", 4);
@@ -156,6 +156,21 @@ void ResourceManager::load()
 	//flipatlas
 	// 
 	//load_audio(_T(R"(resources\audio\bgm.mp3)"), _T("bgm"));
+	load_audio(_T(R"(resources\audio\fire_ball.mp3)"), _T("fire_ball"));
+	load_audio(_T(R"(resources\audio\fire_snake.mp3)"), _T("fire_snake"));
+	load_audio(_T(R"(resources\audio\magic_bear_bite.mp3)"), _T("magic_bear_bite"));
+	load_audio(_T(R"(resources\audio\pmagic_bear_dash.mp3)"), _T("magic_bear_dash"));
+	load_audio(_T(R"(resources\audio\magic_bear_hurt.mp3)"), _T("magic_bear_hurt"));
+	load_audio(_T(R"(resources\audio\magic_bear_dead.mp3)"), _T("magic_bear_dead"));
+	load_audio(_T(R"(resources\audio\magic_bear_magic.mp3)"), _T("magic_bear_magic"));
+	load_audio(_T(R"(resources\audio\magic_bear_ray.mp3)"), _T("magic_bear_ray"));
+	load_audio(_T(R"(resources\audio\player_dead.mp3)"), _T("player_dead"));
+	load_audio(_T(R"(resources\audio\player_hurt.mp3)"), _T("player_hurt"));
+	load_audio(_T(R"(resources\audio\magic_bear_sneer.mp3)"), _T("magic_bear_sneer"));
+	load_audio(_T(R"(resources\audio\snow_1.mp3)"), _T("snow_1"));
+	load_audio(_T(R"(resources\audio\snow_2.mp3)"), _T("snow_2"));
+	load_audio(_T(R"(resources\audio\snow_3.mp3)"), _T("snow_3"));
+	load_audio(_T(R"(resources\audio\snow_4.mp3)"), _T("snow_4"));
 }
 
 void ResourceManager::flip_image(IMAGE* src_image, IMAGE* dst_image, int num_h)

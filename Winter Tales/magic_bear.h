@@ -121,9 +121,9 @@ private:
         const float RUN_ATTACK_CD = 2.0f;
         const float WALK_SPEED = 150.0f;
         const float RUN_SPEED = 250.0f;
-        const float CLOSE_RANGE = 50.0f;
+        const float CLOSE_RANGE = 75.0f;
         const float FAR_RANGE = 400.0f;
-        const float MID_RANGE = 100.0f;
+        const float MID_RANGE = 200.0f;
         const float POST_HURT_INVULNERABILITY_TIME = 1.0f;
 
         float hp_max = 10.0f;

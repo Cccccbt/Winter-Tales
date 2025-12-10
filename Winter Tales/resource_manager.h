@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include "atlas.h"
+#include "util.h"
 
 // Loads and caches atlases/images so they can be reused across the game.
 class ResourceManager

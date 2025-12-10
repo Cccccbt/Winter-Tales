@@ -32,7 +32,6 @@ void PlayerAttack1::on_enter()
 	player->set_attacking(true);
 	player->on_attack();
 	player->throw_bullet();
-
 	CollisionBox* hit_box = player->get_hit_box();
 	hit_box->set_enabled(false);
 	update_hit_box_position();

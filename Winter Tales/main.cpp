@@ -44,7 +44,7 @@ int main()
 	
 	ExMessage msg;
 	bool running = true;
-
+	bool debug_mode = false;
         BeginBatchDraw();
 
         // Game Loop
@@ -53,6 +53,10 @@ int main()
                 // Process any pending input messages and pass them to characters.
                 while (peekmessage(&msg))
                 {
+                        if (msg.message == WM_KEYDOWN && msg.vkcode == 0x51)
+                        {
+                                debug_mode = !debug_mode;
+                        }
                         CharacterManager::instance()->on_input(msg);
                 }
 
@@ -71,7 +75,7 @@ int main()
                 putimage(0, 0, ResourceManager::instance()->find_image("background"));
 
                 CharacterManager::instance()->on_render();
-                // CollisionManager::instance()->on_debug_render();
+                if (debug_mode) CollisionManager::instance()->on_debug_render();
 
                 FlushBatchDraw();
 
