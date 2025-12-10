@@ -1,6 +1,7 @@
 #include <chrono>
 #include <graphics.h>
 #include <iostream>
+#include <memory>
 #include <thread>
 #include "camera.h"
 #include "animation.h"
@@ -12,7 +13,8 @@
 #include "magic_bear_ball.h"
 #include "magic_bear_ray.h"
 #include "player.h"
-#include "resource_manager.h"
+#include "scene_manager.h"
+#include "game_scene.h"
 #include "timer.h"
 #include "util.h"
 #include "vector2.h"
@@ -39,8 +41,12 @@ int main()
                 return -1;
         }
 
-	const nanoseconds frame_duration(1000000000 / 60);
-	steady_clock::time_point last_tick = steady_clock::now();
+        SceneManager* scene_manager = SceneManager::instance();
+        scene_manager->register_scene("game", std::make_unique<GameScene>());
+        scene_manager->switch_to("game");
+
+        const nanoseconds frame_duration(1000000000 / 60);
+        steady_clock::time_point last_tick = steady_clock::now();
 	
 	ExMessage msg;
 	bool running = true;
@@ -50,27 +56,20 @@ int main()
         // Game Loop
         while (running)
         {
-                // Process any pending input messages and pass them to characters.
+                // Process any pending input messages and pass them to the active scene.
                 while (peekmessage(&msg))
                 {
-                        CharacterManager::instance()->on_input(msg);
+                        scene_manager->on_input(msg);
                 }
 
 		        steady_clock::time_point frame_start = steady_clock::now();
 		        duration<float> delta = duration<float>(frame_start - last_tick);
 		        float scaled_delta = BulletTimeManager::instance()->on_update(delta.count());
-		        //Process update
+                        //Process update
 
-		        Camera::instance()->on_update(scaled_delta);
-		        CharacterManager::instance()->on_update(scaled_delta);
-		        CollisionManager::instance()->process_collide();
+                        scene_manager->on_update(scaled_delta);
 
-                setbkcolor(RGB(0, 0, 0));
-                cleardevice();
-
-                putimage(0, 0, ResourceManager::instance()->find_image("background"));
-
-                CharacterManager::instance()->on_render();
+                scene_manager->on_render();
                 // CollisionManager::instance()->on_debug_render();
 
                 FlushBatchDraw();
