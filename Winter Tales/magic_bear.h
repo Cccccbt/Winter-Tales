@@ -112,6 +112,12 @@ public:
         void start_attack3_cooldown();
         void start_attack4_cooldown();
         void update_attack_cooldowns(float delta);
+        void start_post_attack_idle();
+        bool is_post_attack_idle_active() const
+        {
+                return is_post_attack_idle;
+        }
+        void update_post_attack_idle(float delta);
 
 private:
         const float GLOBAL_ATTACK_CD = 3.0f;
@@ -137,11 +143,14 @@ private:
         bool is_bite_on_cd = false;
         bool is_run_on_cd = false;
 
+        bool is_post_attack_idle = false;
+
         Timer global_cd_timer;
         Timer ball_cd_timer;
         Timer ray_cd_timer;
         Timer bite_cd_timer;
         Timer run_cd_timer;
+        Timer post_attack_idle_timer;
 
         void setup_cooldown_timers();
         float get_phase_based_global_cd() const;
