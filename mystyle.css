@@ -212,6 +212,31 @@ a:hover {
   color: var(--muted);
 }
 
+.highlight-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1rem;
+}
+
+.highlight-card {
+  padding: 1.2rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: linear-gradient(145deg, rgba(143, 211, 255, 0.08), rgba(12, 23, 36, 0.9));
+  box-shadow: var(--shadow);
+}
+
+.highlight-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.45rem;
+}
+
+.highlight-card p {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
 .track-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
