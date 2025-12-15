@@ -154,6 +154,42 @@ public:
                 putimage_ex_camera(frame_list[idx_frame].image, &rect_dst, &frame_list[idx_frame].rect_src);
         }
 
+        // Render the current frame and overlay a translucent tint color on top.
+        void on_render_with_overlay(COLORREF overlay_color, BYTE overlay_alpha)
+        {
+                Rect rect_dst;
+                rect_dst.x = static_cast<int>(position.x - frame_list[idx_frame].rect_src.w / 2);
+                rect_dst.y = (AnchorMode::Centered == anchor_mode)
+                                     ? static_cast<int>(position.y - frame_list[idx_frame].rect_src.h / 2)
+                                     : static_cast<int>(position.y - frame_list[idx_frame].rect_src.h);
+                rect_dst.w = frame_list[idx_frame].rect_src.w;
+                rect_dst.h = frame_list[idx_frame].rect_src.h;
+
+                putimage_ex(frame_list[idx_frame].image, &rect_dst, &frame_list[idx_frame].rect_src);
+
+                // Scale a tiny colored image across the sprite bounds to achieve the tint.
+                IMAGE overlay(1, 1);
+                DWORD* buffer = GetImageBuffer(&overlay);
+                buffer[0] = (static_cast<DWORD>(overlay_alpha) << 24) |
+                            (static_cast<DWORD>(GetRValue(overlay_color)) << 16) |
+                            (static_cast<DWORD>(GetGValue(overlay_color)) << 8) |
+                            static_cast<DWORD>(GetBValue(overlay_color));
+
+                BLENDFUNCTION overlay_func = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
+                AlphaBlend(
+                        GetImageHDC(GetWorkingImage()),
+                        rect_dst.x,
+                        rect_dst.y,
+                        rect_dst.w,
+                        rect_dst.h,
+                        GetImageHDC(&overlay),
+                        0,
+                        0,
+                        overlay.getwidth(),
+                        overlay.getheight(),
+                        overlay_func);
+        }
+
 private:
         struct Frame
         {
