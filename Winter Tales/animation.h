@@ -49,6 +49,16 @@ public:
                 timer.restart();
         }
 
+        Rect get_current_frame_rect() const
+        {
+                if (frame_list.empty())
+                {
+                        return { 0, 0, 0, 0 };
+                }
+
+                return frame_list[idx_frame].rect_src;
+        }
+
         // Set the logical position; rendering offsets depend on the anchor mode.
         void set_position(const Vector2& pos)
         {
@@ -58,6 +68,11 @@ public:
         void set_AnchorMode(AnchorMode mode)
         {
                 anchor_mode = mode;
+        }
+
+        AnchorMode get_AnchorMode() const
+        {
+                return anchor_mode;
         }
 
         // Toggle whether the animation loops when it reaches the last frame.
